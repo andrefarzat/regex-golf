@@ -5,7 +5,7 @@ import Terminal from "../nodes/Terminal";
 import Utils from "../Utils";
 
 
-export default class Program {
+export default class BaseProgram {
     public left: string[] = [];
     public right: string[] = [];
     public chars: {left: {[key: string]: number}, right: {[key: string]: number}} = {left: {}, right: {}};
