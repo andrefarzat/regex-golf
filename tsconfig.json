@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "target": "es6",
+        "lib": ["es6"]
+    },
+    "files": [
+        "./src/genetic/index.ts",
+        "./src/localsearch/index.ts"
+    ]
+}
