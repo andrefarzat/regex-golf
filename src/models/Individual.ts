@@ -1,7 +1,7 @@
-import Func from "./nodes/Func";
-import Terminal from "./nodes/Terminal";
-import Node from "./nodes/Node";
-import Logger from './Logger';
+import Func from "../nodes/Func";
+import Terminal from "../nodes/Terminal";
+import Node from "../nodes/Node";
+import Logger from '../Logger';
 
 
 export default class Individual {

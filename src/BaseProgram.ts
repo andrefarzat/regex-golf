@@ -1,11 +1,11 @@
-import Func from "../nodes/Func";
-import Individual from "../Individual";
-import IndividualFactory from "../IndividualFactory";
-import Terminal from "../nodes/Terminal";
-import Utils from "../Utils";
+import Func from "./nodes/Func";
+import Individual from "./models/Individual";
+import IndividualFactory from "./models/IndividualFactory";
+import Terminal from "./nodes/Terminal";
+import Utils from "./Utils";
 
 
-export default class BaseProgram {
+export default abstract class BaseProgram {
     public left: string[] = [];
     public right: string[] = [];
     public chars: {left: {[key: string]: number}, right: {[key: string]: number}} = {left: {}, right: {}};

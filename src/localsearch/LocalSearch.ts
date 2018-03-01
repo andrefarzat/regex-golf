@@ -1,6 +1,6 @@
-import BaseProgram from "./BaseProgram";
+import BaseProgram from "../BaseProgram";
 import Func from "../nodes/Func";
-import Individual from "../Individual";
+import Individual from "../models/Individual";
 import Terminal from "../nodes/Terminal";
 import Utils from "../Utils";
 
@@ -11,8 +11,9 @@ export interface Solution {
 }
 
 
-export default class LocalSearch extends BaseProgram {
-    public budget: number = 2000;
+export default abstract class LocalSearch extends BaseProgram {
+    public budget: number;
+    public depth: number;
     public solutions: Solution[] = [];
     public localSolutions: Solution[] = [];
 
@@ -35,53 +36,10 @@ export default class LocalSearch extends BaseProgram {
     }
 
     public generateInitialIndividual(): Individual {
-        let index = 0;
-        let maxIndex = this.validLeftChars.length - 1;
-
-        let ind = new Individual();
-        ind.tree = new Func();
-        ind.tree.type = Func.Types.concatenation;
-        ind.tree.left = new Terminal(this.validLeftChars[index]);
-        ind.tree.right = new Terminal('');
-
-        if (this.isValidLeft(ind)) {
-            return ind;
-        }
-
-        let current = ind.tree;
-        while (!this.isValidLeft(ind)) {
-            current.type = Func.Types.or;
-            index ++;
-
-            if ((index + 1) > maxIndex) {
-                break;
-            }
-
-            let func = new Func();
-            func.type = Func.Types.or;
-            func.left = new Terminal(this.validLeftChars[index]);
-            func.right = new Terminal(this.validLeftChars[index + 1]);
-
-            current.right = func;
-            current = func;
-        }
-
-        return ind;
+        return this.factory.generateRandom(this.depth);
     }
 
-    public getNeighborhoodLength(solution: string): number {
-        let ret = 0;
-        let len = solution.length;
-        let chars = this.validLeftChars.length + 4;
-
-        ret += (chars * len) * 2;
-        ret += (chars * len) * 3;
-        ret += ((this.validLeftChars.length * 2) * len) * 2;
-        ret += (this.rightCharsNotInLeft.length) * len;
-        ret += (this.rightCharsNotInLeft.length * 2) * len;
-
-        return ret;
-    }
+    public abstract restartFromSolution(ind: Individual): Individual;
 
     public * generateNeighborhood(solution: Individual) {
         let nodes = solution.getNodes();
@@ -205,42 +163,7 @@ export default class LocalSearch extends BaseProgram {
         // more = "•++",
     }
 
-    public getRandomNeighbor(ind: Individual): Individual {
-        return this.factory.generateRandomlyFrom(ind);
-    }
-
     public getBestSolution(): Solution {
         return this.solutions.length > 0 ? this.solutions[0] : this.localSolutions[0];
-    }
-
-    public generateViaILS(ind: Individual): Individual {
-        let count = 5;
-
-        while (--count > 0) {
-            let neo = this.factory.generateRandomlyFrom(ind);
-            if (!neo.isValid()) continue;
-            if (!this.isValidRegex(neo.toString())) continue;
-
-            ind = neo;
-        }
-
-        let len = ind.getNodes().length;
-        if (len > 5) {
-            count = 3;
-        } else if (len > 2) {
-            count = 1;
-        } else {
-            count = 0;
-        }
-
-        while (--count > 0) {
-            let neo = this.factory.removeRandomNode(ind);
-            if (!neo.isValid()) continue;
-            if (!this.isValidRegex(neo.toString())) continue;
-
-            ind = neo;
-        }
-
-        return ind;
     }
 }
