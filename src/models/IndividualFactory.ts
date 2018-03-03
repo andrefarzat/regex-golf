@@ -1,9 +1,9 @@
-import Func, {FuncTypes} from "./nodes/Func";
-import Individual from "./Individual";
-import Node from "./nodes/Node";
-import Terminal from "./nodes/Terminal"
-import Utils from "./Utils";
-import { IncomingHttpHeaders } from "http";
+import Func, {FuncTypes} from '../nodes/Func';
+import Individual from './Individual';
+import Node from '../nodes/Node';
+import Terminal from '../nodes/Terminal'
+import Utils from '../Utils';
+import { IncomingHttpHeaders } from 'http';
 
 
 export default class IndividualFactory {

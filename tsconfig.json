@@ -1,14 +1,20 @@
 {
     "compilerOptions": {
+        "experimentalDecorators": true,
         "outDir": "./dist/",
         "sourceMap": true,
         "noImplicitAny": true,
         "module": "commonjs",
-        "target": "es6",
+        "target": "es5",
         "lib": ["es6"]
     },
-    "files": [
-        "./src/genetic/index.ts",
-        "./src/localsearch/index.ts"
+    "include": [
+        "./src/*.ts",
+        "./src/**/*.ts",
+        "./tests/*.ts",
+        "./tests/**/*.ts"
+    ],
+    "exclude": [
+        "./tests/runner.ts"
     ]
 }

@@ -1,20 +1,26 @@
 const args = require('args');
 import * as moment from "moment";
 
+import ILS from './ILS';
+import ILS_Shrink from './ILS_Shrink';
 import LocalSearch from './LocalSearch';
+import RRLS from './RRLS';
+
 import Logger from '../Logger';
 import Utils from '../Utils';
 
 
-args.option('name', 'O nome da instancia')
+args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS"')
+    .option('instance', 'O nome da instância do problema')
     .option('depth', 'O tamanho do depth', 5)
     .option('budget', 'Número máximo de avaliações', 100000 * 6)
-    .option('log-level', "Log level entre 1 e 5", 3)
+    .option('log-level', 'Log level entre 1 e 5', 3)
     .option('index', 'O índice da execução', 1)
-    .option('timeout', "Timeout em miliseconds", 1000 * 60);
+    .option('timeout', 'Timeout em miliseconds', 1000 * 60);
 
 const flags: {
-    name: string,
+    name: 'ILS'| 'ILS_Shrink' | 'RRLS',
+    instance: string,
     depth: number,
     budget: number,
     logLevel: number,
@@ -29,12 +35,22 @@ if (!flags.name) {
 
 Utils.setIndex(flags.index);
 
-const programs: {[key: string]: LocalSearch} = {};
+function getProgram(): LocalSearch {
+    switch (flags.name) {
+        case 'ILS':        return new ILS(flags.instance);
+        case 'ILS_Shrink': return new ILS_Shrink(flags.instance);
+        case 'RRLS':       return new RRLS(flags.instance);
+    }
+
+    console.log(`${flags.name} não é um algoritmo válido.`);
+    process.exit(1);
+}
 
 function main() {
+
     // 1. Carrega a instância do problema
     // 2. Instância o programa
-    let program = programs['oi'];
+    let program = getProgram();
 
     // 3. Seta o Budget
     program.budget = flags.budget;

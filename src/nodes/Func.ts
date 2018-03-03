@@ -251,6 +251,8 @@ export default class Func implements Node {
         // oneOrMore = "•?+",
         // group = "(•)",
         // more = "•++",
+
+        // Our default is shrink left and right and return a new Func
         let func = new Func(this.type);
         func.left = this.left.shrink();
         func.right = this.right.shrink();

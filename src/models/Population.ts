@@ -1,5 +1,5 @@
 import Individual from "./Individual";
-import Utils from "./Utils";
+import Utils from "../Utils";
 import IndividualFactory from "./IndividualFactory";
 
 
