@@ -1,33 +1,61 @@
+import * as regexp from "regexp-tree";
+
 import Func, {FuncTypes} from '../nodes/Func';
 import Individual from './Individual';
 import Node from '../nodes/Node';
 import Terminal from '../nodes/Terminal'
 import Utils from '../Utils';
-import { IncomingHttpHeaders } from 'http';
 
 
 export default class IndividualFactory {
     public constructor(public leftChars: string[], public rightChars: string[]) {}
 
     public createFromString(phrase: string) : Individual {
+        let tree = regexp.parse(`/${phrase}/`);
+        let expressions = (tree.body as any).expressions as regexp.Node.Expression[];
+
         let ind = new Individual();
-        let currentFunc = new Func();
+        let currentFunc = new Func(Func.Types.concatenation);
         ind.tree = currentFunc;
 
-        phrase.split('').forEach(letter => {
-            if (!currentFunc.left) {
-                currentFunc.left = new Terminal(letter);
+        for (let expression of expressions) {
+            let node: Terminal | Func;
+
+            if (expression.type == 'Char') {
+                node = new Terminal((expression as any).value);
+            } else if (expression.type == 'Assertion' && expression.kind == '^') {
+                node = new Func();
+                node.type = Func.Types.lineBegin;
+            } else if (expression.type == 'Assertion' && expression.kind == '$') {
+                node = new Func();
+                node.type = Func.Types.lineEnd;
             } else {
-                let func = new Func();
-                func.type = Func.Types.concatenation;
-                func.left = new Terminal(letter);
-
-                currentFunc.right = func;
-                currentFunc = func;
+                node = new Terminal((expression as any).value);
             }
-        });
 
-        currentFunc.right = new Terminal('');
+            if (node instanceof Terminal) {
+                if (!currentFunc.left) {
+                    currentFunc.left = node;
+                } else {
+                    let func = new Func();
+                    func.type = Func.Types.concatenation;
+                    func.left = node;
+
+                    currentFunc.right = func;
+                    currentFunc = func;
+                }
+            } else {
+                if (!currentFunc.left) {
+                    currentFunc.left = new Terminal('');
+                }
+
+                currentFunc.right = node;
+                currentFunc = node;
+            }
+        }
+
+        if (!currentFunc.left)  currentFunc.left  = new Terminal('');
+        if (!currentFunc.right) currentFunc.right = new Terminal('');
         return ind;
     }
 

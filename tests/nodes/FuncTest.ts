@@ -3,6 +3,7 @@ import { Expect, Test, TestCase, TestFixture, IgnoreTest } from "alsatian";
 import IndividualFactory from '../../src/models/IndividualFactory';
 import Func from "../../src/nodes/Func";
 import Terminal from "../../src/nodes/Terminal";
+import Individual from "../../src/models/Individual";
 
 
 @TestFixture('FuncTest')
