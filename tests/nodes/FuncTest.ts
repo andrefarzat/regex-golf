@@ -33,8 +33,19 @@ export class FuncShrinkTest {
 
     @Test('Test Shrink LineBegin')
     public testShrinkLineBegin() {
+        // Let's keep only one lineBegin node
         let tree = this.individualFactory.createFromString('^abc^xyz');
         Expect(tree.shrink().toString()).toEqual('^abcxyz');
+    }
+
+    @Test('Test Shrink LineEnd')
+    public testShrinkLineEnd() {
+        // Let's keep only one lineEnd node
+        let tree = this.individualFactory.createFromString('abc$xyz$');
+        Expect(tree.shrink().toString()).toEqual('abcxyz$');
+
+        tree = this.individualFactory.createFromString('abc\\$xyz$');
+        Expect(tree.shrink().toString()).toEqual('abc\\$xyz$');
     }
 
 }

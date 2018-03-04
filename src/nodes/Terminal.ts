@@ -3,6 +3,8 @@ import Utils from "../Utils";
 
 
 export default class Terminal implements Node {
+    private static charsToBeEscapted = '^$\\.*+?()[]{}|'.split('');
+
     constructor(public value: string = '') {
         // pass
     }
@@ -14,7 +16,8 @@ export default class Terminal implements Node {
     }
 
     public toString(): string {
-        return this.value.toString().replace(/\s/g, '\\s');
+        let value = this.value.toString();
+        return Terminal.charsToBeEscapted.indexOf(value) >= 0 ? '\\' + value : value;
     }
 
     public toRegex(): RegExp {
