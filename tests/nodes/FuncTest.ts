@@ -14,8 +14,6 @@ export class FuncTest {
 
         // Func.Types
         // Func.Types.concatenation
-        // Func.Types.lineBegin
-        // Func.Types.lineEnd
         // Func.Types.list
         // Func.Types.negation
         // Func.Types.or
@@ -46,6 +44,12 @@ export class FuncShrinkTest {
 
         tree = this.individualFactory.createFromString('abc\\$xyz$');
         Expect(tree.shrink().toString()).toEqual('abc\\$xyz$');
+    }
+
+    @Test('Test Shrink concatenation')
+    public testShrinkConcatenation() {
+        let tree = this.individualFactory.createFromString('abc');
+        Expect(tree.shrink().toString()).toEqual('abc');
     }
 
 }

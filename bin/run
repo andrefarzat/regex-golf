@@ -1,0 +1,3 @@
+#!/bin/bash
+
+npm run localsearch -- --name RRLS --instance anchors
