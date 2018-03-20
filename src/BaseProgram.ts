@@ -11,9 +11,10 @@ export default abstract class BaseProgram {
     public chars: {left: {[key: string]: number}, right: {[key: string]: number}} = {left: {}, right: {}};
     public factory: IndividualFactory;
     public currentBest: Individual = null;
-    public evalutionCount: number = 0;
+    public evaluationCount: number = 0;
     public startTime: Date;
     public endTime: Date;
+    public seed: number;
 
     public get validLeftChars(): string[] {
         return Object.keys(this.chars.left);
@@ -84,13 +85,17 @@ export default abstract class BaseProgram {
     }
 
     public evaluate(ind: Individual): number {
+        if (ind.isEvaluated) return ind.fitness;
+
         ind.leftFitness = 0;
         ind.rightFitness = 0;
-        this.evalutionCount += 1;
+        this.evaluationCount += 1;
+        ind.evaluationIndex = this.evaluationCount;
         let regex = ind.toRegex();
 
         this.left .forEach(name => ind.leftFitness  += regex.test(name) ? 1 : 0);
         this.right.forEach(name => ind.rightFitness += regex.test(name) ? 0 : 1);
+        ind.isEvaluated = true;
         return ind.fitness;
     }
 

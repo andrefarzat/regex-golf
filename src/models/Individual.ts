@@ -8,6 +8,9 @@ export default class Individual {
     public tree: Func;
     public leftFitness: number = 0;
     public rightFitness: number = 0;
+    public evaluationIndex: number;
+    public createdDate = new Date();
+    public isEvaluated: boolean = false;
 
     public get fitness(): number {
         return this.leftFitness + this.rightFitness;
@@ -76,18 +79,18 @@ export default class Individual {
 
     public isBetterThan(ind: Individual): boolean {
         if (this.fitness > ind.fitness) {
-            Logger.log(3, `[Found better ${this.toString()}] from fitness ${ind.fitness} to ${this.fitness}`);
+            // Logger.log(3, `[Found better ${this.toString()}] from fitness ${ind.fitness} to ${this.fitness}`);
             return true;
         }
 
         if (this.fitness == ind.fitness) {
             if (this.toString().length < this.toString().length) {
-                Logger.log(3, `[Found shorter ${this.toString()}] from length ${ind.toString().length} to ${this.toString().length}`);
+                // Logger.log(3, `[Found shorter ${this.toString()}] from length ${ind.toString().length} to ${this.toString().length}`);
                 return true;
             }
 
             if (this.leftFitness > ind.leftFitness) {
-                Logger.log(3, `[Found better left fitness ${this.toString()}] from ${ind.leftFitness} to ${this.leftFitness}`);
+                // Logger.log(3, `[Found better left fitness ${this.toString()}] from ${ind.leftFitness} to ${this.leftFitness}`);
                 return true;
             }
         }

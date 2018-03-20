@@ -3,6 +3,7 @@ import Func from "../nodes/Func";
 import Individual from "../models/Individual";
 import Terminal from "../nodes/Terminal";
 import Utils from "../Utils";
+import { Moment } from "moment";
 
 export interface Solution {
     ind: Individual;
@@ -14,11 +15,13 @@ export interface Solution {
 export default abstract class LocalSearch extends BaseProgram {
     public budget: number;
     public depth: number;
-    public solutions: Solution[] = [];
-    public localSolutions: Solution[] = [];
+    public maxTimeout: Moment;
+    public solutions: Individual[] = [];
+    public localSolutions: Individual[] = [];
+    public hasTimedOut: boolean = false;
 
     public shouldStop(): boolean {
-        if (this.evalutionCount >= this.budget) {
+        if (this.evaluationCount >= this.budget) {
             this.endTime = new Date();
             return true;
         }
@@ -27,12 +30,12 @@ export default abstract class LocalSearch extends BaseProgram {
     }
 
     public addSolution(ind: Individual) {
-        this.solutions.push({ind, date: new Date(), count: this.evalutionCount});
+        this.solutions.push(ind);
     }
 
     public addLocalSolution(ind: Individual) {
         this.evaluate(ind);
-        this.localSolutions.push({ind, date: new Date(), count: this.evalutionCount});
+        this.localSolutions.push(ind);
     }
 
     public generateInitialIndividual(): Individual {
@@ -163,7 +166,7 @@ export default abstract class LocalSearch extends BaseProgram {
         // more = "•++",
     }
 
-    public getBestSolution(): Solution {
+    public getBestSolution(): Individual {
         return this.solutions.length > 0 ? this.solutions[0] : this.localSolutions[0];
     }
 }
