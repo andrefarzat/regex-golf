@@ -19,6 +19,7 @@ args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS",
     .option('budget', 'Número máximo de avaliações', 100000 * 6)
     .option('log-level', 'Log level entre 1 e 5', 3)
     .option('index', 'O índice da execução', 1)
+    .option('seed', 'O seed para Random')
     .option('timeout', 'Timeout em miliseconds', 1000 * 60);
 
 const flags: {
@@ -29,6 +30,7 @@ const flags: {
     logLevel: number,
     index: number,
     timeout: number,
+    seed: number,
 } = args.parse(process.argv);
 
 if (!flags.name) {
@@ -37,6 +39,7 @@ if (!flags.name) {
 }
 
 Utils.setIndex(flags.index);
+if (flags.seed) Utils.setSeed(flags.seed);
 
 function getProgram(): LocalSearch {
     switch (flags.name) {

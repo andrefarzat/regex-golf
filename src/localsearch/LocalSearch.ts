@@ -2,7 +2,6 @@ import BaseProgram from "../BaseProgram";
 import Func from "../nodes/Func";
 import Individual from "../models/Individual";
 import Terminal from "../nodes/Terminal";
-import Utils from "../Utils";
 import { Moment } from "moment";
 
 export interface Solution {

@@ -4,52 +4,13 @@ import Func from "./nodes/Func";
 import Node from "./nodes/Node";
 import MersenneTwister = require("mersenne-twister");
 
-const seeds = [
-    946600524769,
-    930664507645,
-    817011623690,
-    351860869256,
-    172997522630,
-    569738111923,
-    377439701338,
-    962495572336,
-    715744732573,
-    390198731553,
-    638754023500,
-    488638353730,
-    870295812448,
-    437914337996,
-    513315557055,
-    150581012801,
-    481024974863,
-    972388393095,
-    509764353392,
-    657452459883,
-    763367874030,
-    418166563613,
-    955834666465,
-    404640470305,
-    232737611637,
-    947041428682,
-    309675561420,
-    837014034550,
-    453263833593,
-    265217263684,
-];
-
 
 export default class Utils {
     private static index = 0;
-    static _random: MersenneTwister;
+    protected static random: MersenneTwister = new MersenneTwister(new Date().getTime());
 
-    static get random(): MersenneTwister {
-        if (!Utils._random) {
-            if (!Array.isArray(seeds)) throw new Error('Invalid seeds');
-            let seed = seeds[Utils.index];
-            Utils._random = new MersenneTwister(seed);
-        };
-
-        return Utils._random;
+    static setSeed(seed: number) {
+        this.random = new MersenneTwister(seed);
     }
 
     static loadInstance(instanceName: string): {left: string[], right: string[]} {
