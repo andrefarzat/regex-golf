@@ -122,6 +122,7 @@ function main() {
             program.addLocalSolution(currentSolution);
             logger.logSolution('Best local', currentSolution);
             currentSolution = program.restartFromSolution(currentSolution);
+            logger.logEmptyLine();
             logger.log(3, `[Jumped to] ${currentSolution.toString()}`);
         }
     } while (true);
@@ -137,13 +138,14 @@ function main() {
         return 0;
     };
 
+    logger.logEmptyLine();
     logger.log(2, `Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.sort(sorter);
     program.localSolutions.forEach(ind => {
         logger.log(3, `[Local Solution]: ${ind.toString()} [Fitness ${ind.fitness} of ${program.getMaxFitness()}] [Length ${ind.toString().length}]`);
     });
 
-    logger.log(2, ' ');
+    logger.logEmptyLine();
     logger.log(2, `Was found ${program.solutions.length} solution(s)`);
 
     program.solutions.sort(sorter);

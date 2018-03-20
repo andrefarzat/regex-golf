@@ -5,6 +5,7 @@ import Individual from './models/Individual';
 export default class Logger {
     private logLevel = 3;
     private program!: BaseProgram;
+    private shouldLogEmptyLine = false;
 
     public static create(program: BaseProgram): Logger {
         let logger = new Logger();
@@ -19,7 +20,12 @@ export default class Logger {
     }
 
     public log(level: number, message: string) {
-        if (level <= this.logLevel) console.log(message);
+        if (level <= this.logLevel) {
+            if (this.shouldLogEmptyLine) console.log('');
+            console.log(message);
+        }
+
+        this.shouldLogEmptyLine = false
     }
 
     private formatDateToDisplay(date: Date | Moment.Moment): string {
@@ -31,6 +37,10 @@ export default class Logger {
     }
 
     public logSolution(prefix: string, ind: Individual) {
-        this.log(3, `[${prefix}] ${ind.toString()} [Fitness:    ${ind.fitness}]`);
+        this.log(3, `[${prefix}] ${ind.toString()} [Fitness: ${ind.fitness}]`);
+    }
+
+    public logEmptyLine() {
+        this.shouldLogEmptyLine = true;
     }
 }
