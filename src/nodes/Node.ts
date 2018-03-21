@@ -1,3 +1,4 @@
+import { FuncTypes } from "./Func";
 
 export enum NodeTypes {
     terminal = 'terminal',
@@ -12,5 +13,7 @@ export default interface Node {
     toRegex(): RegExp;
     shrink(): Node;
     readonly nodeType: NodeTypes;
+
+    is(type: NodeTypes | FuncTypes): boolean;
 }
 

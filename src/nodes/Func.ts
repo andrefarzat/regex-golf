@@ -14,6 +14,7 @@ export enum FuncTypes {
     list = "[•]",
     negation = "[^•]",
     more = "•++",
+    repetition = "•{#}"
 }
 
 
@@ -21,6 +22,7 @@ export default class Func implements Node {
     public static placeholder: FuncTypes = FuncTypes.concatenation;
     public static Types = FuncTypes;
     private static _options: string[] = null;
+    public repetitionNumber: string = '1';
 
     public static get options(): FuncTypes[] {
         if (!Func._options) { Func._options = Object.keys(FuncTypes).map(key => (FuncTypes as any)[key]); }
@@ -38,6 +40,12 @@ export default class Func implements Node {
 
     public mutate(values: string[]): void {
         this.type = Utils.getRandomlyFromList(Func.options);
+        this.repetitionNumber = this.type == FuncTypes.repetition ? Utils.nextInt(9).toString() : '0';
+    }
+
+    public is(type: NodeTypes | FuncTypes): boolean {
+        if (type == this.nodeType) return true;
+        return type == this.type;
     }
 
     public toString(): string {
@@ -46,6 +54,10 @@ export default class Func implements Node {
 
         if (this.type == FuncTypes.or) {
             return left + "|" + right;
+        }
+
+        if (this.type == FuncTypes.repetition) {
+            return `${left}{${this.repetitionNumber}}${right}`;
         }
 
         let txt = left + right;
@@ -61,6 +73,7 @@ export default class Func implements Node {
         func.left = this.left.clone();
         func.right = this.right.clone();
         func.type = this.type;
+        func.repetitionNumber = this.repetitionNumber;
         return func;
     }
 
@@ -122,11 +135,37 @@ export default class Func implements Node {
             let left = this.left.shrink();
             let right = this.right.shrink();
 
-            let areBothTerminal = left.nodeType == 'terminal'
-                && right.nodeType == 'terminal';
+            let areBothTerminal = left.is(NodeTypes.terminal) && right.is(NodeTypes.terminal);
 
             if (areBothTerminal) {
+                let leftStr = left.toString();
+                let rightStr = right.toString();
+
+                if (leftStr.length == 1 && rightStr.length == 1) {
+                    if (leftStr == rightStr) {
+                        let func = new Func(Func.Types.repetition);
+                        func.repetitionNumber = '2';
+                        func.left = new Terminal(leftStr);
+                        func.right = new Terminal('');
+                        return func;
+                    }
+                }
+
                 return new Terminal(left.toString() + right.toString());
+            }
+
+            if (left.is(NodeTypes.terminal) && right.is(FuncTypes.repetition)) {
+                let funcRight = right as Func;
+                let leftStr = left.toString();
+                let whatIsRepetead = funcRight.left.toString();
+
+                if (leftStr == whatIsRepetead) {
+                    let func = new Func(FuncTypes.repetition);
+                    func.left = new Terminal(leftStr);
+                    func.repetitionNumber = this.addToRepetitionNumber(funcRight, 1);
+                    func.right = funcRight.right.clone();
+                    return func;
+                }
             }
 
             let func = new Func(FuncTypes.concatenation);
@@ -256,6 +295,18 @@ export default class Func implements Node {
         let func = new Func(this.type);
         func.left = this.left.shrink();
         func.right = this.right.shrink();
+        func.repetitionNumber = this.repetitionNumber;
         return func;
+    }
+
+    public addToRepetitionNumber(func: Func, value: number): string {
+        let numbers = func.repetitionNumber.split(',');
+
+        switch (numbers.length) {
+            case 1: return (parseInt(numbers[0], 10) + value).toString();
+            case 2: return (parseInt(numbers[1], 10) + value).toString();
+        }
+
+        return value.toString()
     }
 }

@@ -1,5 +1,6 @@
 import Node, {NodeTypes} from "./Node";
 import Utils from "../Utils";
+import { FuncTypes } from "./Func";
 
 
 export default class Terminal implements Node {
@@ -31,5 +32,9 @@ export default class Terminal implements Node {
 
     public shrink(): Terminal {
         return this.clone();
+    }
+
+    public is(type: NodeTypes): boolean {
+        return type == NodeTypes.terminal;
     }
 }

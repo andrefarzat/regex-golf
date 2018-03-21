@@ -1,28 +1,15 @@
-import { Expect, Test, TestCase, TestFixture, IgnoreTest } from "alsatian";
+import { Expect, Test, TestCase, TestFixture, IgnoreTest, FocusTest } from "alsatian";
 
 import IndividualFactory from '../../src/models/IndividualFactory';
 import Func from "../../src/nodes/Func";
 import Terminal from "../../src/nodes/Terminal";
 import Individual from "../../src/models/Individual";
+import { NodeTypes } from "../../src/nodes/Node";
 
 
 @TestFixture('FuncTest')
 export class FuncTest {
 
-    @Test()
-    public testShrink() {
-
-        // Func.Types
-        // Func.Types.concatenation
-        // Func.Types.list
-        // Func.Types.negation
-        // Func.Types.or
-
-
-        // let func = new Func();
-        // func.shrink();
-        // func.sh
-    }
 }
 
 @TestFixture('FuncShrinkTest')
@@ -39,17 +26,32 @@ export class FuncShrinkTest {
     @Test('Test Shrink LineEnd')
     public testShrinkLineEnd() {
         // Let's keep only one lineEnd node
-        let tree = this.individualFactory.createFromString('abc$xyz$');
-        Expect(tree.shrink().toString()).toEqual('abcxyz$');
+        let ind = this.individualFactory.createFromString('abc$xyz$');
+        Expect(ind.shrink().toString()).toEqual('abcxyz$');
 
-        tree = this.individualFactory.createFromString('abc\\$xyz$');
-        Expect(tree.shrink().toString()).toEqual('abc\\$xyz$');
+        ind = this.individualFactory.createFromString('abc\\$xyz$');
+        Expect(ind.shrink().toString()).toEqual('abc\\$xyz$');
     }
 
     @Test('Test Shrink concatenation')
     public testShrinkConcatenation() {
-        let tree = this.individualFactory.createFromString('abc');
-        Expect(tree.shrink().toString()).toEqual('abc');
+        let ind = this.individualFactory.createFromString('abc');
+        let shrunk = ind.shrink();
+        Expect(shrunk.toString()).toEqual('abc');
+        Expect(shrunk.tree.nodeType).toEqual(NodeTypes.func);
+        Expect(shrunk.tree.left.nodeType).toEqual(NodeTypes.terminal);
+        Expect(shrunk.tree.right.nodeType).toEqual(NodeTypes.terminal);
+        Expect((shrunk.tree.left as Terminal).value).toEqual('');
+        Expect((shrunk.tree.right as Terminal).value).toEqual('abc');
+
+        ind = this.individualFactory.createFromString('aaaaa');
+        shrunk = ind.shrink();
+        Expect(shrunk.toString()).toEqual('a{5}');
+
+        ind = this.individualFactory.createFromString('aa{5}');
+        debugger;
+        shrunk = ind.shrink();
+        Expect(shrunk.toString()).toEqual('a{6}');
     }
 
 }

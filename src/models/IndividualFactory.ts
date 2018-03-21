@@ -12,7 +12,10 @@ export default class IndividualFactory {
 
     public createFromString(phrase: string) : Individual {
         let tree = regexp.parse(`/${phrase}/`);
-        let expressions = (tree.body as any).expressions as regexp.Node.Expression[];
+        let body = tree.body as any;
+        let expressions = body.expressions
+            ? body.expressions as regexp.Node.Expression[]
+            : [body] as regexp.Node.Expression[];
 
         let ind = new Individual();
         let currentFunc = new Func(Func.Types.concatenation);
@@ -29,6 +32,20 @@ export default class IndividualFactory {
             } else if (expression.type == 'Assertion' && expression.kind == '$') {
                 node = new Func();
                 node.type = Func.Types.lineEnd;
+            } else if (expression.type == 'Repetition') {
+                if (expression.quantifier && expression.quantifier.kind == 'Range') {
+                    node = new Func();
+                    node.type = Func.Types.repetition;
+                    node.left = new Terminal((expression.expression as any).value);
+
+                    if (expression.quantifier.from == expression.quantifier.to) {
+                        node.repetitionNumber = expression.quantifier.from.toString();
+                    } else {
+                        node.repetitionNumber = `${expression.quantifier.from},${expression.quantifier.to}`;
+                    }
+                } else {
+                    throw new Error('Unkown expression.type == Repetition');
+                }
             } else {
                 node = new Terminal((expression as any).value);
             }
