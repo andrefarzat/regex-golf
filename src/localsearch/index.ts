@@ -1,5 +1,7 @@
 const colors = require('colors/safe');
 const args = require('args');
+const fs = require('fs');
+import * as path from 'path';
 import * as moment from "moment";
 
 import ILS from './ILS';
@@ -20,7 +22,8 @@ args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS",
     .option('log-level', 'Log level entre 1 e 5', 3)
     .option('index', 'O índice da execução', 1)
     .option('seed', 'O seed para Random')
-    .option('timeout', 'Timeout em miliseconds', 1000 * 60);
+    .option('timeout', 'Timeout em miliseconds', 1000 * 60)
+    .option('csv', 'Exportar resultado em csv');
 
 const flags: {
     name: 'ILS'| 'ILS_Shrink' | 'RRLS' | 'Constructed_RRLS',
@@ -31,12 +34,14 @@ const flags: {
     index: number,
     timeout: number,
     seed: number,
+    csv: string,
 } = args.parse(process.argv);
 
 if (!flags.name) {
     args.showHelp();
     process.exit();
 }
+
 
 Utils.setIndex(flags.index);
 if (flags.seed) Utils.setSeed(flags.seed);
@@ -156,6 +161,35 @@ function main() {
         let txt = `[Solution]: ${ind.toString()} [Fitness ${ind.fitness} of ${program.getMaxFitness()}] [Length ${ind.toString().length}]`;
         logger.log(1, (i == 0) ? colors.green(txt) : txt);
     });
+
+    if (!flags.csv) process.exit();
+
+    !function() {
+        let bestSolution = program.getBestSolution();
+        // Nome, i, Depth, seed
+        let csvLine: (string | number)[] = [program.instanceName, program.depth, flags.index, program.seed];
+
+        let startTime = moment(program.startTime);
+        let endTime   = moment(program.endTime);
+
+        if (bestSolution) {
+            csvLine.push(bestSolution.fitness); // Melhor_fitness
+            csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
+            csvLine.push(startTime.diff(bestSolution.createdDate, 'milliseconds')); // Tempo_para_encontrar_melhor_solucao
+        } else {
+            csvLine.push('N/A'); // Melhor_fitness
+            csvLine.push('N/A'); // Numero_de_comparacoes
+            csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
+        }
+
+        let totalTime = moment(program.endTime).diff(program.startTime, 'milliseconds');
+        csvLine.push(totalTime); // Tempo_total
+        csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
+        csvLine.push(`\n`); // Break line
+
+        let filepath = path.join(__dirname, '..', '..', 'results', flags.csv);
+        fs.appendFileSync(filepath, csvLine.join(','));
+    }();
 }
 
 main();

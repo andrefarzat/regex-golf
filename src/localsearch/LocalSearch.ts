@@ -165,7 +165,7 @@ export default abstract class LocalSearch extends BaseProgram {
         // more = "•++",
     }
 
-    public getBestSolution(): Individual {
+    public getBestSolution(): Individual | undefined {
         return this.solutions.length > 0 ? this.solutions[0] : this.localSolutions[0];
     }
 }
