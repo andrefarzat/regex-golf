@@ -2,6 +2,7 @@ import * as Moment from 'moment';
 import BaseProgram from "./BaseProgram";
 import Individual from './models/Individual';
 import LocalSearch from './localsearch/LocalSearch';
+import Utils from './Utils';
 
 export default class Logger {
     private logLevel = 3;
@@ -11,7 +12,7 @@ export default class Logger {
     public static create(program: LocalSearch): Logger {
         let logger = new Logger();
         logger.program = program;
-        logger.log(logger.logLevel, `[Program started] ${program.constructor.name} instance: ${program.instanceName} depth: ${program.depth} seed: ${program.seed}`);
+        logger.log(logger.logLevel, `[Program started] ${program.constructor.name} instance: ${program.instanceName} depth: ${program.depth} i: ${program.index} seed: ${program.seed}`);
         return logger;
     }
 

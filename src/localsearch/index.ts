@@ -66,6 +66,8 @@ function main() {
     // 3. Seta o Budget
     program.budget = flags.budget;
     program.depth = flags.depth;
+    program.seed = flags.seed;
+    program.index = flags.index;
 
     // 4. Seta o Timeout
     program.maxTimeout = moment().add(flags.timeout, 'milliseconds');

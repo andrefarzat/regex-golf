@@ -15,6 +15,7 @@ export default abstract class BaseProgram {
     public startTime: Date;
     public endTime: Date;
     public seed: number;
+    public index: number;
 
     public get validLeftChars(): string[] {
         return Object.keys(this.chars.left);
