@@ -2,7 +2,7 @@
 import datetime, os
 from subprocess import call
 
-PROGRAMS = ['ILS', 'ILS_Shrink']
+PROGRAMS = ['ILS']
 
 INSTANCES = ['abba', 'aman-aplan', 'four', 'order', 'ranges', 'triples', 'words', 'anchors']
 
