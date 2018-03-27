@@ -4,7 +4,7 @@ from subprocess import call
 
 PROGRAMS = ['RRLS']
 
-INSTANCES = ['abba', 'aman-aplan', 'four', 'order', 'ranges', 'triples', 'words', 'anchors']
+INSTANCES = ['words', 'anchors']
 
 SEEDS = [4105328976, 6370951248, 9431657082, 1874029365, 5691784320, 8392760514,
          4612780539, 8261384957, 2463075891, 9135874206, 7095231486, 9842301657,
