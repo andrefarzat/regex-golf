@@ -30,10 +30,6 @@ export default class Terminal implements Node {
         return terminal;
     }
 
-    public shrink(): Terminal {
-        return this.clone();
-    }
-
     public is(type: NodeTypes): boolean {
         return type == NodeTypes.terminal;
     }

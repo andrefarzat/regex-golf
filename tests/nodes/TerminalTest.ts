@@ -6,12 +6,6 @@ import Terminal from "../../src/nodes/Terminal";
 @TestFixture('TerminalTest')
 export default class TerminalTest {
 
-    @Test()
-    public testShrink() {
-        let terminal = new Terminal('abc');
-        Expect(terminal.shrink().toString()).toBe(terminal.toString());
-    }
-
     @Test('Check if given terminal is escaped')
     @TestCase('^')
     @TestCase('$')

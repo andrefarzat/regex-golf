@@ -11,7 +11,6 @@ export default interface Node {
     mutate(values: string[]): void;
     toString(): string;
     toRegex(): RegExp;
-    shrink(): Node;
     readonly nodeType: NodeTypes;
 
     is(type: NodeTypes | FuncTypes): boolean;

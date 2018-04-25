@@ -1,7 +1,9 @@
 import Func from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import Node from "../nodes/Node";
+import NodeShrinker from '../NodeShrinker';
 import Logger from '../Logger';
+
 
 
 export default class Individual {
@@ -100,7 +102,7 @@ export default class Individual {
 
     public shrink(): Individual {
         let ind = new Individual();
-        let node = this.tree.shrink();
+        let node = NodeShrinker.shrink(this.tree);
 
         if (node.nodeType === 'terminal') {
             let func = new Func();
