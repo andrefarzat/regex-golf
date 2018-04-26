@@ -176,10 +176,12 @@ function main() {
         let endTime   = moment(program.endTime);
 
         if (bestSolution) {
+            csvLine.push(bestSolution.toString()); // Melhor_solucao
             csvLine.push(bestSolution.fitness); // Melhor_fitness
             csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
             csvLine.push(startTime.diff(bestSolution.createdDate, 'milliseconds')); // Tempo_para_encontrar_melhor_solucao
         } else {
+            csvLine.push('N/A'); // Melhor_fitness
             csvLine.push('N/A'); // Melhor_fitness
             csvLine.push('N/A'); // Numero_de_comparacoes
             csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
