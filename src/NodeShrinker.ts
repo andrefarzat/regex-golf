@@ -210,39 +210,15 @@ export default class NodeShrinker {
     }
 
     protected static shrinkFuncNegation(node: Func): Node {
-        let func = node.clone();
+        let func = this.shrinkFuncList(node).asFunc();
 
-        func.getFuncs().forEach(func => {
-            if (func.type == Func.Types.negation) {
-                func.type = Func.Types.concatenation;
-            }
-        });
-
-        let left = NodeShrinker.shrink(node.left);
-        let right = NodeShrinker.shrink(node.right);
-
-        let areBothTerminal = left.nodeType == NodeTypes.terminal
-            && right.nodeType == NodeTypes.terminal;
-
-        if (areBothTerminal) {
-            let str = Utils.getUniqueChars(left.toString() + right.toString());
-            let func = new Func(Func.Types.negation);
-            func.left = new Terminal();
-            func.right = new Terminal(str);
-            return func;
-        } else if (left.nodeType == NodeTypes.terminal) {
-            let str = Utils.getUniqueChars(left.toString());
-            let func = new Func(Func.Types.negation);
-            func.left = new Terminal(str);
-            func.right = right;
-            return func;
+        if (func.is(FuncTypes.range)) {
+            (func as RangeFunc).negative = true;
         } else {
-            let str = Utils.getUniqueChars(right.toString());
-            let func = new Func(Func.Types.negation);
-            func.left = left;
-            func.right = new Terminal(str);
-            return func;
+            func.type = FuncTypes.negation;
         }
+
+        return func;
     }
 
     protected static shrinkFuncOr(node: Func): Node {

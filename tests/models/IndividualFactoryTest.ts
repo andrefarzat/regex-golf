@@ -69,4 +69,10 @@ export default class IndividualFactoryTest {
         ind = this.factory.createFromString('a[a-f]z');
         Expect(ind.tree.toString()).toEqual('a[a-f]z');
     }
+
+    @Test('Test creating with negation')
+    public testCreatingWithNegation() {
+        let ind = this.factory.createFromString('a[^abcdef]z');
+        Expect(ind.tree.toString()).toEqual('a[^abcdef]z');
+    }
 }

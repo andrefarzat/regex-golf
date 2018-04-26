@@ -85,7 +85,8 @@ export class NodeShrinkerTest {
     }
 
 
-    @TestCase('[^abcabc]', '[^abc]')
+    @TestCase('z[^abcabc]a', 'z[^abc]a')
+    @TestCase('a[^abcdefghijklmnopqrstuvwxyz]z', 'a[^a-z]z')
     public testShrinkNegation(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
         let shrunk = ind.shrink();

@@ -53,12 +53,10 @@ export default class Func implements Node {
         let left  = this.left ? this.left.toString() : '';
         let right = this.right ? this.right.toString() : '';
 
-        if (this.type == FuncTypes.or) {
-            return left + "|" + right;
-        }
-
-        if (this.type == FuncTypes.list) {
-            return this.type.replace(Func.placeholder, left) + right;
+        switch (this.type) {
+            case FuncTypes.or: return left + "|" + right;
+            case FuncTypes.list: return this.type.replace(Func.placeholder, left) + right;
+            case FuncTypes.negation: return this.type.replace(Func.placeholder, left) + right;
         }
 
         let txt = left + right;

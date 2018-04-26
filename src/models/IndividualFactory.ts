@@ -85,12 +85,13 @@ export default class IndividualFactory {
                     let func = new RangeFunc();
                     func.from = n.from.value;
                     func.to = n.to.value;
+                    func.negative = expression.negative;
                     return func;
                 }
             }
 
             let nodes = expression.expressions.map((exp: any) => this.parseExpression(exp).toString()).join('');
-            let node = new Func(Func.Types.list);
+            let node = new Func(expression.negative ? Func.Types.negation : Func.Types.list);
             node.left = this.createFromString(nodes).tree;
             return node;
         } else {
