@@ -10,6 +10,21 @@ import Terminal from "../../src/nodes/Terminal";
 export default class IndividualFactoryTest {
     private factory = new IndividualFactory(['a', 'b', 'c'], [ 'x', 'y', 'z']);
 
+    @Test('Test createFromString')
+    public createFromString() {
+        let ind = this.factory.createFromString('abc')
+        Expect(ind.toString()).toEqual('abc');
+        Expect(ind.tree.nodeType).toEqual(NodeTypes.func);
+        Expect(ind.tree.left.nodeType).toEqual(NodeTypes.terminal);
+        Expect(ind.tree.left.toString()).toEqual('a');
+
+        Expect(ind.tree.right.nodeType).toEqual(NodeTypes.func);
+        let right = ind.tree.right as Func;
+
+        Expect((right.left as Terminal).value).toEqual('b');
+        Expect((right.right as Terminal).value).toEqual('c');
+    }
+
     @Test('Test creating from string')
     public testCreateFromString() {
         let ind = this.factory.createFromString('^abc$');

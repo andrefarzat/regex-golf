@@ -53,12 +53,12 @@ export class NodeShrinkerTest {
     }
 
 
-    // @TestCase('a', 'a')
-    // @TestCase('bb', 'bb')
-    // @TestCase('ccc', 'ccc')
-    // @TestCase('dddd', 'd{4}')
-    // @TestCase('bcccccccbb', 'bc{7}bb')
-    // @TestCase('aaaaaa', 'a{6}')
+    @TestCase('a', 'a')
+    @TestCase('bb', 'bb')
+    @TestCase('ccc', 'ccc')
+    @TestCase('dddd', 'd{4}')
+    @TestCase('bcccccccbb', 'bc{7}bb')
+    @TestCase('aaaaaa', 'a{6}')
     @TestCase('zza{5}a{5}hh', 'zza{10}hh')
     // @TestCase('abcabc', '(abc){2}')
     // @TestCase('[x-z]', '[xz]')
