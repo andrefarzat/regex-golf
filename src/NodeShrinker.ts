@@ -214,7 +214,7 @@ export default class NodeShrinker {
             let fRight = new Func(FuncTypes.list, left, new Terminal());
             let func = new RepetitionFunc(fRight, right.asFunc().right);
             func.repetitionNumber = '2';
-            return func;
+            return this.shrinkRepetition(func);
         }
 
         return new Func(FuncTypes.list, left, right);

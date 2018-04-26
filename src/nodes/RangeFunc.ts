@@ -26,7 +26,7 @@ export default class RangeFunc extends Func {
         let simbol = this.negative ? '^' : '';
         let diff = this.to.charCodeAt(0) - this.from.charCodeAt(0);
 
-        if (diff > 3) {
+        if (diff > 2) {
             return `[${simbol}${this.from}-${this.to}]`;
         } else {
             let txt = '';
