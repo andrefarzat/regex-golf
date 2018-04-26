@@ -9,13 +9,15 @@ import RangeFunc from './nodes/RangeFunc';
 
 export default class NodeShrinker {
 
-    public static shrink(node: Node): Node {
+    public static shrink(node?: Node): Node {
         let neo: Node;
 
         if (node instanceof Func) {
             neo = NodeShrinker.shrinkFunc(node);
         } else if (node instanceof Terminal) {
             neo = NodeShrinker.shrinkTerminal(node);
+        } else if (node === undefined) {
+            neo = new Terminal('');
         } else {
             throw new Error('Invalid Node type to Shrink');
         }
@@ -36,6 +38,7 @@ export default class NodeShrinker {
             case Func.Types.negation: return NodeShrinker.shrinkFuncNegation(node);
             case Func.Types.or: return NodeShrinker.shrinkFuncOr(node);
             case Func.Types.repetition: return NodeShrinker.shrinkRepetition(node as RepetitionFunc);
+            case Func.Types.range: return NodeShrinker.shrinkRange(node as RangeFunc);
         }
 
         // or = "•|•",
@@ -199,11 +202,19 @@ export default class NodeShrinker {
                 let func = new RangeFunc(new Terminal(), right);
                 func.from = leftStr.charAt(0);
                 func.to = leftStr.substr(-1);
-                return func;
+                return this.shrinkRange(func);
             }
 
             let neoLeft = new IndividualFactory([], []).createFromString(leftStr);
-            return new Func(FuncTypes.list, neoLeft.tree, right);
+            let func = new Func(FuncTypes.list, neoLeft.tree, right);
+            return this.shrinkFuncList(func);
+        }
+
+        if (node.equals(right)) {
+            let fRight = new Func(FuncTypes.list, left, new Terminal());
+            let func = new RepetitionFunc(fRight, right.asFunc().right);
+            func.repetitionNumber = '2';
+            return func;
         }
 
         return new Func(FuncTypes.list, left, right);
@@ -218,6 +229,35 @@ export default class NodeShrinker {
             func.type = FuncTypes.negation;
         }
 
+        return func;
+    }
+
+    protected static shrinkRange(node: RangeFunc): Node {
+        let left = NodeShrinker.shrink(node.left);
+        let right = NodeShrinker.shrink(node.right);
+
+        if (node.equals(left)) {
+            let fLeft = new RangeFunc();
+            fLeft.from = node.from;
+            fLeft.to = node.to;
+
+            let func = new RepetitionFunc(fLeft, right);
+            return this.shrinkRepetition(func);
+        }
+
+        if (left.toString() == '' && node.equals(right)) {
+            let fLeft = new RangeFunc();
+            fLeft.from = node.from;
+            fLeft.to = node.to;
+
+            let func = new RepetitionFunc(fLeft, right.asFunc().right);
+            func.repetitionNumber = '2';
+            return this.shrinkRepetition(func);
+        }
+
+        let func = new RangeFunc(left, right);
+        func.from = node.from;
+        func.to = node.to;
         return func;
     }
 

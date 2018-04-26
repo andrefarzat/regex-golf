@@ -57,6 +57,8 @@ export default class Func implements Node {
             case FuncTypes.or: return left + "|" + right;
             case FuncTypes.list: return this.type.replace(Func.placeholder, left) + right;
             case FuncTypes.negation: return this.type.replace(Func.placeholder, left) + right;
+            case FuncTypes.range: throw new Error('It should be an RangeFunc instance');
+            case FuncTypes.repetition: throw new Error('It should be an RepetitionFunc instance');
         }
 
         let txt = left + right;

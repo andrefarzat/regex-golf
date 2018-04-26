@@ -22,14 +22,12 @@ export default class RangeFunc extends Func {
         return func;
     }
 
-    public toString(): string {
-        let left  = this.left ? this.left.toString() : '';
-        let right = this.right ? this.right.toString() : '';
+    public getRangeAsString(): string {
         let simbol = this.negative ? '^' : '';
         let diff = this.to.charCodeAt(0) - this.from.charCodeAt(0);
 
         if (diff > 3) {
-            return `[${simbol}${this.from}-${this.to}]${left}${right}`;
+            return `[${simbol}${this.from}-${this.to}]`;
         } else {
             let txt = '';
             let currentCharCode = this.from.charCodeAt(0);
@@ -38,8 +36,25 @@ export default class RangeFunc extends Func {
                 currentCharCode++;
             }
 
-            return `[${simbol}${txt}]${left}${right}`;
+            return `[${simbol}${txt}]`;
         }
+    }
+
+    public toString(): string {
+        let left  = this.left ? this.left.toString() : '';
+        let right = this.right ? this.right.toString() : '';
+
+        return `${this.getRangeAsString()}${left}${right}`;
+    }
+
+    public equals(node: Node): boolean {
+        if (node instanceof Func) {
+            if (node.nodeType != this.nodeType) return false;
+            if (node.type == this.type) return (node as RangeFunc).getRangeAsString() == this.getRangeAsString();
+            if (node.type == FuncTypes.list) return node.toString() == this.getRangeAsString();
+        }
+
+        return false;
     }
 
 }

@@ -69,14 +69,14 @@ export class NodeShrinkerTest {
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
 
-
     @TestCase('a[a]aa', 'a{4}')
     @TestCase('a[abcabcabc]z', 'a[abc]z')
     @TestCase('a[abcdefghijklmnopqrstuvwxyz]z', 'a[a-z]z')
-    // @TestCase('[x-z]', '[xz]')
-    // @TestCase('abcef[a-b]fecba', 'abcef[ab]fecba')
-    // @TestCase('a[abc][def][ghi]z', 'a[abcdefghi]z')
-    @Test('Test Shrink to list')
+    @TestCase('p[x-z]', 'p[xyz]')
+    @TestCase('abcef[a-b]fecba', 'abcef[ab]fecba')
+    @TestCase('a[abc][abc]', 'a[abc]{2}')
+    @TestCase('abc[abcd][abcd]', 'abc[a-d]{2}')
+    @Test('Test Shrink to list or range')
     public testShrinkListExamples(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
         let shrunk = ind.shrink();

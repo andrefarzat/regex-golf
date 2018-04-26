@@ -28,12 +28,13 @@ export default class RepetitionFunc extends Func {
     public toString(): string {
         let left  = this.left ? this.left.toString() : '';
         let right = this.right ? this.right.toString() : '';
+        let len = left.length;
 
         if (this.repetitionNumber === '1') {
             return `${left}${right}`;
-        } else if (this.repetitionNumber === '2') {
+        } else if (this.repetitionNumber === '2' && len < 4) {
             return `${left}${left}${right}`;
-        } else if (this.repetitionNumber === '3') {
+        } else if (this.repetitionNumber === '3'  && len < 4) {
             return `${left}${left}${left}${right}`;
         }
 
