@@ -70,10 +70,9 @@ export class NodeShrinkerTest {
     }
 
 
-    @FocusTest
     @TestCase('a[a]aa', 'a{4}')
-    @TestCase('a[abcdefghijklmnopqrstuvwxyz]z', 'a[a-z]z')
     @TestCase('a[abcabcabc]z', 'a[abc]z')
+    @TestCase('a[abcdefghijklmnopqrstuvwxyz]z', 'a[a-z]z')
     // @TestCase('[x-z]', '[xz]')
     // @TestCase('abcef[a-b]fecba', 'abcef[ab]fecba')
     @Test('Test Shrink to list')

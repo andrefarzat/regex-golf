@@ -5,6 +5,8 @@ import Individual from './Individual';
 import Node from '../nodes/Node';
 import Terminal from '../nodes/Terminal'
 import Utils from '../Utils';
+import RepetitionFunc from "../nodes/RepetitionFunc";
+import RangeFunc from "../nodes/RangeFunc";
 
 
 export default class IndividualFactory {
@@ -63,7 +65,7 @@ export default class IndividualFactory {
             return new Func(Func.Types.lineEnd);
         } else if (expression.type == 'Repetition') {
             if (expression.quantifier && expression.quantifier.kind == 'Range') {
-                let node = new Func(Func.Types.repetition);
+                let node = new RepetitionFunc();
                 node.left = new Terminal((expression.expression as any).value);
 
                 if (expression.quantifier.from == expression.quantifier.to) {
@@ -77,6 +79,16 @@ export default class IndividualFactory {
                 throw new Error('Unkown expression.type == Repetition');
             }
         } else if (expression.type == 'CharacterClass') {
+            if (expression.expressions.length == 1) {
+                let n = expression.expressions[0];
+                if (n.type === 'ClassRange') {
+                    let func = new RangeFunc();
+                    func.from = n.from.value;
+                    func.to = n.to.value;
+                    return func;
+                }
+            }
+
             let nodes = expression.expressions.map((exp: any) => this.parseExpression(exp).toString()).join('');
             let node = new Func(Func.Types.list);
             node.left = this.createFromString(nodes).tree;

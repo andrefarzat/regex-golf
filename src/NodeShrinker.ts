@@ -3,6 +3,7 @@ import Func, { FuncTypes } from './nodes/Func';
 import Terminal from './nodes/Terminal';
 import Utils from './Utils';
 import IndividualFactory from './models/IndividualFactory';
+import RepetitionFunc from './nodes/RepetitionFunc';
 
 
 export default class NodeShrinker {
@@ -33,7 +34,7 @@ export default class NodeShrinker {
             case Func.Types.list: return NodeShrinker.shrinkFuncList(node);
             case Func.Types.negation: return NodeShrinker.shrinkFuncNegation(node);
             case Func.Types.or: return NodeShrinker.shrinkFuncOr(node);
-            case Func.Types.repetition: return NodeShrinker.shrinkRepetition(node);
+            case Func.Types.repetition: return NodeShrinker.shrinkRepetition(node as RepetitionFunc);
         }
 
         // or = "•|•",
@@ -46,7 +47,6 @@ export default class NodeShrinker {
         let func = new Func(node.type);
         func.left = NodeShrinker.shrink(node.left);
         func.right = NodeShrinker.shrink(node.right);
-        func.repetitionNumber = node.repetitionNumber;
         return func;
     }
 
@@ -62,10 +62,8 @@ export default class NodeShrinker {
 
             if (leftStr.length == 1 && rightStr.length == 1) {
                 if (leftStr == rightStr) {
-                    let func = new Func(Func.Types.repetition);
+                    let func = new RepetitionFunc(new Terminal(leftStr), new Terminal(''));
                     func.repetitionNumber = '2';
-                    func.left = new Terminal(leftStr);
-                    func.right = new Terminal('');
                     return func;
                 }
             }
@@ -83,9 +81,9 @@ export default class NodeShrinker {
                 let whatIsRepetead = right.left.toString();
 
                 if (leftStr == whatIsRepetead) {
-                    let func = new Func(FuncTypes.repetition);
+                    let func = new RepetitionFunc();
                     func.left = new Terminal(leftStr);
-                    func.repetitionNumber = NodeShrinker.addToRepetitionNumber(right, 1);
+                    func.repetitionNumber = NodeShrinker.addToRepetitionNumber(right as RepetitionFunc, 1);
                     func.right = right.right.clone();
                     return func;
                 }
@@ -95,7 +93,7 @@ export default class NodeShrinker {
                 if (right.left.is(NodeTypes.terminal)) {
                     let rightLeftStr = right.left.toString();
                     if (leftStr === rightLeftStr) {
-                        let neoLeft = new Func(FuncTypes.repetition, new Terminal(leftStr), new Terminal());
+                        let neoLeft = new RepetitionFunc(new Terminal(leftStr), new Terminal());
                         neoLeft.repetitionNumber = (leftStr.length + rightLeftStr.length).toString();
 
                         return new Func(FuncTypes.concatenation, neoLeft, right.right);
@@ -105,8 +103,8 @@ export default class NodeShrinker {
                 if (right.left.is(FuncTypes.repetition)) {
                     let rightLeftStr = (right.left as Func).left.toString();
                     if (leftStr === rightLeftStr) {
-                        let neoLeft = new Func(FuncTypes.repetition, new Terminal(leftStr), new Terminal());
-                        neoLeft.repetitionNumber = NodeShrinker.addToRepetitionNumber(right.left as Func, leftStr.length);
+                        let neoLeft = new RepetitionFunc(new Terminal(leftStr), new Terminal());
+                        neoLeft.repetitionNumber = NodeShrinker.addToRepetitionNumber(right.left as RepetitionFunc, leftStr.length);
 
                         return new Func(FuncTypes.concatenation, neoLeft, right.right);
                     }
@@ -120,8 +118,8 @@ export default class NodeShrinker {
             let rightStr = (right as Func).left.toString();
 
             if (leftStr === rightStr) {
-                let func = new Func(FuncTypes.repetition, new Terminal(leftStr), (right as Func).right);
-                func.repetitionNumber = NodeShrinker.addToRepetitionNumber(left.asFunc(), right.asFunc().repetitionNumber);
+                let func = new RepetitionFunc(new Terminal(leftStr), (right as Func).right);
+                func.repetitionNumber = NodeShrinker.addToRepetitionNumber(left as RepetitionFunc, (right as RepetitionFunc).repetitionNumber);
                 return func;
             }
         }
@@ -236,7 +234,7 @@ export default class NodeShrinker {
         return func;
     }
 
-    protected static shrinkRepetition(node: Func): Node {
+    protected static shrinkRepetition(node: RepetitionFunc): Node {
         let left = NodeShrinker.shrink(node.left);
         let right = NodeShrinker.shrink(node.right);
 
@@ -246,7 +244,7 @@ export default class NodeShrinker {
             let rightStr = right.toString();
 
             if (leftStr === rightStr) {
-                let func = new Func(Func.Types.repetition, left, new Terminal(''));
+                let func = new RepetitionFunc(left, new Terminal(''));
                 func.repetitionNumber = NodeShrinker.addToRepetitionNumber(func, rightStr.length);
                 return func;
             }
@@ -256,18 +254,18 @@ export default class NodeShrinker {
             let rightStr = (right as Func).left.toString();
 
             if (leftStr === rightStr) {
-                let func = new Func(FuncTypes.repetition, left, right.asFunc().right);
+                let func = new RepetitionFunc(left, right.asFunc().right);
                 func.repetitionNumber = NodeShrinker.addToRepetitionNumber(node, node.repetitionNumber);
                 return func;
             }
         }
 
-        let func = new Func(Func.Types.repetition, left, right);
+        let func = new RepetitionFunc(left, right);
         func.repetitionNumber = node.repetitionNumber;
         return func;
     }
 
-    protected static addToRepetitionNumber(func: Func, value: number | string): string {
+    protected static addToRepetitionNumber(func: RepetitionFunc, value: number | string): string {
         let numbers = func.repetitionNumber.split(',');
 
         if (typeof value === 'string') {

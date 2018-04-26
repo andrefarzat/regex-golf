@@ -13,6 +13,7 @@ export enum FuncTypes {
     group = "(•)",
     list = "[•]",
     negation = "[^•]",
+    range = "[•-•]",
     more = "•++",
     repetition = "•{#}"
 }
@@ -21,8 +22,7 @@ export enum FuncTypes {
 export default class Func implements Node {
     public static placeholder: FuncTypes = FuncTypes.concatenation;
     public static Types = FuncTypes;
-    private static _options: string[] = null;
-    public repetitionNumber: string = '1';
+    protected static _options: string[] = null;
 
     public static get options(): FuncTypes[] {
         if (!Func._options) { Func._options = Object.keys(FuncTypes).map(key => (FuncTypes as any)[key]); }
@@ -42,7 +42,6 @@ export default class Func implements Node {
 
     public mutate(values: string[]): void {
         this.type = Utils.getRandomlyFromList(Func.options);
-        this.repetitionNumber = this.type == FuncTypes.repetition ? Utils.nextInt(9).toString() : '0';
     }
 
     public is(type: NodeTypes | FuncTypes): boolean {
@@ -56,18 +55,6 @@ export default class Func implements Node {
 
         if (this.type == FuncTypes.or) {
             return left + "|" + right;
-        }
-
-        if (this.type == FuncTypes.repetition) {
-            if (this.repetitionNumber === '1') {
-                return `${left}${right}`;
-            } else if (this.repetitionNumber === '2') {
-                return `${left}${left}${right}`;
-            } else if (this.repetitionNumber === '3') {
-                return `${left}${left}${left}${right}`;
-            } else {
-                return `${left}{${this.repetitionNumber}}${right}`;
-            }
         }
 
         if (this.type == FuncTypes.list) {
@@ -87,7 +74,6 @@ export default class Func implements Node {
         func.left = this.left.clone();
         func.right = this.right.clone();
         func.type = this.type;
-        func.repetitionNumber = this.repetitionNumber;
         return func;
     }
 

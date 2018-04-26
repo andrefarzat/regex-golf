@@ -4,6 +4,7 @@ import IndividualFactory from "../../src/models/IndividualFactory";
 import { NodeTypes } from "../../src/nodes/Node";
 import Func, { FuncTypes } from "../../src/nodes/Func";
 import Terminal from "../../src/nodes/Terminal";
+import RepetitionFunc from "../../src/nodes/RepetitionFunc";
 
 
 @TestFixture("IndividualFactory Test")
@@ -48,21 +49,25 @@ export default class IndividualFactoryTest {
         Expect(left.is(NodeTypes.terminal)).toBeTruthy();
         Expect(left.value).toEqual('b');
 
-        let right = ind.tree.right as Func;
+        let right = ind.tree.right as RepetitionFunc;
         Expect(right.is(FuncTypes.concatenation)).toBeTruthy();
         Expect(right.left.is(NodeTypes.terminal)).toBeTruthy();
         Expect(right.right.is(FuncTypes.repetition)).toBeTruthy();
 
-        right = right.right as Func;
+        right = right.right as RepetitionFunc;
         Expect(right.nodeType).toEqual(NodeTypes.func);
         Expect(right.type).toEqual(Func.Types.repetition);
         Expect(right.repetitionNumber).toBe('5');
         Expect(right.toString()).toEqual('a{5}');
     }
 
-    @Test('Test creating with range')
+    @FocusTest
+    @Test('Test creating with list and range')
     public testCreatingWithRange() {
         let ind = this.factory.createFromString('a[abcdef]z');
         Expect(ind.tree.toString()).toEqual('a[abcdef]z');
+
+        ind = this.factory.createFromString('a[a-f]z');
+        Expect(ind.tree.toString()).toEqual('a[a-f]z');
     }
 }
