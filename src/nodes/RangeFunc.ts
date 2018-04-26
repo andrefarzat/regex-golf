@@ -25,7 +25,20 @@ export default class RangeFunc extends Func {
         let left  = this.left ? this.left.toString() : '';
         let right = this.right ? this.right.toString() : '';
 
-        return `[${this.from}-${this.to}]${left}${right}`;
+        let diff = this.to.charCodeAt(0) - this.from.charCodeAt(0);
+
+        if (diff > 3) {
+            return `[${this.from}-${this.to}]${left}${right}`;
+        } else {
+            let txt = '';
+            let currentCharCode = this.from.charCodeAt(0);
+            while (currentCharCode <= this.to.charCodeAt(0)) {
+                txt += String.fromCharCode(currentCharCode);
+                currentCharCode++;
+            }
+
+            return `[${txt}]${left}${right}`;
+        }
     }
 
 }

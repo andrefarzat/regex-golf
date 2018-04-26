@@ -61,7 +61,6 @@ export default class IndividualFactoryTest {
         Expect(right.toString()).toEqual('a{5}');
     }
 
-    @FocusTest
     @Test('Test creating with list and range')
     public testCreatingWithRange() {
         let ind = this.factory.createFromString('a[abcdef]z');

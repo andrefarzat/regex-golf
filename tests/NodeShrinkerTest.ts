@@ -75,8 +75,18 @@ export class NodeShrinkerTest {
     @TestCase('a[abcdefghijklmnopqrstuvwxyz]z', 'a[a-z]z')
     // @TestCase('[x-z]', '[xz]')
     // @TestCase('abcef[a-b]fecba', 'abcef[ab]fecba')
+    // @TestCase('a[abc][def][ghi]z', 'a[abcdefghi]z')
     @Test('Test Shrink to list')
     public testShrinkListExamples(txt: string, expectedResult: string) {
+        let ind = this.individualFactory.createFromString(txt);
+        let shrunk = ind.shrink();
+
+        Expect(shrunk.toString()).toEqual(expectedResult);
+    }
+
+
+    @TestCase('[^abcabc]', '[^abc]')
+    public testShrinkNegation(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
         let shrunk = ind.shrink();
 

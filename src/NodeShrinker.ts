@@ -4,6 +4,7 @@ import Terminal from './nodes/Terminal';
 import Utils from './Utils';
 import IndividualFactory from './models/IndividualFactory';
 import RepetitionFunc from './nodes/RepetitionFunc';
+import RangeFunc from './nodes/RangeFunc';
 
 
 export default class NodeShrinker {
@@ -181,8 +182,25 @@ export default class NodeShrinker {
         let leftNodes = left.asFunc().getNodes();
         let allLeftAreTerminals = leftNodes.every(n => n.is(NodeTypes.terminal) || n.is(FuncTypes.concatenation));
         if (allLeftAreTerminals) {
-            let leftStr = leftNodes.map(n => n.toString()).join('');
+            let leftStr = leftNodes.map(n => n.toString()).sort().join('');
             leftStr = Utils.getUniqueChars(leftStr);
+
+            let charCode: number = 0;
+            let isSequence = Array.from(leftStr).every(letter => {
+                if (charCode < letter.charCodeAt(0)) {
+                    charCode = letter.charCodeAt(0);
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            if (isSequence) {
+                let func = new RangeFunc(new Terminal(), right);
+                func.from = leftStr.charAt(0);
+                func.to = leftStr.substr(-1);
+                return func;
+            }
 
             let neoLeft = new IndividualFactory([], []).createFromString(leftStr);
             return new Func(FuncTypes.list, neoLeft.tree, right);
