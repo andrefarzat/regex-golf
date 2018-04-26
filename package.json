@@ -6,7 +6,7 @@
   "author": "Andre Farzat",
   "license": "MIT",
   "scripts": {
-    "test": "ts-node tests/runner.ts",
+    "test": "ts-node tests/runner.ts --tap",
     "localsearch": "ts-node src/localsearch/index.ts"
   },
   "dependencies": {

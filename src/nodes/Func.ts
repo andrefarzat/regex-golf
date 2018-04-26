@@ -34,8 +34,10 @@ export default class Func implements Node {
     public type: FuncTypes = Func.placeholder;
     public readonly nodeType = NodeTypes.func;
 
-    public constructor(type?: FuncTypes) {
+    public constructor(type?: FuncTypes, left?: Node, right?: Node) {
         if (type) this.type = type;
+        if (left) this.left = left;
+        if (right) this.right = right;
     }
 
     public mutate(values: string[]): void {
@@ -57,7 +59,15 @@ export default class Func implements Node {
         }
 
         if (this.type == FuncTypes.repetition) {
-            return `${left}{${this.repetitionNumber}}${right}`;
+            if (this.repetitionNumber === '1') {
+                return `${left}${right}`;
+            } else if (this.repetitionNumber === '2') {
+                return `${left}${left}${right}`;
+            } else if (this.repetitionNumber === '3') {
+                return `${left}${left}${left}${right}`;
+            } else {
+                return `${left}{${this.repetitionNumber}}${right}`;
+            }
         }
 
         let txt = left + right;

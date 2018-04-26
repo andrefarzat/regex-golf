@@ -21,8 +21,10 @@ export default class IndividualFactory {
         let currentFunc = new Func(Func.Types.concatenation);
         ind.tree = currentFunc;
 
+        let i = 0;
         for (let expression of expressions) {
             let node: Terminal | Func;
+            let isLast = ++i === expressions.length;
 
             if (expression.type == 'Char') {
                 node = new Terminal((expression as any).value);
@@ -53,6 +55,8 @@ export default class IndividualFactory {
             if (node instanceof Terminal) {
                 if (!currentFunc.left) {
                     currentFunc.left = node;
+                } else if (isLast) {
+                    currentFunc.right = node;
                 } else {
                     let func = new Func();
                     func.type = Func.Types.concatenation;

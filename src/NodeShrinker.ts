@@ -7,9 +7,17 @@ import Utils from './Utils';
 export default class NodeShrinker {
 
     public static shrink(node: Node): Node {
-        if (node instanceof Func) { return NodeShrinker.shrinkFunc(node); }
-        if (node instanceof Terminal) { return NodeShrinker.shrinkTerminal(node); }
-        throw new Error('Invalid Node type to Shrink');
+        let neo: Node;
+
+        if (node instanceof Func) {
+            neo = NodeShrinker.shrinkFunc(node);
+        } else if (node instanceof Terminal) {
+            neo = NodeShrinker.shrinkTerminal(node);
+        } else {
+            throw new Error('Invalid Node type to Shrink');
+        }
+
+        return neo;
     }
 
     public static shrinkTerminal(node: Terminal): Node {
@@ -17,158 +25,14 @@ export default class NodeShrinker {
     }
 
     public static shrinkFunc(node: Func): Node {
-        if (node.type == Func.Types.concatenation) {
-            let left = NodeShrinker.shrink(node.left);
-            let right = NodeShrinker.shrink(node.right);
-
-            let areBothTerminal = left.is(NodeTypes.terminal) && right.is(NodeTypes.terminal);
-
-            if (areBothTerminal) {
-                let leftStr = left.toString();
-                let rightStr = right.toString();
-
-                if (leftStr.length == 1 && rightStr.length == 1) {
-                    if (leftStr == rightStr) {
-                        let func = new Func(Func.Types.repetition);
-                        func.repetitionNumber = '2';
-                        func.left = new Terminal(leftStr);
-                        func.right = new Terminal('');
-                        return func;
-                    }
-                }
-
-                return new Terminal(left.toString() + right.toString());
-            }
-
-            if (left.is(NodeTypes.terminal) && right.is(FuncTypes.repetition)) {
-                let funcRight = right as Func;
-                let leftStr = left.toString();
-                let whatIsRepetead = funcRight.left.toString();
-
-                if (leftStr == whatIsRepetead) {
-                    let func = new Func(FuncTypes.repetition);
-                    func.left = new Terminal(leftStr);
-                    func.repetitionNumber = NodeShrinker.addToRepetitionNumber(funcRight, 1);
-                    func.right = funcRight.right.clone();
-                    return func;
-                }
-            }
-
-            let func = new Func(FuncTypes.concatenation);
-            func.left = left;
-            func.right = right;
-            return func;
-        }
-
-        if (node.type == Func.Types.lineBegin) {
-            let func = node.clone();
-            // We search for all lineBegin and remove them.
-            // There must be only ONE lineBegin
-            func.getFuncs().forEach(func => {
-                if (func.type == Func.Types.lineBegin) {
-                    func.type = Func.Types.concatenation;
-                }
-            });
-
-            let neo = new Func(Func.Types.lineBegin);
-            neo.left = new Terminal();
-            neo.right = func;
-            return neo;
-        }
-
-        if (node.type == Func.Types.lineEnd) {
-            let func = node.clone();
-            // We search for all lineEnd and remove them.
-            // There must be only ONE lineEnd
-            func.getFuncs().forEach(func => {
-                if (func.type == Func.Types.lineEnd) {
-                    func.type = Func.Types.concatenation;
-                }
-            });
-
-            let neo = new Func(Func.Types.lineEnd);
-            neo.left = new Terminal();
-            neo.right = func;
-            return neo;
-        }
-
-        if (node.type == Func.Types.list) {
-            let func = node.clone();
-
-            func.getFuncs().forEach(func => {
-                if (func.type == Func.Types.list) {
-                    func.type = Func.Types.concatenation;
-                }
-            });
-
-            let left = NodeShrinker.shrink(node.left);
-            let right = NodeShrinker.shrink(node.right);
-
-            let areBothTerminal = left.nodeType == NodeTypes.terminal
-                && right.nodeType == NodeTypes.terminal;
-
-            if (areBothTerminal) {
-                let str = Utils.getUniqueChars(left.toString() + right.toString());
-                let func = new Func(Func.Types.list);
-                func.left = new Terminal();
-                func.right = new Terminal(str);
-                return func;
-            } else if (left.nodeType == NodeTypes.terminal) {
-                let str = Utils.getUniqueChars(left.toString());
-                let func = new Func(Func.Types.list);
-                func.left = new Terminal(str);
-                func.right = right;
-                return func;
-            } else {
-                let str = Utils.getUniqueChars(right.toString());
-                let func = new Func(Func.Types.list);
-                func.left = left;
-                func.right = new Terminal(str);
-                return func;
-            }
-        }
-
-        if (node.type == Func.Types.negation) {
-            let func = node.clone();
-
-            func.getFuncs().forEach(func => {
-                if (func.type == Func.Types.negation) {
-                    func.type = Func.Types.concatenation;
-                }
-            });
-
-            let left = NodeShrinker.shrink(node.left);
-            let right = NodeShrinker.shrink(node.right);
-
-            let areBothTerminal = left.nodeType == NodeTypes.terminal
-                && right.nodeType == NodeTypes.terminal;
-
-            if (areBothTerminal) {
-                let str = Utils.getUniqueChars(left.toString() + right.toString());
-                let func = new Func(Func.Types.negation);
-                func.left = new Terminal();
-                func.right = new Terminal(str);
-                return func;
-            } else if (left.nodeType == NodeTypes.terminal) {
-                let str = Utils.getUniqueChars(left.toString());
-                let func = new Func(Func.Types.negation);
-                func.left = new Terminal(str);
-                func.right = right;
-                return func;
-            } else {
-                let str = Utils.getUniqueChars(right.toString());
-                let func = new Func(Func.Types.negation);
-                func.left = left;
-                func.right = new Terminal(str);
-                return func;
-            }
-        }
-
-        if (node.type == Func.Types.or) {
-            let func = new Func(Func.Types.or);
-            func.left = NodeShrinker.shrink(node.left);
-            func.right = NodeShrinker.shrink(node.right);
-            return func;
+        switch (node.type) {
+            case Func.Types.concatenation: return NodeShrinker.shrinkFuncConcatenation(node);
+            case Func.Types.lineBegin: return NodeShrinker.shrinkFuncLineBegin(node);
+            case Func.Types.lineEnd: return NodeShrinker.shrinkFuncLineEnd(node);
+            case Func.Types.list: return NodeShrinker.shrinkFuncList(node);
+            case Func.Types.negation: return NodeShrinker.shrinkFuncNegation(node);
+            case Func.Types.or: return NodeShrinker.shrinkFuncOr(node);
+            case Func.Types.repetition: return NodeShrinker.shrinkRepetition(node);
         }
 
         // or = "•|•",
@@ -185,8 +49,225 @@ export default class NodeShrinker {
         return func;
     }
 
-    public static addToRepetitionNumber(func: Func, value: number): string {
+    protected static shrinkFuncConcatenation(node: Func): Node {
+        let left = NodeShrinker.shrink(node.left);
+        let right = NodeShrinker.shrink(node.right);
+
+        let areBothTerminal = left.is(NodeTypes.terminal) && right.is(NodeTypes.terminal);
+
+        if (areBothTerminal) {
+            let leftStr = left.toString();
+            let rightStr = right.toString();
+
+            if (leftStr.length == 1 && rightStr.length == 1) {
+                if (leftStr == rightStr) {
+                    let func = new Func(Func.Types.repetition);
+                    func.repetitionNumber = '2';
+                    func.left = new Terminal(leftStr);
+                    func.right = new Terminal('');
+                    return func;
+                }
+            }
+
+            let func = new Func(FuncTypes.concatenation);
+            func.left = new Terminal(leftStr);
+            func.right = new Terminal(rightStr);
+            return func;
+        }
+
+        if (left.is(NodeTypes.terminal) && right instanceof Func) {
+            let leftStr = left.toString();
+
+            if (right.is(FuncTypes.repetition)) {
+                let whatIsRepetead = right.left.toString();
+
+                if (leftStr == whatIsRepetead) {
+                    let func = new Func(FuncTypes.repetition);
+                    func.left = new Terminal(leftStr);
+                    func.repetitionNumber = NodeShrinker.addToRepetitionNumber(right, 1);
+                    func.right = right.right.clone();
+                    return func;
+                }
+            }
+
+            if (right.is(FuncTypes.concatenation)) {
+                if (right.left.is(NodeTypes.terminal)) {
+                    let rightLeftStr = right.left.toString();
+                    if (leftStr === rightLeftStr) {
+                        let neoLeft = new Func(FuncTypes.repetition, new Terminal(leftStr), new Terminal());
+                        neoLeft.repetitionNumber = (leftStr.length + rightLeftStr.length).toString();
+
+                        return new Func(FuncTypes.concatenation, neoLeft, right.right);
+                    }
+                }
+
+                if (right.left.is(FuncTypes.repetition)) {
+                    let rightLeftStr = (right.left as Func).left.toString();
+                    if (leftStr === rightLeftStr) {
+                        let neoLeft = new Func(FuncTypes.repetition, new Terminal(leftStr), new Terminal());
+                        neoLeft.repetitionNumber = NodeShrinker.addToRepetitionNumber(right.left as Func, leftStr.length);
+
+                        return new Func(FuncTypes.concatenation, neoLeft, right.right);
+                    }
+                }
+            }
+        }
+
+
+        let func = new Func(FuncTypes.concatenation);
+        func.left = left;
+        func.right = right;
+        return func;
+    }
+
+    protected static shrinkFuncLineBegin(node: Func): Node {
+        let func = node.clone();
+        // We search for all lineBegin and remove them.
+        // There must be only ONE lineBegin
+        func.getFuncs().forEach(func => {
+            if (func.type == Func.Types.lineBegin) {
+                func.type = Func.Types.concatenation;
+            }
+        });
+
+        let neo = new Func(Func.Types.lineBegin);
+        neo.left = new Terminal();
+        neo.right = func;
+        return neo;
+    }
+
+    protected static shrinkFuncLineEnd(node: Func): Node {
+        let func = node.clone();
+        // We search for all lineEnd and remove them.
+        // There must be only ONE lineEnd
+        func.getFuncs().forEach(func => {
+            if (func.type == Func.Types.lineEnd) {
+                func.type = Func.Types.concatenation;
+            }
+        });
+
+        let neo = new Func(Func.Types.lineEnd);
+        neo.left = new Terminal();
+        neo.right = func;
+        return neo;
+    }
+
+    protected static shrinkFuncList(node: Func): Node {
+        let func = node.clone();
+
+        func.getFuncs().forEach(func => {
+            if (func.type == Func.Types.list) {
+                func.type = Func.Types.concatenation;
+            }
+        });
+
+        let left = NodeShrinker.shrink(node.left);
+        let right = NodeShrinker.shrink(node.right);
+
+        let areBothTerminal = left.is(NodeTypes.terminal) && right.is(NodeTypes.terminal);
+
+        if (areBothTerminal) {
+            let str = Utils.getUniqueChars(left.toString() + right.toString());
+            let func = new Func(Func.Types.list);
+            func.left = new Terminal();
+            func.right = new Terminal(str);
+            return func;
+        } else if (left.nodeType == NodeTypes.terminal) {
+            let str = Utils.getUniqueChars(left.toString());
+            let func = new Func(Func.Types.list);
+            func.left = new Terminal(str);
+            func.right = right;
+            return func;
+        } else {
+            let str = Utils.getUniqueChars(right.toString());
+            let func = new Func(Func.Types.list);
+            func.left = left;
+            func.right = new Terminal(str);
+            return func;
+        }
+    }
+
+    protected static shrinkFuncNegation(node: Func): Node {
+        let func = node.clone();
+
+        func.getFuncs().forEach(func => {
+            if (func.type == Func.Types.negation) {
+                func.type = Func.Types.concatenation;
+            }
+        });
+
+        let left = NodeShrinker.shrink(node.left);
+        let right = NodeShrinker.shrink(node.right);
+
+        let areBothTerminal = left.nodeType == NodeTypes.terminal
+            && right.nodeType == NodeTypes.terminal;
+
+        if (areBothTerminal) {
+            let str = Utils.getUniqueChars(left.toString() + right.toString());
+            let func = new Func(Func.Types.negation);
+            func.left = new Terminal();
+            func.right = new Terminal(str);
+            return func;
+        } else if (left.nodeType == NodeTypes.terminal) {
+            let str = Utils.getUniqueChars(left.toString());
+            let func = new Func(Func.Types.negation);
+            func.left = new Terminal(str);
+            func.right = right;
+            return func;
+        } else {
+            let str = Utils.getUniqueChars(right.toString());
+            let func = new Func(Func.Types.negation);
+            func.left = left;
+            func.right = new Terminal(str);
+            return func;
+        }
+    }
+
+    protected static shrinkFuncOr(node: Func): Node {
+        let func = new Func(Func.Types.or);
+        func.left = NodeShrinker.shrink(node.left);
+        func.right = NodeShrinker.shrink(node.right);
+        return func;
+    }
+
+    protected static shrinkRepetition(node: Func): Node {
+        let left = NodeShrinker.shrink(node.left);
+        let right = NodeShrinker.shrink(node.right);
+
+        let leftStr = left.toString();
+
+        if (right.is(NodeTypes.terminal)) {
+            let rightStr = right.toString();
+
+            if (leftStr === rightStr) {
+                let func = new Func(Func.Types.repetition, left, new Terminal(''));
+                func.repetitionNumber = NodeShrinker.addToRepetitionNumber(func, rightStr.length);
+                return func;
+            }
+        }
+
+        if (right.is(Func.Types.repetition)) {
+            let rightStr = (right as Func).left.toString();
+
+            if (leftStr === rightStr) {
+                let func = new Func(FuncTypes.repetition);
+                func.repetitionNumber = NodeShrinker.addToRepetitionNumber(node, node.repetitionNumber);
+            }
+        }
+
+        let func = new Func(Func.Types.repetition, left, right);
+        func.repetitionNumber = node.repetitionNumber;
+        return func;
+    }
+
+    protected static addToRepetitionNumber(func: Func, value: number | string): string {
         let numbers = func.repetitionNumber.split(',');
+
+        if (typeof value === 'string') {
+            let values = value.split(',');
+            value = values.length == 2 ? values[1] : values[0];
+            value = parseInt(value, 10);
+        }
 
         switch (numbers.length) {
             case 1: return (parseInt(numbers[0], 10) + value).toString();
