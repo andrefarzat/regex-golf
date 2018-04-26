@@ -70,6 +70,10 @@ export default class Func implements Node {
             }
         }
 
+        if (this.type == FuncTypes.list) {
+            return this.type.replace(Func.placeholder, left) + right;
+        }
+
         let txt = left + right;
         return this.type.replace(Func.placeholder, txt);
     }

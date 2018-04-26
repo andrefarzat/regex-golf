@@ -61,10 +61,23 @@ export class NodeShrinkerTest {
     @TestCase('aaaaaa', 'a{6}')
     @TestCase('zza{5}a{5}hh', 'zza{10}hh')
     // @TestCase('abcabc', '(abc){2}')
+    @Test('Test Shrink to repetition')
+    public testShrinkRepetitionExamples(txt: string, expectedResult: string) {
+        let ind = this.individualFactory.createFromString(txt);
+        let shrunk = ind.shrink();
+
+        Expect(shrunk.toString()).toEqual(expectedResult);
+    }
+
+
+    @FocusTest
+    @TestCase('a[a]aa', 'a{4}')
+    @TestCase('a[abcdefghijklmnopqrstuvwxyz]z', 'a[a-z]z')
+    @TestCase('a[abcabcabc]z', 'a[abc]z')
     // @TestCase('[x-z]', '[xz]')
     // @TestCase('abcef[a-b]fecba', 'abcef[ab]fecba')
-    @Test('Test Shrink to repetition')
-    public testShrinkExamples(txt: string, expectedResult: string) {
+    @Test('Test Shrink to list')
+    public testShrinkListExamples(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
         let shrunk = ind.shrink();
 

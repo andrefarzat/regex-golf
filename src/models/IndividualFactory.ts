@@ -23,34 +23,8 @@ export default class IndividualFactory {
 
         let i = 0;
         for (let expression of expressions) {
-            let node: Terminal | Func;
+            let node = this.parseExpression(expression);
             let isLast = ++i === expressions.length;
-
-            if (expression.type == 'Char') {
-                node = new Terminal((expression as any).value);
-            } else if (expression.type == 'Assertion' && expression.kind == '^') {
-                node = new Func();
-                node.type = Func.Types.lineBegin;
-            } else if (expression.type == 'Assertion' && expression.kind == '$') {
-                node = new Func();
-                node.type = Func.Types.lineEnd;
-            } else if (expression.type == 'Repetition') {
-                if (expression.quantifier && expression.quantifier.kind == 'Range') {
-                    node = new Func();
-                    node.type = Func.Types.repetition;
-                    node.left = new Terminal((expression.expression as any).value);
-
-                    if (expression.quantifier.from == expression.quantifier.to) {
-                        node.repetitionNumber = expression.quantifier.from.toString();
-                    } else {
-                        node.repetitionNumber = `${expression.quantifier.from},${expression.quantifier.to}`;
-                    }
-                } else {
-                    throw new Error('Unkown expression.type == Repetition');
-                }
-            } else {
-                node = new Terminal((expression as any).value);
-            }
 
             if (node instanceof Terminal) {
                 if (!currentFunc.left) {
@@ -78,6 +52,38 @@ export default class IndividualFactory {
         if (!currentFunc.left)  currentFunc.left  = new Terminal('');
         if (!currentFunc.right) currentFunc.right = new Terminal('');
         return ind;
+    }
+
+    public parseExpression(expression: regexp.Node.Expression): Func | Terminal {
+        if (expression.type == 'Char') {
+            return new Terminal((expression as any).value);
+        } else if (expression.type == 'Assertion' && expression.kind == '^') {
+            return new Func(Func.Types.lineBegin);
+        } else if (expression.type == 'Assertion' && expression.kind == '$') {
+            return new Func(Func.Types.lineEnd);
+        } else if (expression.type == 'Repetition') {
+            if (expression.quantifier && expression.quantifier.kind == 'Range') {
+                let node = new Func(Func.Types.repetition);
+                node.left = new Terminal((expression.expression as any).value);
+
+                if (expression.quantifier.from == expression.quantifier.to) {
+                    node.repetitionNumber = expression.quantifier.from.toString();
+                } else {
+                    node.repetitionNumber = `${expression.quantifier.from},${expression.quantifier.to}`;
+                }
+
+                return node;
+            } else {
+                throw new Error('Unkown expression.type == Repetition');
+            }
+        } else if (expression.type == 'CharacterClass') {
+            let nodes = expression.expressions.map((exp: any) => this.parseExpression(exp).toString()).join('');
+            let node = new Func(Func.Types.list);
+            node.left = this.createFromString(nodes).tree;
+            return node;
+        } else {
+            return new Terminal((expression as any).value);
+        }
     }
 
     public getRandomCharFromLeft(): Terminal {

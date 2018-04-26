@@ -2,6 +2,7 @@ import Node, { NodeTypes } from './nodes/Node';
 import Func, { FuncTypes } from './nodes/Func';
 import Terminal from './nodes/Terminal';
 import Utils from './Utils';
+import IndividualFactory from './models/IndividualFactory';
 
 
 export default class NodeShrinker {
@@ -164,38 +165,32 @@ export default class NodeShrinker {
     }
 
     protected static shrinkFuncList(node: Func): Node {
-        let func = node.clone();
-
-        func.getFuncs().forEach(func => {
-            if (func.type == Func.Types.list) {
-                func.type = Func.Types.concatenation;
-            }
-        });
-
         let left = NodeShrinker.shrink(node.left);
         let right = NodeShrinker.shrink(node.right);
 
-        let areBothTerminal = left.is(NodeTypes.terminal) && right.is(NodeTypes.terminal);
-
-        if (areBothTerminal) {
-            let str = Utils.getUniqueChars(left.toString() + right.toString());
-            let func = new Func(Func.Types.list);
-            func.left = new Terminal();
-            func.right = new Terminal(str);
-            return func;
-        } else if (left.nodeType == NodeTypes.terminal) {
-            let str = Utils.getUniqueChars(left.toString());
-            let func = new Func(Func.Types.list);
-            func.left = new Terminal(str);
-            func.right = right;
-            return func;
-        } else {
-            let str = Utils.getUniqueChars(right.toString());
-            let func = new Func(Func.Types.list);
-            func.left = left;
-            func.right = new Terminal(str);
-            return func;
+        if (left instanceof Terminal) {
+            return new Func(FuncTypes.concatenation, left, right);
         }
+
+        if (left.is(FuncTypes.concatenation)) {
+            let leftStr = left.toString();
+            if (leftStr.length == 1) {
+                let func = new Func(FuncTypes.concatenation, new Terminal(leftStr), right);
+                return this.shrinkFuncConcatenation(func);
+            }
+        }
+
+        let leftNodes = left.asFunc().getNodes();
+        let allLeftAreTerminals = leftNodes.every(n => n.is(NodeTypes.terminal) || n.is(FuncTypes.concatenation));
+        if (allLeftAreTerminals) {
+            let leftStr = leftNodes.map(n => n.toString()).join('');
+            leftStr = Utils.getUniqueChars(leftStr);
+
+            let neoLeft = new IndividualFactory([], []).createFromString(leftStr);
+            return new Func(FuncTypes.list, neoLeft.tree, right);
+        }
+
+        return new Func(FuncTypes.list, left, right);
     }
 
     protected static shrinkFuncNegation(node: Func): Node {

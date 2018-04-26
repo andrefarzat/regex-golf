@@ -1,4 +1,4 @@
-import { Expect, Test, TestCase, TestFixture } from "alsatian";
+import { Expect, Test, TestCase, TestFixture, FocusTest } from "alsatian";
 
 import IndividualFactory from "../../src/models/IndividualFactory";
 import { NodeTypes } from "../../src/nodes/Node";
@@ -58,5 +58,11 @@ export default class IndividualFactoryTest {
         Expect(right.type).toEqual(Func.Types.repetition);
         Expect(right.repetitionNumber).toBe('5');
         Expect(right.toString()).toEqual('a{5}');
+    }
+
+    @Test('Test creating with range')
+    public testCreatingWithRange() {
+        let ind = this.factory.createFromString('a[abcdef]z');
+        Expect(ind.tree.toString()).toEqual('a[abcdef]z');
     }
 }
