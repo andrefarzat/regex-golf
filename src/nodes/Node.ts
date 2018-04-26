@@ -1,4 +1,4 @@
-import { FuncTypes } from "./Func";
+import Func, { FuncTypes } from "./Func";
 
 export enum NodeTypes {
     terminal = 'terminal',
@@ -14,5 +14,8 @@ export default interface Node {
     readonly nodeType: NodeTypes;
 
     is(type: NodeTypes | FuncTypes): boolean;
+    equals(node: Node): boolean;
+
+    asFunc(): Func;
 }
 

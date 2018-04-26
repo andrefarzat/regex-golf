@@ -113,6 +113,17 @@ export default class NodeShrinker {
             }
         }
 
+        let areBothRepetitions = left.is(FuncTypes.repetition) && right.is(FuncTypes.repetition);
+        if (areBothRepetitions) {
+            let leftStr = (left as Func).left.toString();
+            let rightStr = (right as Func).left.toString();
+
+            if (leftStr === rightStr) {
+                let func = new Func(FuncTypes.repetition, new Terminal(leftStr), (right as Func).right);
+                func.repetitionNumber = NodeShrinker.addToRepetitionNumber(left.asFunc(), right.asFunc().repetitionNumber);
+                return func;
+            }
+        }
 
         let func = new Func(FuncTypes.concatenation);
         func.left = left;
@@ -250,8 +261,9 @@ export default class NodeShrinker {
             let rightStr = (right as Func).left.toString();
 
             if (leftStr === rightStr) {
-                let func = new Func(FuncTypes.repetition);
+                let func = new Func(FuncTypes.repetition, left, right.asFunc().right);
                 func.repetitionNumber = NodeShrinker.addToRepetitionNumber(node, node.repetitionNumber);
+                return func;
             }
         }
 

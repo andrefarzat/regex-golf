@@ -139,4 +139,19 @@ export default class Func implements Node {
         });
         return nodes;
     }
+
+    public equals(node: Node): boolean {
+        if (node instanceof Func) {
+            if (node.nodeType !== this.nodeType) return false;
+            if (node.type !== this.type) return false;
+            if (node.toString() !== this.toString()) return false;
+            return true;
+        }
+
+        return false;
+    }
+
+    public asFunc(): Func {
+        return this;
+    }
 }

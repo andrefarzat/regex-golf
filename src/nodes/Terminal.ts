@@ -33,4 +33,18 @@ export default class Terminal implements Node {
     public is(type: NodeTypes): boolean {
         return type == NodeTypes.terminal;
     }
+
+    public equals(node: Node): boolean {
+        if (node instanceof Terminal) {
+            if (node.nodeType !== this.nodeType) return false;
+            if (node.value !== this.value) return false;
+            return true;
+        }
+
+        return false;
+    }
+
+    public asFunc(): never {
+        throw new Error(`Cannot convert Terminal to Function!`);
+    }
 }

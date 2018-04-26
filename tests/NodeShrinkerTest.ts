@@ -53,14 +53,14 @@ export class NodeShrinkerTest {
     }
 
 
-    @FocusTest
-    @TestCase('a', 'a')
-    @TestCase('bb', 'bb')
-    @TestCase('ccc', 'ccc')
-    @TestCase('dddd', 'd{4}')
-    @TestCase('bcccccccbb', 'bc{7}bb')
-    @TestCase('aaaaaa', 'a{6}')
-    // @TestCase('zza{5}a{5}hh', 'zza{10}hh')
+    // @TestCase('a', 'a')
+    // @TestCase('bb', 'bb')
+    // @TestCase('ccc', 'ccc')
+    // @TestCase('dddd', 'd{4}')
+    // @TestCase('bcccccccbb', 'bc{7}bb')
+    // @TestCase('aaaaaa', 'a{6}')
+    @TestCase('zza{5}a{5}hh', 'zza{10}hh')
+    // @TestCase('abcabc', '(abc){2}')
     // @TestCase('[x-z]', '[xz]')
     // @TestCase('abcef[a-b]fecba', 'abcef[ab]fecba')
     @Test('Test Shrink to repetition')
@@ -70,16 +70,4 @@ export class NodeShrinkerTest {
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
-
-    @Test('Test shrink concatenation with repetition')
-    public testShrinkConcatenationWithRepetition() {
-        let ind = this.individualFactory.createFromString('aabbbb');
-        let shrunk = ind.shrink();
-        Expect(shrunk.toString()).toEqual('aab{4}');
-
-        Expect(shrunk.tree.left).toEqual('a');
-        Expect((shrunk.tree.right as Func).left.toString()).toBe('a');
-    }
-
-
 }
