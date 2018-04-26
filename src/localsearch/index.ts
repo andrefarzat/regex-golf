@@ -112,6 +112,7 @@ function main() {
             //        Else -> Stop !
             let neighbor = neighborhood.next();
             if (neighbor.done) break;
+            if (!neighbor.value.isValid()) continue; // FIXME: We should not generate invalid individuals
             program.evaluate(neighbor.value);
             logger.logSolution('Ind', neighbor.value);
 
