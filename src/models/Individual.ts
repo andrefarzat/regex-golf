@@ -24,16 +24,14 @@ export default class Individual {
 
     public toCSV(withDot: boolean = false): string {
         let arr = [
-            this.id,
             this.toString(),
             this.fitness,
-            this.isValid().toString(),
             this.evaluationIndex,
         ];
 
         if (withDot) arr.push(this.toDot());
 
-        return arr.join(',') + '\n';
+        return arr.join(',');
     }
 
     public toString(): string {
