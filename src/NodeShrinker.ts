@@ -223,16 +223,16 @@ export default class NodeShrinker {
     protected static shrinkFuncNegation(node: Func): Node {
         let func = this.shrinkFuncList(node).asFunc();
 
-        if (func.left.toString().length == 0) {
-            func.type = FuncTypes.anyChar;
-            func.left = new Terminal('');
-            return func;
-        }
-
         if (func.is(FuncTypes.range)) {
             (func as RangeFunc).negative = true;
         } else {
             func.type = FuncTypes.negation;
+        }
+
+        if (func.left.toString().length == 0) {
+            func.type = FuncTypes.anyChar;
+            func.left = new Terminal('');
+            return func;
         }
 
         return func;

@@ -17,6 +17,10 @@ export default class Terminal implements Node {
         return Terminal.charsToBeEscapted.indexOf(value) >= 0 ? '\\' + value : value;
     }
 
+    public toDot(i: number): string {
+        return `n${i} [ label = "${this.toString()}" ]`;
+    }
+
     public toRegex(): RegExp {
         return new RegExp(this.toString());
     }

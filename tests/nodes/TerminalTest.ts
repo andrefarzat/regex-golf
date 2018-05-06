@@ -26,4 +26,11 @@ export default class TerminalTest {
         Expect(terminal.toString()).toBe("\\" + char);
     }
 
+
+    @TestCase('a', 'n5 [ label = "a" ]')
+    public testToDot(char: string, expectedResult: string) {
+        let terminal = new Terminal(char);
+        Expect(terminal.toDot(5)).toBe(expectedResult);
+    }
+
 }

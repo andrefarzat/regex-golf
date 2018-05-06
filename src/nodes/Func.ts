@@ -62,6 +62,26 @@ export default class Func implements Node {
         return this.type.replace(Func.placeholder, txt);
     }
 
+    public toDot(i: number): string {
+        let j = i;
+        let result: string[] = [`n${j} [ label = "${this.type}" ]`];
+
+        i += 1;
+        if (this.left) {
+            result.push(`n${j} -> n${i}`);
+            let str = this.left.toDot(i);
+            result.push(str);
+            i += (str.match(/label/g) || []).length;
+        }
+
+        if (this.right) {
+            result.push(`n${j} -> n${i}`);
+            result.push(this.right.toDot(i));
+        }
+
+        return result.join('; ');
+    }
+
     public toRegex(): RegExp {
         return new RegExp(this.toString());
     }
