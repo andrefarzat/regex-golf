@@ -12,10 +12,6 @@ export default class Terminal implements Node {
 
     public readonly nodeType = NodeTypes.terminal;
 
-    public mutate(values: string[]): void {
-        this.value = Utils.getRandomlyFromList(values);
-    }
-
     public toString(): string {
         let value = this.value.toString();
         return Terminal.charsToBeEscapted.indexOf(value) >= 0 ? '\\' + value : value;

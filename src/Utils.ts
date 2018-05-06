@@ -6,6 +6,7 @@ import MersenneTwister = require("mersenne-twister");
 
 
 export default class Utils {
+    private static idIndex = 0;
     private static index = 0;
     protected static random: MersenneTwister = new MersenneTwister(new Date().getTime());
 
@@ -63,5 +64,9 @@ export default class Utils {
         let i = typeof index === 'string' ? parseInt(index, 10) : index;
         if (isNaN(i)) i = 0;
         Utils.index = i;
+    }
+
+    static getNextId() {
+        return this.idIndex++;
     }
 }

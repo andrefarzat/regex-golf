@@ -3,3 +3,6 @@ node_modules/
 dist/
 .ipynb_checkpoints
 *.log
+
+
+results/current

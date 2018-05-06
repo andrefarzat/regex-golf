@@ -3,10 +3,11 @@ import Terminal from "../nodes/Terminal";
 import Node from "../nodes/Node";
 import NodeShrinker from '../NodeShrinker';
 import Logger from '../Logger';
-
+import Utils from "../Utils";
 
 
 export default class Individual {
+    public id = Utils.getNextId();
     public tree: Func;
     public leftFitness: number = 0;
     public rightFitness: number = 0;
@@ -16,6 +17,10 @@ export default class Individual {
 
     public get fitness(): number {
         return this.leftFitness + this.rightFitness;
+    }
+
+    public toCSV(): string {
+        return [this.id, this.toString(), this.fitness, this.isValid().toString()].join(',') + '\n';
     }
 
     public toString(): string {

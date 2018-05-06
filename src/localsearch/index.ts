@@ -73,8 +73,7 @@ function main() {
     program.maxTimeout = moment().add(flags.timeout, 'milliseconds');
     program.init();
 
-    let logger = Logger.create(program);
-    logger.setLogLevel(flags.logLevel);
+    let logger = Logger.create(flags.logLevel, program);
 
     // 5. Gera indivíduo inicial
     let currentSolution = program.generateInitialIndividual();
@@ -95,7 +94,6 @@ function main() {
         let hasFoundBetter = false;
         if (program.isBest(currentSolution)) {
             program.addSolution(currentSolution);
-            logger.log(2, `[Found best][Ind] ${currentSolution.toString()} [Fitness: ${currentSolution.fitness}]`)
         }
 
         // 6.3. Should stop ?
@@ -112,9 +110,13 @@ function main() {
             //        Else -> Stop !
             let neighbor = neighborhood.next();
             if (neighbor.done) break;
-            if (!neighbor.value.isValid()) continue; // FIXME: We should not generate invalid individuals
+            if (!neighbor.value.isValid()) {
+                // FIXME: We should not generate invalid individuals
+                logger.logInvalidSolution(neighbor.value);
+                continue;
+            }
             program.evaluate(neighbor.value);
-            logger.logSolution('Ind', neighbor.value);
+            logger.logSolution(neighbor.value);
 
             // 6.5.2. Neighbor is better than current solution ?
             //        Then -> Current = Neighbor
@@ -131,7 +133,6 @@ function main() {
         //           -> Realizar o restart
         if (!hasFoundBetter) {
             program.addLocalSolution(currentSolution);
-            logger.logSolution('Best local', currentSolution);
             currentSolution = program.restartFromSolution(currentSolution);
             logger.logEmptyLine();
             logger.log(3, `[Jumped to] ${currentSolution.toString()}`);
@@ -153,6 +154,7 @@ function main() {
     logger.log(2, `Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.sort(sorter);
     program.localSolutions.forEach(ind => {
+        logger.logBestLocalSolution(ind);
         logger.log(3, `[Local Solution]: ${ind.toString()} [Fitness ${ind.fitness} of ${program.getMaxFitness()}] [Length ${ind.toString().length}]`);
     });
 
@@ -161,6 +163,7 @@ function main() {
 
     program.solutions.sort(sorter);
     program.solutions.forEach((ind, i) => {
+        logger.logBestSolution(ind);
         let txt = `[Solution]: ${ind.toString()} [Fitness ${ind.fitness} of ${program.getMaxFitness()}] [Length ${ind.toString().length}]`;
         logger.log(1, (i == 0) ? colors.green(txt) : txt);
     });
@@ -193,8 +196,10 @@ function main() {
         csvLine.push(`\n`); // Break line
 
         let filepath = path.join(__dirname, '..', '..', 'results', flags.csv);
-        fs.appendFileSync(filepath, csvLine.join(','));
+        // fs.appendFileSync(filepath, csvLine.join(','));
     }();
+
+    logger.logProgramEnd();
 }
 
 main();

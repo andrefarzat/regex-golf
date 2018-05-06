@@ -20,11 +20,6 @@ export default class RepetitionFunc extends Func {
         return func;
     }
 
-    public mutate(values: string[]): void {
-        this.type = Utils.getRandomlyFromList(Func.options);
-        this.repetitionNumber = this.type == FuncTypes.repetition ? Utils.nextInt(9).toString() : '0';
-    }
-
     public toString(): string {
         let left  = this.left ? this.left.toString() : '';
         let right = this.right ? this.right.toString() : '';

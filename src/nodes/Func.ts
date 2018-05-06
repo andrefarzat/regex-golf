@@ -40,10 +40,6 @@ export default class Func implements Node {
         if (right) this.right = right;
     }
 
-    public mutate(values: string[]): void {
-        this.type = Utils.getRandomlyFromList(Func.options);
-    }
-
     public is(type: NodeTypes | FuncTypes): boolean {
         if (type == this.nodeType) return true;
         return type == this.type;
