@@ -96,7 +96,6 @@ export default abstract class BaseProgram {
 
         this.left .forEach(name => ind.leftFitness  += regex.test(name) ? 1 : 0);
         this.right.forEach(name => ind.rightFitness += regex.test(name) ? 0 : 1);
-        ind.isEvaluated = true;
         return ind.fitness;
     }
 

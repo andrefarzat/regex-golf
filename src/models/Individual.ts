@@ -11,20 +11,37 @@ export default class Individual {
     public tree: Func;
     public leftFitness: number = 0;
     public rightFitness: number = 0;
-    public evaluationIndex: number;
+    public evaluationIndex: number = undefined;
     public createdDate = new Date();
-    public isEvaluated: boolean = false;
+
+    public get isEvaluated(): boolean {
+        return this.evaluationIndex != undefined;
+    }
 
     public get fitness(): number {
         return this.leftFitness + this.rightFitness;
     }
 
-    public toCSV(): string {
-        return [this.id, this.toString(), this.fitness, this.isValid().toString()].join(',') + '\n';
+    public toCSV(withDot: boolean = false): string {
+        let arr = [
+            this.id,
+            this.toString(),
+            this.fitness,
+            this.isValid().toString(),
+            this.evaluationIndex,
+        ];
+
+        if (withDot) arr.push(this.toDot());
+
+        return arr.join(',') + '\n';
     }
 
     public toString(): string {
         return this.tree.toString();
+    }
+
+    public toDot(): string {
+        return this.tree.toDot(1);
     }
 
     public toRegex(): RegExp {

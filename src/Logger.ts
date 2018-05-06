@@ -76,16 +76,16 @@ export default class Logger {
     }
 
     public logBestSolution(ind: Individual) {
-        this.csv.bests.write(ind.toCSV());
+        this.csv.bests.write(ind.toCSV(true));
         this.log(2, `[Found best][Ind] ${ind.toString()} [Fitness: ${ind.fitness}]`)
     }
 
     public logInvalidSolution(ind: Individual) {
-        this.csv.invalids.write(ind.toCSV());
+        this.csv.invalids.write(ind.toCSV(true));
     }
 
     public logBestLocalSolution(ind: Individual) {
-        this.csv.bestLocals.write(ind.toCSV());
+        this.csv.bestLocals.write(ind.toCSV(true));
     }
 
     public logEmptyLine() {
