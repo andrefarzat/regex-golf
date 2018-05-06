@@ -93,4 +93,16 @@ export class NodeShrinkerTest {
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
+
+    @Test('Test transforming [^] into .')
+    public testEmptyNegative() {
+        let ind = this.individualFactory.createFromString('ab[^c]');
+        let func = ind.tree.getLeastFunc();
+        func.left = new Terminal();
+        func.right = new Terminal();
+        Expect(ind.toString()).toBe('ab[^]');
+
+        let shrunk = ind.shrink();
+        Expect(shrunk.toString()).toBe('ab.');
+    }
 }

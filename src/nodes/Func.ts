@@ -15,7 +15,8 @@ export enum FuncTypes {
     negation = "[^•]",
     range = "[•-•]",
     more = "•++",
-    repetition = "•{#}"
+    repetition = "•{#}",
+    anyChar = '.•',
 }
 
 
