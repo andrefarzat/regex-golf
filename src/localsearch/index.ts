@@ -196,7 +196,7 @@ function main() {
         csvLine.push(`\n`); // Break line
 
         let filepath = path.join(__dirname, '..', '..', 'results', flags.csv);
-        // fs.appendFileSync(filepath, csvLine.join(','));
+        fs.appendFileSync(filepath, csvLine.join(','));
     }();
 
     logger.logProgramEnd();
