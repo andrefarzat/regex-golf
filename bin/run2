@@ -4,8 +4,9 @@ from subprocess import call
 
 PROGRAMS = ['ILS_Shrink']
 
-# INSTANCES = ['abba', 'aman-aplan', 'four', 'order', 'ranges', 'triples', 'words', 'anchors']
-INSTANCES = ['four', 'order']
+INSTANCES = """abba, aman-aplan, backrefs, books, foo,  glob, it-never-ends, movies, order, powers-2, ranges,
+               substraction, warmup, alphabetical, anchors, balance, family, four, hard, long-count, names,
+               powers, prime, regex-of-regex, triples, words""".split(',')[6:6 + 6]
 
 SEEDS = [4105328976, 6370951248, 9431657082, 1874029365, 5691784320, 8392760514,
          4612780539, 8261384957, 2463075891, 9135874206, 7095231486, 9842301657,
@@ -18,6 +19,7 @@ DEPTHS = [5]
 
 for program in PROGRAMS:
     for instance in INSTANCES:
+        instance = instance.strip()
         for depth in DEPTHS:
             for index, seed in enumerate(SEEDS):
                 today = datetime.date.today().strftime("%Y-%m-%d")
@@ -43,7 +45,7 @@ for program in PROGRAMS:
                        "--csv", csvFilePath]
 
                 cmd = list(map(str, cmd))
-                call(cmd)
+                call(cmd, shell=True)
                 # print(cmd)
 
 # npm run localsearch -- --name ILS_Shrink --instance anchors --log-level 1 --csv
