@@ -1,5 +1,5 @@
 import BaseProgram from "../BaseProgram";
-import Func from "../nodes/Func";
+import Func, { FuncTypes } from "../nodes/Func";
 import Individual from "../models/Individual";
 import Terminal from "../nodes/Terminal";
 import { Moment } from "moment";
@@ -155,6 +155,20 @@ export default abstract class LocalSearch extends BaseProgram {
         for (let char of this.rightCharsNotInLeft) {
             for (let node of nodes) {
                 let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
+                if (neo.isValid()) yield neo;
+            }
+        }
+
+        // Operator: Backref
+        let howManyGroups = funcs.filter(func => func.is(FuncTypes.group)).length;
+        if (howManyGroups > 0) {
+            // Are there groups ?
+        }
+
+        for (let node of nodes) {
+            let current = this.factory.wrapNodeWithGroup(solution, node);
+            for (let localNode of current.getNodes()) {
+                let neo = this.factory.addBackref(current, localNode, 1);
                 if (neo.isValid()) yield neo;
             }
         }

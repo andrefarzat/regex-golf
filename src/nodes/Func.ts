@@ -17,6 +17,7 @@ export enum FuncTypes {
     more = "•++",
     repetition = "•{#}",
     anyChar = '.•',
+    backref = "\\#•",
 }
 
 
