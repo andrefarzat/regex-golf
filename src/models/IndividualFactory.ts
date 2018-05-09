@@ -403,7 +403,9 @@ export default class IndividualFactory {
 
         let func = new Func(FuncTypes.group, new Terminal(''), neoNode);
 
-        if (parent.side == 'left') {
+        if (!parent) {
+            neo.tree = func;
+        } else if (parent.side == 'left') {
             parent.func.left = func;
         } else {
             parent.func.right = func;

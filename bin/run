@@ -23,7 +23,7 @@ for program in PROGRAMS:
         for depth in DEPTHS:
             for index, seed in enumerate(SEEDS):
                 today = datetime.date.today().strftime("%Y-%m-%d")
-                resultsDir = "/%s" % (today)
+                resultsDir = "%s" % (today)
                 absResultsDir = "%s/results/%s" % (os.getcwd(), resultsDir)
 
                 if not os.path.isdir(absResultsDir):
@@ -45,7 +45,7 @@ for program in PROGRAMS:
                        "--csv", csvFilePath]
 
                 cmd = list(map(str, cmd))
-                call(cmd, shell=True)
+                call(cmd, shell=os.name == 'nt')
                 # print(cmd)
 
 # npm run localsearch -- --name ILS_Shrink --instance anchors --log-level 1 --csv
