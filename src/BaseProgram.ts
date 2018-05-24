@@ -88,18 +88,32 @@ export default abstract class BaseProgram {
     public evaluate(ind: Individual): number {
         if (ind.isEvaluated) return ind.fitness;
 
-        ind.leftFitness = 0;
-        ind.rightFitness = 0;
+        ind.matchesOnLeft = 0;
+        ind.matchesOnRight = 0;
+        ind.ourFitness = 0;
         this.evaluationCount += 1;
         ind.evaluationIndex = this.evaluationCount;
         let regex = ind.toRegex();
 
-        this.left .forEach(name => ind.leftFitness  += regex.test(name) ? 1 : 0);
-        this.right.forEach(name => ind.rightFitness += regex.test(name) ? 0 : 1);
+        for (let name of this.left) {
+            if (regex.test(name)) {
+                ind.matchesOnLeft += 1;
+                ind.ourFitness += 1;
+            }
+        }
+
+        for (let name of this.right) {
+            if (regex.test(name)) {
+                ind.matchesOnRight += 1;
+            } else {
+                ind.ourFitness += 1;
+            }
+        }
+
         return ind.fitness;
     }
 
     public getMaxFitness(): number {
-        return this.left.length + this.right.length;
+        return this.left.length;
     }
 }
