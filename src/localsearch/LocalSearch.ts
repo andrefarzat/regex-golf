@@ -44,7 +44,7 @@ export default abstract class LocalSearch extends BaseProgram {
 
     public abstract restartFromSolution(ind: Individual): Individual;
 
-    public * generateNeighborhood(solution: Individual) {
+    public generateNeighborhood(solution: Individual) {
         let hood = new Neighborhood(solution, this);
         return hood.getGenerator();
     }
