@@ -2,19 +2,19 @@ import Individual from "./Individual";
 import BaseProgram from "../BaseProgram";
 import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
+import RangeFunc from "../nodes/RangeFunc";
+import { NOTFOUND } from "dns";
 
 
 export default class Neighborhood {
-    protected next: Individual;
-
-    public constructor(public ind: Individual, public program: BaseProgram) {}
+    public constructor(public solution: Individual, public program: BaseProgram) {}
 
     public get factory() {
         return this.program.factory;
     }
 
     public * getGenerator() {
-        let solution = this.ind;
+        let { solution } = this;
         let nodes = solution.getNodes();
         let funcs = solution.getFuncs();
         let terminals = solution.getTerminals();
@@ -39,7 +39,7 @@ export default class Neighborhood {
             if (neo.isValid()) yield neo;
         }
 
-        // Replacing
+        // Replacing / Swap
         for (let terminal of terminals) {
             for (let char of this.program.validLeftChars) {
                 let neo = this.factory.replaceNode(solution, terminal, new Terminal(char));
@@ -55,6 +55,7 @@ export default class Neighborhood {
             }
         }
 
+        // Changing operator concatenating to alternative (or)
         for (let func of funcs) {
             if (func.type != Func.Types.concatenation) continue;
             let neo = this.factory.changeFuncType(solution, func, Func.Types.or);
@@ -82,17 +83,19 @@ export default class Neighborhood {
         }
 
         // Operator: Range
-        let ranges: Terminal[] = [];
+        let ranges: RangeFunc[] = [];
         for (let c1 of this.program.leftCharsNotInRight) {
             for(let c2 of this.program.leftCharsNotInRight) {
                 if (c1 == c2) continue;
+                let func = new RangeFunc(new Terminal(''), new Terminal(''));
                 if (c1 < c2) {
-                    let terminal = new Terminal(`[${c1}-${c2}]`);
-                    ranges.push(terminal);
+                    func.from = c1;
+                    func.to = c2;
                 } else {
-                    let terminal = new Terminal(`[${c2}-${c1}]`);
-                    ranges.push(terminal);
+                    func.from = c2;
+                    func.to = c1;
                 }
+                ranges.push(func);
             }
         }
 
@@ -144,9 +147,17 @@ export default class Neighborhood {
             }
         }
 
-        // zeroOrMore = "•*+",
-        // oneOrMore = "•?+",
-        // group = "(•)",
-        // more = "•++",
+        // Operators: zeroOrMore, oneOrMore, anyChar and optional
+        for (let funcType of [FuncTypes.zeroOrMore, FuncTypes.oneOrMore, FuncTypes.anyChar, FuncTypes.optional]) {
+            let func = new Func(funcType, new Terminal(''), new Terminal(''));
+
+            for (let node of nodes) {
+                let neo = this.factory.replaceNode(solution, node, func);
+                if (neo.isValid()) yield neo;
+
+                neo = this.factory.concatenateToNode(solution, node, func);
+                if (neo.isValid()) yield neo;
+            }
+        }
     }
 }

@@ -45,7 +45,6 @@ export default class NodeShrinker {
         // zeroOrMore = "•*+",
         // oneOrMore = "•?+",
         // group = "(•)",
-        // more = "•++",
 
         // Our default is shrink left and right and return a new Func
         let func = new Func(node.type);
