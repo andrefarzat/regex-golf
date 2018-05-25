@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+
+import re
+from pathlib import Path
+
+BARTOLI_HUMANS = {
+    "warmup": r"foo",
+    "anchors": r"k$",
+    "ranges": r"^[a-f]*$",
+    "backrefs": r"(...).*\1",
+    "abba": r"^(?!.*(.)(.)\2\1)",
+    "aman-aplan": r"^(.)[^p].*$",
+    "prime": r"^(?!(..+))\1$",
+    "four": r"(.)(.\1){3}",
+    "order": r"^.5[^e]?$",
+    "triples": r"00($|3|6|9|12|15)|4.2|.1.+4|55|.17",
+    "glob": r"ai|c$|^p|[bcnrw][bnopr]",
+    "balance": r"^(<(<(<(<<?>?>|.9)>)>)>)$",
+    "powers": r"^(?!(.(..)+)\1*$)",
+    "long-count": r"((.+)0 \2?1 ){7}",
+    "alphabetical": r".r.{32}r|a.{10}te|n.n..",
+}
+
+BARTOLI_GP = {
+    "warmup": r"foo",
+    "anchors": r"k$",
+    "ranges": r"(^..[a-f][a-f])",
+    "backrefs": r"v|[^b][^o][^p]t|ngo|lo|[n]o|rp|rb|ro|ro|rf",
+    "abba": r"z|.u|nv|st|ca|it",
+    "aman-aplan": r"oo|x|^k|ed|^m|ah|^r|v|^t",
+    "prime": r"^(?=((?:x[A-Zx])+))\1x",
+    "four": r"ell|j|W|ele|o.o|Ma|si|de|do",
+    "order": r"ch|[l-p]o|ad|fi|ac|ty|os",
+    "triples": r"24|55|02|54|00|95|17",
+    "glob": r"lo|ro|^p|(?=((c)+))\1r|en|^w|y.|le|^p|rr",
+    "balance": r"((?=((?:<<\>\>\>)*))\2(?=((?:<<<(?=(<*))\4\>\><<<<)*))\3(?=((?:<<<<<\>\>\>(?=(<*))\6\>\>\>)*)) \5(?=((?:<<<<<<)*))\7^(?=((?:<<\><<)*))\8(?=((?:<<<\>\>\>)*))\9<<)",
+    "powers": r"^(?=(((x|^)x)+))\1$",
+    "long-count": r"0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111",
+    "alphabetical": r"tena|[^et][^etren](?=((?:(?:ren|eren.(?=((?:(?:ren|[^ren]))+))\2|eren.(?=((?:(?:ren| [^ren]))+))\3))+))\1|eas",
+}
+
+
+
+def get_content_from_file(instance, filename):
+    return [i for i in Path('./instances/%s/%s.txt' % (instance, filename)).read_text().split('\n') if i != '']
+
+
+def compute(instance, regex_str):
+    left_content = get_content_from_file(instance, 'left')
+    right_content = get_content_from_file(instance, 'right')
+
+    regex = re.compile(regex_str)
+
+    i = 0
+    for name in left_content:
+        if regex.search(name) is not None:
+            i += 1
+
+    for name in right_content:
+        if regex.search(name) is not None:
+            i -= 1
+
+    # print('Instance(%s) %s : %s' % (instance, regex, i))
+    print('%s: %s' % (instance, i))
+
+
+def main():
+    print("BARTOLI_HUMANS: ")
+    for instance, regex_str in BARTOLI_HUMANS.items():
+        compute(instance, regex_str)
+
+    print('')
+    print("BARTOLI_GP: ")
+    for instance, regex_str in BARTOLI_GP.items():
+        compute(instance, regex_str)
+
+if __name__ == '__main__':
+    main()
