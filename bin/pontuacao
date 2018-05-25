@@ -41,32 +41,21 @@ BARTOLI_GP = {
 }
 
 MAX_FITNESS = {
-    "warmup": 21,
-    "anchors": 21,
-    "ranges": 21,
-    "backrefs": 21,
-    "abba": 22,
-    "aman-aplan": 19,
-    "prime": 20,
-    "four": 21,
-    "order": 21,
-    "triples": 21,
-    "glob": 21,
-    "balance": 32,
-    "powers": 11,
-    "long-count": 1,
-    "alphabetical": 17,
-
-    "books": 7,
-    "family": 2,
-    "hard": 4,
-    "it-never-ends": 3,
-    "movies": 8,
-    "names": 10,
-    "powers-2": 10,
-    "regex-of-regex": 15,
-    "substraction": 20,
-    "words": 19,
+    "warmup": [21],
+    "anchors": [21],
+    "ranges": [21],
+    "backrefs": [21],
+    "abba": [22],
+    "aman-aplan": [19],
+    "prime": [20],
+    "four": [21],
+    "order": [21],
+    "triples": [21],
+    "glob": [21],
+    "balance": [32],
+    "powers": [11],
+    "long-count": [1],
+    "alphabetical": [17],
 }
 
 
@@ -113,7 +102,8 @@ def compute_with_our_fitness(instance, regex_str) -> int:
 def compute(instance, regex_str):
     bartoli = compute_with_bartoli_fitness(instance, regex_str)
     ours = compute_with_bartoli_fitness(instance, regex_str)
-    print('"%s": [%d, %d],' % (instance, bartoli, ours))
+    # print('"%s": [%d, %d],' % (instance, bartoli, ours))
+    print('"%s": %d,' % (instance, bartoli))
 
 
 def main():
