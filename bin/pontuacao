@@ -2,6 +2,7 @@
 
 import re
 from pathlib import Path
+from typing import List
 
 BARTOLI_HUMANS = {
     "warmup": r"foo",
@@ -39,13 +40,42 @@ BARTOLI_GP = {
     "alphabetical": r"tena|[^et][^etren](?=((?:(?:ren|eren.(?=((?:(?:ren|[^ren]))+))\2|eren.(?=((?:(?:ren| [^ren]))+))\3))+))\1|eas",
 }
 
+MAX_FITNESS = {
+    "warmup": 21,
+    "anchors": 21,
+    "ranges": 21,
+    "backrefs": 21,
+    "abba": 22,
+    "aman-aplan": 19,
+    "prime": 20,
+    "four": 21,
+    "order": 21,
+    "triples": 21,
+    "glob": 21,
+    "balance": 32,
+    "powers": 11,
+    "long-count": 1,
+    "alphabetical": 17,
+
+    "books": 7,
+    "family": 2,
+    "hard": 4,
+    "it-never-ends": 3,
+    "movies": 8,
+    "names": 10,
+    "powers-2": 10,
+    "regex-of-regex": 15,
+    "substraction": 20,
+    "words": 19,
+}
 
 
-def get_content_from_file(instance, filename):
+
+def get_content_from_file(instance, filename) -> List[str]:
     return [i for i in Path('./instances/%s/%s.txt' % (instance, filename)).read_text().split('\n') if i != '']
 
 
-def compute(instance, regex_str):
+def compute_with_bartoli_fitness(instance, regex_str) -> int:
     left_content = get_content_from_file(instance, 'left')
     right_content = get_content_from_file(instance, 'right')
 
@@ -60,8 +90,30 @@ def compute(instance, regex_str):
         if regex.search(name) is not None:
             i -= 1
 
-    # print('Instance(%s) %s : %s' % (instance, regex, i))
-    print('%s: %s' % (instance, i))
+    return i
+
+def compute_with_our_fitness(instance, regex_str) -> int:
+    left_content = get_content_from_file(instance, 'left')
+    right_content = get_content_from_file(instance, 'right')
+
+    regex = re.compile(regex_str)
+
+    i = 0
+    for name in left_content:
+        if regex.search(name) is not None:
+            i += 1
+
+    for name in right_content:
+        if regex.search(name) is None:
+            i += 1
+
+    return i
+
+
+def compute(instance, regex_str):
+    bartoli = compute_with_bartoli_fitness(instance, regex_str)
+    ours = compute_with_bartoli_fitness(instance, regex_str)
+    print('"%s": [%d, %d],' % (instance, bartoli, ours))
 
 
 def main():
