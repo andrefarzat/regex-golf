@@ -1,4 +1,4 @@
-Nome,Depth,i,seed,regex,Melhor_fitness,Melhor_nosso,Tempo,Tempo_total,Timed_out
+Nome,Depth,i,seed,regex,Melhor_bartoli,Melhor_nosso,Tempo,Tempo_total,Timed_out
 warmup,5,1,4105328976,foo,21,42,49814827387,32777,false
 order,5,1,4105328976,ac|^c|y$|o.$,16,37,742834220,31353,false
 warmup,5,1,6370951248,foo,21,42,8319563,34439,false
