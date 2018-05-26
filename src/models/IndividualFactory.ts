@@ -7,6 +7,7 @@ import Terminal from '../nodes/Terminal'
 import Utils from '../Utils';
 import RepetitionFunc from "../nodes/RepetitionFunc";
 import RangeFunc from "../nodes/RangeFunc";
+import BackrefFunc from "../nodes/BackrefFunc";
 
 
 export default class IndividualFactory {
@@ -392,5 +393,51 @@ export default class IndividualFactory {
         }
 
         return this.generateRandomlyFrom(ind);
+    }
+
+    public wrapNodeWithGroup(ind: Individual, node: Node): Individual {
+        let index = ind.getNodes().indexOf(node);
+        let neo = ind.clone();
+        let neoNode = neo.getNodes()[index];
+        let parent = neo.getParentOf(neoNode);
+
+        let func = new Func(FuncTypes.group, new Terminal(''), neoNode);
+
+        if (!parent) {
+            neo.tree = func;
+        } else if (parent.side == 'left') {
+            parent.func.left = func;
+        } else {
+            parent.func.right = func;
+        }
+
+        return neo;
+    }
+
+    public addBackref(ind: Individual, node: Node, number: number = 1): Individual {
+        let func = new BackrefFunc(new Terminal(''), new Terminal(''));
+        func.number = number;
+        return this.concatenateToNode(ind, node, func);
+    }
+
+    public concatenateToNode2(ind: Individual, one: Node, two: Node): Individual {
+        let neo = ind.clone();
+        let neoOne = neo.getNodes()[ind.getNodes().indexOf(one)];
+        let parent = neo.getParentOf(neoOne);
+
+        let func = new Func();
+        func.type = Func.Types.concatenation;
+        func.left = neoOne;
+        func.right = two;
+
+        if (!parent) {
+            neo.tree = func;
+        } else if (parent.side == 'left') {
+            parent.func.left = func;
+        } else {
+            parent.func.right = func;
+        }
+
+        return neo;
     }
 }

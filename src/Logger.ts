@@ -43,10 +43,10 @@ export default class Logger {
     }
 
     public logProgramEnd() {
-        this.csv.invalids.close();
-        this.csv.solutions.close();
-        this.csv.bestLocals.close();
-        this.csv.bests.close();
+        this.csv.invalids.end();
+        this.csv.solutions.end();
+        this.csv.bestLocals.end();
+        this.csv.bests.end();
     }
 
     public setLogLevel(level: number): void {

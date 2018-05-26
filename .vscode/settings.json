@@ -1,5 +1,6 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
     "javascript.implicitProjectConfig.experimentalDecorators": true,
-    "python.linting.pylintEnabled": false
+    "python.linting.pylintEnabled": false,
+    "python.pythonPath": "/usr/local/opt/python3/bin/python3.6"
 }

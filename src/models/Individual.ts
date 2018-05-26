@@ -9,8 +9,9 @@ import Utils from "../Utils";
 export default class Individual {
     public id = Utils.getNextId();
     public tree: Func;
-    public leftFitness: number = 0;
-    public rightFitness: number = 0;
+    public matchesOnLeft: number = 0;
+    public matchesOnRight: number = 0;
+    public ourFitness: number = 0;
     public evaluationIndex: number = undefined;
     public createdDate = new Date();
 
@@ -19,13 +20,14 @@ export default class Individual {
     }
 
     public get fitness(): number {
-        return this.leftFitness + this.rightFitness;
+        return this.matchesOnLeft - this.matchesOnRight;
     }
 
     public toCSV(withDot: boolean = false): string {
         let arr = [
             this.toString(),
             this.fitness,
+            this.ourFitness,
             this.evaluationIndex,
         ];
 
@@ -66,8 +68,8 @@ export default class Individual {
     public clone(): Individual {
         let ind = new Individual();
         ind.tree = this.tree.clone();
-        ind.leftFitness = this.leftFitness;
-        ind.rightFitness = this.rightFitness;
+        ind.matchesOnLeft = this.matchesOnLeft;
+        ind.matchesOnRight = this.matchesOnRight;
         return ind;
     }
 
@@ -111,7 +113,7 @@ export default class Individual {
                 return true;
             }
 
-            if (this.leftFitness > ind.leftFitness) {
+            if (this.matchesOnLeft > ind.matchesOnLeft) {
                 // Logger.log(3, `[Found better left fitness ${this.toString()}] from ${ind.leftFitness} to ${this.leftFitness}`);
                 return true;
             }

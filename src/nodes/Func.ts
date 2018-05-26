@@ -14,9 +14,10 @@ export enum FuncTypes {
     list = "[•]",
     negation = "[^•]",
     range = "[•-•]",
-    more = "•++",
     repetition = "•{#}",
     anyChar = '.•',
+    optional = '•?',
+    backref = "\\#•",
 }
 
 
