@@ -73,6 +73,22 @@ export default class Individual {
         return ind;
     }
 
+    public getParentsOf(node: Node): Func[] {
+        let parents: Func[] = [];
+
+        do {
+            let parent = this.getParentOf(node);
+            if (parent) {
+                parents.unshift(parent.func);
+                node = parent.func;
+            } else {
+                break;
+            }
+        } while (true);
+
+        return parents;
+    }
+
     public getParentOf(node: Node): {func: Func, side: 'left' | 'right'} {
         let funcs = this.getFuncs();
 

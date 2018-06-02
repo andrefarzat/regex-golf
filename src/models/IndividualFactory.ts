@@ -440,4 +440,9 @@ export default class IndividualFactory {
 
         return neo;
     }
+
+    public isNodeWrappedByGroup(node: Node, ind: Individual): boolean {
+        let parents = ind.getParentsOf(node);
+        return parents.some(parent => parent.is(FuncTypes.group));
+    }
 }

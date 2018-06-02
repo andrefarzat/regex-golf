@@ -133,20 +133,6 @@ export default class Neighborhood {
             }
         }
 
-        // Operator: Backref
-        let howManyGroups = funcs.filter(func => func.is(FuncTypes.group)).length;
-        if (howManyGroups > 0) {
-            // Are there groups ?
-        }
-
-        for (let node of nodes) {
-            let current = this.factory.wrapNodeWithGroup(solution, node);
-            for (let localNode of current.getNodes()) {
-                let neo = this.factory.addBackref(current, localNode, 1);
-                if (neo.isValid()) yield neo;
-            }
-        }
-
         // Operators: zeroOrMore, oneOrMore, anyChar and optional
         for (let funcType of [FuncTypes.zeroOrMore, FuncTypes.oneOrMore, FuncTypes.anyChar, FuncTypes.optional]) {
             let func = new Func(funcType, new Terminal(''), new Terminal(''));
@@ -157,6 +143,26 @@ export default class Neighborhood {
 
                 neo = this.factory.concatenateToNode(solution, node, func);
                 if (neo.isValid()) yield neo;
+            }
+        }
+
+        // Operator: Backref
+        for (let node of nodes) {
+            let nodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(node, solution);
+            if (nodeIsWrappedByGroup) continue;
+
+            let current = this.factory.wrapNodeWithGroup(solution, node);
+            let length = new Set(current.getFuncs().filter(func => func.is(FuncTypes.group))).size;
+
+            // We loop for each group in the current solution to add a backref to each
+            for (let i = 1; i <= length; i++) {
+                for (let localNode of current.getNodes()) {
+                    let localNodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(localNode, current);
+                    if (localNodeIsWrappedByGroup) continue;
+
+                    let neo = this.factory.addBackref(current, localNode, i);
+                    if (neo.isValid()) yield neo;
+                }
             }
         }
     }
