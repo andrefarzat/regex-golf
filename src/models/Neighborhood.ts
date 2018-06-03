@@ -48,7 +48,7 @@ export default class Neighborhood {
         }
 
         // Concatenating
-        for (let char of this.program.leftCharsNotInRight) {
+        for (let char of this.program.validLeftChars) {
             for (let node of nodes) {
                 let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
                 if (neo.isValid()) yield neo;
@@ -63,7 +63,7 @@ export default class Neighborhood {
         }
 
         // Operator: Or
-        for (let char of this.program.leftCharsNotInRight) {
+        for (let char of this.program.validLeftChars) {
             for (let terminal of terminals) {
                 let func = new Func();
                 func.type = Func.Types.or;
@@ -84,8 +84,8 @@ export default class Neighborhood {
 
         // Operator: Range
         let ranges: RangeFunc[] = [];
-        for (let c1 of this.program.leftCharsNotInRight) {
-            for(let c2 of this.program.leftCharsNotInRight) {
+        for (let c1 of this.program.validLeftChars) {
+            for(let c2 of this.program.validLeftChars) {
                 if (c1 == c2) continue;
                 let func = new RangeFunc(new Terminal(''), new Terminal(''));
                 if (c1 < c2) {

@@ -47,7 +47,7 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/localsearch/index.ts",
-            "args": ["--name", "ILS_Shrink", "--instance", "warmup", "--depth", "5", "--index", "0", "--seed", "4105328976", "--log-level", "1", "--csv", "HOJE/ILS_Shrink.csv"],
+            "args": ["--name", "ILS_Shrink", "--instance", "ranges", "--depth", "5", "--index", "0", "--seed", "4105328976", "--log-level", "1", "--csv", "HOJE/ILS_Shrink.csv"],
             "protocol": "inspector",
             "internalConsoleOptions": "openOnSessionStart",
             "preLaunchTask": "tsc: build - tsconfig.json",
