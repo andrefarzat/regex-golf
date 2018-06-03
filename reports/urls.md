@@ -9,8 +9,8 @@
 
 ## Other urls
 
-* regex golf: https://alf.nu/RegexGolf
-* dot vizualizer: http://www.webgraphviz.com/
+* Rregex golf: https://alf.nu/RegexGolf
+* Dot vizualizer: http://www.webgraphviz.com/
 * Bartoli's automatic regex golf player: http://regex.inginf.units.it/golf/
 * Norvig's Regex golf implementation: https://www.oreilly.com/learning/regex-golf-with-peter-norvig
 * Best known human anwsers: https://gist.github.com/jonathanmorley/8058871
