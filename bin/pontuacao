@@ -4,6 +4,25 @@ import re
 from pathlib import Path
 from typing import List
 
+
+NORVIG = {
+    "warmup": r"f.o",
+    "anchors": r"k$",
+    "ranges": r"de|a..$|.b|ad|ff|ee",
+    "backrefs": r"l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g",
+    "abba": r".u|.hi|te|z|gy|t$|rs|rit",
+    "aman-aplan": r"^r|oo|d$|^..v|r..$|x|la|eb|ak|ten",
+    "prime": r"^.x$|^xxx$|^xxxxx$|^xxxxxxx$|^xxxxxxxxxxx$|^xxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$",
+    "four": r"o.o|ara|vi|es|el..",
+    "order": r"lo|^c|fi|os|de|cc|ps",
+    "triples": r"4.2|.17|1.4|06|55|009|00$|602|0.2|003|015",
+    "glob": r"",
+    "balance": r"^.>$|^<><>$|^<<>>$|^<<<><<><>>>>$|^<<<><>><<<>>>>$|^<<<<<>>>><>><<>>$|^<<<<<>>><>><<<>>>><<>>$|^<<<<>>><<<<>><>><<<>>>>>$|^<<<<>>><<<><<>>><><<>>>><<>>$|^<<<>>><<><<<<>>>><<><<<>>>>>$|^<<<<<>>>><<<><>>>><<<<<>><>>>>$|^<<<<><<>>><<<>>>>><<<<<>><>>><<>>>$|^<<<<<>>><<>><<>>><<>>><<<<><<>>>><<<<>>>>>$|^<<<>><<<><<>>><<<>><>>>><><<<<><<>>>>><<<>>>$|^<<<>><><<<><>>>><<<<>><<>><<<>>>><<<<>>><<>><>>>$|^<<<><<<>>>><<<<>>><>>><<<>>><<<<>>><<<>><<<>><>>>>$|^<<<<>>>><<<><<>>>><><<<<>>>><<<><<<>><<>>>><<<<>>>>>$|^<<>><<<<<>>>>><<<<<>><<>>><<><<>>>><>><<><<<<<<>>>>>>>$|^<<<<<>>><<<>><>>><<<>>>><><<<><<<>><>>><>><<><<><<><>>><>>$|^<<><<<<>><>>>><<<><<<>>><<>>><<<>><<><<>>>><<<>><<<>><<>>>>>$|^<<<<<>><<>>><<>>><<><>><<>>><<<<<>>>>><<<><>><<<<>><>>>><<><>>$|^<<<<<>>>><><<<<>>>>><<<<>><<>>><<<>><>><<<<>><<>>><<>><<<>><>>>><>$|^<<>><<<<>><<<>>><<<>>>><>><<<<<>><>><<><>>><<>><<><><<<>><<>>>>><<<<<>>>>>$|^<<<<>>><<><<<>><>>><<><<><<>>><<>>>><<<><<<>>><<><<>>>><<<<>>><>><<<<>><<>>><><<>>>>$|^<<<<<>><>>>><<<>><<<<>>>>><<<<<>><>>><<<><<>>>><<<<>>>><<<<>>><<>>>><<<<<>><>><<<>><>>>>$|^<<<<>><<<>>>><<><<>>>><<<<>><>><<><<>><<><<>>>>><<<<<>>><<<>>>><<<<>><<>>><<<>>><<<>>>><<>>>$|^<<<<<>><>><>><<<<>>><<>><<>>>><<<<<>><<>>>><<<><<>>><<<>>>>><<<<<>><<>>><<<>><<>>>><<<<>>><>>><<<<>>>>$|^<<<<<>>>><<<<>>>><<<>>><<<<>>><<>>>><<<<><<>>><><<><<>>>><<><>>><<<<<>><<>>>><<<><<>>>><<<>><<<>><>>>>$|^<<<<<>><>><<><<>>>><>><<<<<>><<>>><<><<>>>><<<>>><<<><<>>><<<>>>><<<<>><<>>>>><<<<>>><<><<>><>><<<<>>><<<>>>>>$|^<<<<<>>>><><<<>><><<<>><<>>>>><<><<>><><<<<>><<>>><<<>><>>>><><<<><<<>>>><<><<>><<<>>>><><<<>>>><<<><<>>><<<>>><<<><<>>>><>>$|^<<<<<>>><<><>>><<<>>><<<<>>><>><<<<>><<>>><><<>>>><<<><<>>><<<<>>><<<>>>>><<<<>>><<<<>>><<>><<<>>>><<>>><<<><<<>>>><<><<><>>><<<<>><<>>><<<>>>><<><<>>>>$",
+    "powers": r"^x$|^x.$|^xxxx$|^xxxxxxxx$|^xxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$",
+    "long-count": r"^0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111$",
+    "alphabetical": r"es.n|r. r|e e| ae|a t|ne s|^rer|r es|^.nt|r sn",
+}
+
 BARTOLI_HUMANS = {
     "warmup": r"foo",
     "anchors": r"k$",
@@ -114,6 +133,11 @@ def main():
     print('')
     print("BARTOLI_GP: ")
     for instance, regex_str in BARTOLI_GP.items():
+        compute(instance, regex_str)
+
+    print('')
+    print("NORVIG: ")
+    for instance, regex_str in NORVIG.items():
         compute(instance, regex_str)
 
 if __name__ == '__main__':

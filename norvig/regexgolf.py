@@ -93,7 +93,7 @@ def main():
     right_list = file_get_contents(instance_name, 'right.txt')
 
     solution = findregex(left_list, right_list)
-    verify(solution, left_list, right_list)
+    # verify(solution, left_list, right_list)
 
     anwser = (len(solution), solution)
     pprint(anwser)
