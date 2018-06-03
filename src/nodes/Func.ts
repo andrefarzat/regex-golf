@@ -18,6 +18,7 @@ export enum FuncTypes {
     anyChar = '.•',
     optional = '•?',
     backref = "\\#•",
+    wordBoundary = "\\b•",
 }
 
 

@@ -8,6 +8,7 @@ import { NOTFOUND } from "dns";
 
 export default class Neighborhood {
     public constructor(public solution: Individual, public program: BaseProgram) {}
+    public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
 
     public get factory() {
         return this.program.factory;
@@ -45,6 +46,11 @@ export default class Neighborhood {
                 let neo = this.factory.replaceNode(solution, terminal, new Terminal(char));
                 if (neo.isValid()) yield neo;
             }
+
+            for (let specialChar of this.specialChars) {
+                let neo = this.factory.replaceNode(solution, terminal, new Terminal(specialChar));
+                if (neo.isValid()) yield neo;
+            }
         }
 
         // Concatenating
@@ -52,6 +58,11 @@ export default class Neighborhood {
             for (let node of nodes) {
                 let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
                 if (neo.isValid()) yield neo;
+
+                for (let specialChar of this.specialChars) {
+                    let neo = this.factory.concatenateToNode(solution, node, new Terminal(specialChar));
+                    if (neo.isValid()) yield neo;
+                }
             }
         }
 

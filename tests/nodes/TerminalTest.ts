@@ -33,4 +33,16 @@ export default class TerminalTest {
         Expect(terminal.toDot(5)).toBe(expectedResult);
     }
 
+    @Test('Check if given special terminal is represented correctly')
+    @TestCase(`\\b`)
+    @TestCase(`\\B`)
+    @TestCase(`\\w`)
+    @TestCase(`\\W`)
+    @TestCase(`\\d`)
+    @TestCase(`\\D`)
+    public testSpecialTerminals(char: string) {
+        let terminal = new Terminal(char);
+        Expect(terminal.toString()).toBe(char);
+    }
+
 }
