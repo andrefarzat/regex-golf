@@ -7,8 +7,6 @@ PROGRAMS = ['ILS_Shrink']
 INSTANCES = """warmup, anchors, ranges, backrefs, abba, aman-aplan, prime, four, order,
                triples, glob, balance, powers, long-count, alphabetical""".split(',')[:8]
 
-INSTANCES = ["ranges"]
-
 SEEDS = [4105328976, 6370951248, 9431657082, 1874029365, 5691784320, 8392760514,
          4612780539, 8261384957, 2463075891, 9135874206, 7095231486, 9842301657,
          2196735084, 9067852413, 2405681973, 2738495106, 1069782534, 3018795246,
