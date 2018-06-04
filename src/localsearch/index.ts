@@ -183,7 +183,7 @@ function main() {
             csvLine.push(bestSolution.fitness); // Melhor_fitness
             csvLine.push(bestSolution.ourFitness); // Nossa_fitness
             csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
-            csvLine.push(startTime.diff(bestSolution.createdDate, 'milliseconds')); // Tempo_para_encontrar_melhor_solucao
+            csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds'))); // Tempo_para_encontrar_melhor_solucao
         } else {
             csvLine.push('N/A'); // Melhor_Solucao
             csvLine.push('N/A'); // Melhor_fitness
@@ -195,10 +195,9 @@ function main() {
         let totalTime = moment(program.endTime).diff(program.startTime, 'milliseconds');
         csvLine.push(totalTime); // Tempo_total
         csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
-        csvLine.push(`\n`); // Break line
 
         let filepath = path.join(__dirname, '..', '..', 'results', flags.csv);
-        fs.appendFileSync(filepath, csvLine.join(','));
+        fs.appendFileSync(filepath, csvLine.join(',') + `\n`);
     }();
 
     logger.logProgramEnd();
