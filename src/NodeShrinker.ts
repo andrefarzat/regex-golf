@@ -279,6 +279,12 @@ export default class NodeShrinker {
 
         let leftStr = left.toString();
 
+        if (node.repetitionNumber == '1,') {
+            left = new Func(FuncTypes.oneOrMore, new Terminal(), left);
+            let func = new Func(FuncTypes.concatenation, left, right);
+            return func;
+        }
+
         if (right.is(NodeTypes.terminal)) {
             let rightStr = right.toString();
 

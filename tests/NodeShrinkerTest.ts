@@ -1,10 +1,12 @@
 import { Expect, Test, TestCase, TestFixture, IgnoreTest, FocusTest } from "alsatian";
 
 import IndividualFactory from '../src/models/IndividualFactory';
-import Func from "../src/nodes/Func";
+import Func, { FuncTypes } from "../src/nodes/Func";
 import Terminal from "../src/nodes/Terminal";
 import Individual from "../src/models/Individual";
 import { NodeTypes } from "../src/nodes/Node";
+import RepetitionFunc from "../src/nodes/RepetitionFunc";
+import NodeShrinker from "../src/NodeShrinker";
 
 
 @TestFixture('NodeShrinkerTest')
@@ -104,5 +106,12 @@ export class NodeShrinkerTest {
 
         let shrunk = ind.shrink();
         Expect(shrunk.toString()).toBe('ab.');
+    }
+
+    @Test('Test transforming {1,} into +')
+    public testSimpleRepetitionIntoOneAndMore() {
+        let func = new RepetitionFunc(new Terminal('a'), new Terminal('b'));
+        func.repetitionNumber = '1,';
+        Expect(NodeShrinker.shrink(func).toString()).toBe('a+b');
     }
 }
