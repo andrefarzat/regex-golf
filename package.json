@@ -25,7 +25,6 @@
     "ts-node": "^3.3.0",
     "tslint": "^5.7.0",
     "typescript": "^2.5.2",
-    "webpack": "^3.6.0",
-    "webworker-ng": "^0.6.19"
+    "webpack": "^3.6.0"
   }
 }

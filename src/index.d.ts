@@ -1,7 +1,9 @@
 
+declare function postMessage(arg: any): void;
+declare var self: any;
 
-declare module 'webworker-ng' {
-    export class WebWorker {
+declare module 'webworker-threads' {
+    export class Worker {
         constructor(...args: any[]);
 
         postMessage(arg: any): void;

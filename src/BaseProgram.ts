@@ -3,7 +3,7 @@ import Individual from "./models/Individual";
 import IndividualFactory from "./models/IndividualFactory";
 import Terminal from "./nodes/Terminal";
 import Utils from "./Utils";
-import { WebWorker } from 'webworker-ng';
+import * as cp from 'child_process';
 
 
 export default abstract class BaseProgram {
@@ -17,7 +17,7 @@ export default abstract class BaseProgram {
     public endTime: Date;
     public seed: number;
     public index: number;
-    public worker: any;
+    public worker = cp.fork(__dirname + '/sub.js');
 
     public get validLeftChars(): string[] {
         return Object.keys(this.chars.left);
@@ -39,39 +39,6 @@ export default abstract class BaseProgram {
         let instance = Utils.loadInstance(instanceName);
         this.left = instance.left;
         this.right = instance.right;
-
-        this.worker = new WebWorker((self: any, left: string[], right: string[]) => {
-            self.onmessage = function (regex: RegExp) {
-                let hasTimedOut = false;
-                setTimeout(() => {
-                    hasTimedOut = true;
-                    self.postMessage(false);
-                }, 2000);
-
-                let result = {
-                    matchesOnLeft: 0,
-                    ourFitness: 0,
-                    matchesOnRight: 0,
-                };
-
-                for (let name of left) {
-                    if (regex.test(name)) {
-                        result.matchesOnLeft += 1;
-                        result.ourFitness += 1;
-                    }
-                }
-
-                for (let name of right) {
-                    if (regex.test(name)) {
-                        result.matchesOnRight += 1;
-                    } else {
-                        result.ourFitness += 1;
-                    }
-                }
-
-                if (!hasTimedOut) self.postMessage(result);
-            };
-        }, { timeout: 10000, defines: [this.left, this.right] });
     }
 
     public init(): void {
@@ -129,7 +96,7 @@ export default abstract class BaseProgram {
     }
 
     public async evaluate(ind: Individual): Promise<number> {
-        if (ind.isEvaluated) return ind.fitness;
+        if (ind.isEvaluated) return Promise.resolve(ind.fitness);
 
         ind.matchesOnLeft = 0;
         ind.matchesOnRight = 0;
@@ -138,26 +105,25 @@ export default abstract class BaseProgram {
         ind.evaluationIndex = this.evaluationCount;
 
         return new Promise<number>((resolve, reject) => {
-            setTimeout(() => {
-                ind.hasTimedOut = true;
-                reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
-            }, 1000);
-
-            console.log("Evaluating", ind.toRegex());
-
-            this.worker.postMessage(ind.toRegex());
-            this.worker.onmessage = (result: any) => {
-                if (result === false) {
-                    console.log('Timedout');
-                    reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
-                } else {
-                    console.log('result', result);
-                    ind.matchesOnLeft = result.matchesOnLeft;
-                    ind.matchesOnRight = result.matchesOnRight;
-                    ind.ourFitness = result.ourFitness;
-                    resolve();
-                }
+            let hasFinished = false;
+            this.worker.send({regex: ind.toString(), left: this.left, right: this.right});
+            let onmessage = function(result: any) {
+                hasFinished = true;
+                ind.matchesOnLeft = result.matchesOnLeft;
+                ind.matchesOnRight = result.matchesOnRight;
+                ind.ourFitness = result.ourFitness;
+                resolve(ind.fitness);
             };
+
+            this.worker.once('message', onmessage);
+
+            setTimeout(() => {
+                if (hasFinished) return;
+                ind.hasTimedOut = true;
+                console.log(`Timed out in ${this.evaluationCount}`);
+                this.worker.removeListener('message', onmessage);
+                reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
+            }, 500);
         });
     }
 
@@ -166,6 +132,6 @@ export default abstract class BaseProgram {
     }
 
     public finish() {
-        this.worker.terminate();
+        this.worker.disconnect();
     }
 }
