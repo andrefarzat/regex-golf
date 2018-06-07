@@ -205,8 +205,7 @@ export default class NodeShrinker {
             }
 
             let neoLeft = new IndividualFactory([], []).createFromString(leftStr);
-            let func = new Func(FuncTypes.list, neoLeft.tree, right);
-            return this.shrinkFuncList(func);
+            return new Func(FuncTypes.list, neoLeft.tree, right);
         }
 
         if (node.equals(right)) {
