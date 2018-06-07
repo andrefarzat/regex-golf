@@ -1,11 +1,21 @@
 #!/usr/bin/env python
 import datetime, os
 from subprocess import call
+import sys
 
 PROGRAMS = ['ILS_Shrink']
 
 INSTANCES = """warmup, anchors, ranges, backrefs, abba, aman-aplan, prime, four, order,
-               triples, glob, balance, powers, long-count, alphabetical""".split(',')[:8]
+               triples, glob, balance, powers, long-count, alphabetical""".split(',')
+
+i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
+
+INSTANCES_TO_EXECUTE = [
+    INSTANCES[:4],
+    INSTANCES[4:8],
+    INSTANCES[8:12],
+    INSTANCES[12:]
+]
 
 SEEDS = [4105328976, 6370951248, 9431657082, 1874029365, 5691784320, 8392760514,
          4612780539, 8261384957, 2463075891, 9135874206, 7095231486, 9842301657,
@@ -17,7 +27,7 @@ DEPTHS = [5]
 
 
 for program in PROGRAMS:
-    for instance in INSTANCES:
+    for instance in INSTANCES_TO_EXECUTE[i]:
         instance = instance.strip()
         for depth in DEPTHS:
             for index, seed in enumerate(SEEDS):
