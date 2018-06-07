@@ -79,8 +79,7 @@ export default abstract class BaseProgram {
     public async isBest(ind: Individual): Promise<boolean> {
         try {
             let fitness = await this.evaluate(ind);
-            let quantity = this.left.length + this.right.length;
-            return fitness >= quantity;
+            return fitness >= this.getMaxFitness();
         } catch {
             return false;
         }
