@@ -58,7 +58,7 @@ function getProgram(): LocalSearch {
     process.exit(1);
 }
 
-function main() {
+async function main() {
     // 1. Carrega a instância do problema
     // 2. Instância o programa
     let program = getProgram();
@@ -92,7 +92,7 @@ function main() {
         // 6.2. Current Solution is the Best ?
         //      Then -> Add to solutions
         let hasFoundBetter = false;
-        if (program.isBest(currentSolution)) {
+        if (await program.isBest(currentSolution)) {
             program.addSolution(currentSolution);
         }
 
@@ -115,7 +115,13 @@ function main() {
                 logger.logInvalidSolution(neighbor.value);
                 continue;
             }
-            program.evaluate(neighbor.value);
+
+            try {
+                await program.evaluate(neighbor.value);
+            } catch {
+                logger.logTimedoutSolution(neighbor.value);
+            }
+
             logger.logSolution(neighbor.value);
 
             // 6.5.2. Neighbor is better than current solution ?
@@ -133,7 +139,7 @@ function main() {
         //           -> Realizar o restart
         if (!hasFoundBetter) {
             program.addLocalSolution(currentSolution);
-            currentSolution = program.restartFromSolution(currentSolution);
+            currentSolution = await program.restartFromSolution(currentSolution);
             logger.logEmptyLine();
             logger.log(3, `[Jumped to] ${currentSolution.toString()}`);
         }
@@ -201,6 +207,10 @@ function main() {
     }();
 
     logger.logProgramEnd();
+    program.finish();
+    // process.exit();
 }
 
-main();
+(async function() {
+    await main();
+})();

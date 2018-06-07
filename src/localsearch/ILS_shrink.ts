@@ -3,7 +3,7 @@ import Individual from '../models/Individual';
 
 
 export default class ILS_Shrink extends ILS {
-    public restartFromSolution(ind: Individual): Individual {
+    public async restartFromSolution(ind: Individual): Promise<Individual> {
         let shunkCurrentSolution = ind.shrink();
 
         if (!shunkCurrentSolution.isValid()) {
@@ -11,7 +11,11 @@ export default class ILS_Shrink extends ILS {
             return super.restartFromSolution(ind);
         }
 
-        this.evaluate(shunkCurrentSolution);
+        try {
+            await this.evaluate(shunkCurrentSolution);
+        } catch {
+            return super.restartFromSolution(ind);
+        }
 
         return shunkCurrentSolution.isBetterThan(ind)
             ? shunkCurrentSolution

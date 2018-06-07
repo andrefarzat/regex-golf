@@ -3,7 +3,7 @@ import LocalSearch from './LocalSearch';
 
 
 export default class RRLS extends LocalSearch {
-    public restartFromSolution(ind: Individual): Individual {
+    public async restartFromSolution(ind: Individual): Promise<Individual> {
         return this.factory.generateRandom(this.depth);
     }
 }

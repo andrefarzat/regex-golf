@@ -33,16 +33,20 @@ export default abstract class LocalSearch extends BaseProgram {
         this.solutions.push(ind);
     }
 
-    public addLocalSolution(ind: Individual) {
-        this.evaluate(ind);
-        this.localSolutions.push(ind);
+    public async addLocalSolution(ind: Individual) {
+        try {
+            await this.evaluate(ind);
+            this.localSolutions.push(ind);
+        } catch {
+            // pass
+        }
     }
 
     public generateInitialIndividual(): Individual {
         return this.factory.generateRandom(this.depth);
     }
 
-    public abstract restartFromSolution(ind: Individual): Individual;
+    public abstract async restartFromSolution(ind: Individual): Promise<Individual>;
 
     public generateNeighborhood(solution: Individual) {
         let hood = new Neighborhood(solution, this);

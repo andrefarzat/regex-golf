@@ -13,7 +13,13 @@ export default class Logger {
     private shouldLogEmptyLine = false;
     private reportRootDir!: string;
 
-    private csv!: { invalids: fs.WriteStream, solutions: fs.WriteStream, bestLocals: fs.WriteStream, bests: fs.WriteStream };
+    private csv!: {
+        invalids: fs.WriteStream,
+        solutions: fs.WriteStream,
+        bestLocals: fs.WriteStream,
+        bests: fs.WriteStream,
+        timedouts: fs.WriteStream,
+    };
 
     public static create(logLevel: number, program: LocalSearch): Logger {
         let logger = new Logger();
@@ -35,6 +41,7 @@ export default class Logger {
             solutions: fs.createWriteStream(path.join(logger.reportRootDir, 'solutions.csv'), {flags: 'a'}),
             bestLocals: fs.createWriteStream(path.join(logger.reportRootDir, 'bestLocals.csv'), {flags: 'a'}),
             bests: fs.createWriteStream(path.join(logger.reportRootDir, 'bests.csv'), {flags: 'a'}),
+            timedouts: fs.createWriteStream(path.join(logger.reportRootDir, 'timedouts.csv'), {flags: 'a'}),
         };
 
         logger.log(1, `[Program started] ${program.constructor.name} instance: ${program.instanceName} depth: ${program.depth} i: ${program.index} seed: ${program.seed}`);
@@ -86,6 +93,10 @@ export default class Logger {
 
     public logBestLocalSolution(ind: Individual) {
         this.csv.bestLocals.write(ind.toCSV(true) + '\n');
+    }
+
+    public logTimedoutSolution(ind: Individual) {
+        this.csv.timedouts.write(ind.toCSV(true) + '\n');
     }
 
     public logEmptyLine() {

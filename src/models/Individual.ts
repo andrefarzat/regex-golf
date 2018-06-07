@@ -14,6 +14,7 @@ export default class Individual {
     public ourFitness: number = 0;
     public evaluationIndex: number = undefined;
     public createdDate = new Date();
+    public hasTimedOut = false;
 
     public get isEvaluated(): boolean {
         return this.evaluationIndex != undefined;

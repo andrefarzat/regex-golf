@@ -3,7 +3,7 @@ import LocalSearch from './LocalSearch';
 
 
 export default class ILS extends LocalSearch {
-    public restartFromSolution(ind: Individual): Individual {
+    public async restartFromSolution(ind: Individual): Promise<Individual> {
         let count = 5;
 
         while (--count > 0) {
@@ -31,7 +31,12 @@ export default class ILS extends LocalSearch {
             ind = neo;
         }
 
-        this.evaluate(ind);
+        try {
+            await this.evaluate(ind);
+        } catch {
+            // throw new Error("generated an invalid individual");
+        }
+
         return ind;
     }
 }
