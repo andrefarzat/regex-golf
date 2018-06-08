@@ -25,6 +25,8 @@ SEEDS = [4105328976, 6370951248, 9431657082, 1874029365, 5691784320, 8392760514,
 
 DEPTHS = [1, 3, 5]
 
+FOLDER_NAME = 'with-no-timeout'
+
 
 for program in PROGRAMS:
     for instance in INSTANCES_TO_EXECUTE[i]:
@@ -32,7 +34,7 @@ for program in PROGRAMS:
         for depth in DEPTHS:
             for index, seed in enumerate(SEEDS):
                 today = datetime.date.today().strftime("%Y-%m-%d")
-                resultsDir = "%s" % (today)
+                resultsDir = FOLDER_NAME
                 absResultsDir = "%s/results/%s" % (os.getcwd(), resultsDir)
 
                 if not os.path.isdir(absResultsDir):
