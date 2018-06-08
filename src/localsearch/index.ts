@@ -86,7 +86,7 @@ async function main() {
         //           -> Stop!
         if (program.maxTimeout.diff(new Date()) < 0) {
             program.hasTimedOut = true;
-            break;
+            // break;
         }
 
         // 6.2. Current Solution is the Best ?
@@ -208,7 +208,6 @@ async function main() {
 
     logger.logProgramEnd();
     program.finish();
-    // process.exit();
 }
 
 (async function() {

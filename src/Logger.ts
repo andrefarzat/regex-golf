@@ -79,7 +79,7 @@ export default class Logger {
     }
 
     public logSolution(ind: Individual) {
-        this.csv.solutions.write(ind.toCSV() + '\n');
+        // this.csv.solutions.write(ind.toCSV() + '\n');
     }
 
     public logBestSolution(ind: Individual) {
