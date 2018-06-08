@@ -54,6 +54,8 @@ export default class Logger {
         this.csv.solutions.end();
         this.csv.bestLocals.end();
         this.csv.bests.end();
+
+        this.log(1, `[Program finished] total time: ${this.program.endTime.getTime() - this.program.startTime.getTime()}`);
     }
 
     public setLogLevel(level: number): void {
