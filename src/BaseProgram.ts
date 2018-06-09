@@ -125,7 +125,7 @@ export default abstract class BaseProgram {
                 this.worker.kill();
                 this.worker = cp.fork(__dirname + '/sub.js');
                 reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
-            }, 500);
+            }, 1000);
         });
     }
 
