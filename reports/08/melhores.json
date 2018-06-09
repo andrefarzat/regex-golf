@@ -1,0 +1,17 @@
+{
+    "warmup": "foo",
+    "anchors": "k$",
+    "ranges": "^[a-f]*$",
+    "backrefs": "^[a-t][e-l]|[c-t][e-t][a-o][tuv]|[g-l]$",
+    "abba": "z|u[rst]|no|rs|^oc|[^c]h|t[a-e]|t$",
+    "aman-aplan": "^b|ke|[e-r]d|a[h-k]|[n-x][e-o]\\w$",
+    "prime": "(x)*^x?(x|\\Bxx*)\\2\\b$",
+    "four": "([^h])[o-y]\\1|mg|o[i-y]|o[i-o]$",
+    "order": "^[a-g][c-o][c-t][e-t]|sy|o$",
+    "triples": "6$|4[^3]2|00|9[01][2-5]\\B|[34][0-7][2-7][3-7]",
+    "glob": "^w|^p|[*-a]i|r[h-s]|fa|[cd]$",
+    "balance": "([^]>)*<<+>\\W\\W>\\W+\\W>>\\1$",
+    "powers": "^x$|(^x*x?)\\1$",
+    "long-count": "^$",
+    "alphabetical": "^raet r|a[^e] e[e-r]|[e-t][st] \\w[e-r][e-t][e-t][e-t]|[n-r]at$"
+}

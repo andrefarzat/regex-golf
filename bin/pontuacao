@@ -5,6 +5,25 @@ from pathlib import Path
 from typing import List
 
 
+OURS = {
+    "warmup": r"foo",
+    "anchors": r"k$",
+    "ranges": r"^[a-f]*$",
+    "backrefs": r"^[a-t][e-l]|[c-t][e-t][a-o][tuv]|[g-l]$",
+    "abba": r"z|u[rst]|no|rs|^oc|[^c]h|t[a-e]|t$",
+    "aman-aplan": r"^b|ke|[e-r]d|a[h-k]|[n-x][e-o]\w$",
+    "prime": r"(x)*^x?(x|\Bxx*)\2\b$",
+    "four": r"([^h])[o-y]\1|mg|o[i-y]|o[i-o]$",
+    "order": r"^[a-g][c-o][c-t][e-t]|sy|o$",
+    "triples": r"6$|4[^3]2|00|9[01][2-5]\B|[34][0-7][2-7][3-7]",
+    "glob": r"^w|^p|[*-a]i|r[h-s]|fa|[cd]$",
+    "balance": r"(.>)*<<+>\W\W>\W+\W>>\1$",
+    "powers": r"^x$|(^x*x?)\1$",
+    "long-count": r"^$",
+    "alphabetical": r"^raet r|a[^e] e[e-r]|[e-t][st] \w[e-r][e-t][e-t][e-t]|[n-r]at$",
+}
+
+
 NORVIG = {
     "warmup": r"f.o",
     "anchors": r"k$",
@@ -138,6 +157,11 @@ def main():
     print('')
     print("NORVIG: ")
     for instance, regex_str in NORVIG.items():
+        compute(instance, regex_str)
+
+    print('')
+    print('OURS: ')
+    for instance, regex_str in OURS.items():
         compute(instance, regex_str)
 
 if __name__ == '__main__':
