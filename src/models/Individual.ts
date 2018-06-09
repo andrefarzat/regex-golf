@@ -27,7 +27,7 @@ export default class Individual {
     public toCSV(withDot: boolean = false): string {
         let arr = [
             this.toString(),
-            this.shrink().toCSV(),
+            this.shrink().toString(),
             this.fitness,
             this.ourFitness,
             this.evaluationIndex,
