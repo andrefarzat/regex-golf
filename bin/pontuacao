@@ -20,7 +20,7 @@ OURS = {
     "balance": r"(.>)*<<+>\W\W>\W+\W>>\1$",
     "powers": r"^x$|(^x*x?)\1$",
     "long-count": r"^$",
-    "alphabetical": r"^raet r|a[^e] e[e-r]|[e-t][st] \w[e-r][e-t][e-t][e-t]|[n-r]at$",
+    "alphabetical": r"^raet\sr|a[^e]\se[e-r]|[e-t][st]\s\w[e-r][e-t][e-t][e-t]|[n-r]at$",
 }
 
 
@@ -141,7 +141,7 @@ def compute(instance, regex_str):
     bartoli = compute_with_bartoli_fitness(instance, regex_str)
     ours = compute_with_bartoli_fitness(instance, regex_str)
     # print('"%s": [%d, %d],' % (instance, bartoli, ours))
-    print('"%s": %d,' % (instance, bartoli))
+    print('"%s": [%d, %d],' % (instance, bartoli, len(regex_str)))
 
 
 def main():

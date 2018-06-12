@@ -16,3 +16,4 @@
 * Bartoli's automatic regex golf player: http://regex.inginf.units.it/golf/
 * Norvig's Regex golf implementation: https://www.oreilly.com/learning/regex-golf-with-peter-norvig
 * Best known human anwsers: https://gist.github.com/jonathanmorley/8058871
+* Different fitness function: http://www.spoj.com/SHORTEN/problems/REGEX014/
