@@ -51,7 +51,10 @@ OR = '|'.join # Join a sequence of strings with '|' between them
 def regex_parts(winners, losers):
     "Return parts that match at least one winner, but no loser."
     wholes = {'^' + w + '$'  for w in winners}
-    parts = {d for w in wholes for p in subparts(w) for d in dotify(p)}
+    parts = {d
+        for w in wholes
+            for p in subparts(w)
+                for d in dotify(p)}
     return wholes | {p for p in parts if not matches(p, losers)}
 
 
