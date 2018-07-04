@@ -17,7 +17,7 @@ export default abstract class BaseProgram {
     public endTime: Date;
     public seed: number;
     public index: number;
-    public worker = cp.fork(__dirname + '/sub.js');
+    public worker = cp.fork(__dirname + '/sub.js', [], {execArgv: ['--debug=5859']});
 
     public get validLeftChars(): string[] {
         return Object.keys(this.chars.left);
@@ -123,7 +123,7 @@ export default abstract class BaseProgram {
                 console.log(`Timed out in ${this.evaluationCount}`);
                 this.worker.removeListener('message', onmessage);
                 this.worker.kill();
-                this.worker = cp.fork(__dirname + '/sub.js');
+                this.worker = cp.fork(__dirname + '/sub.js', [], {execArgv: ['--debug=5859']});
                 reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
             }, 1000);
         });

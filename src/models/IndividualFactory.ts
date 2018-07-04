@@ -59,7 +59,7 @@ export default class IndividualFactory {
 
     public parseExpression(expression: regexp.Node.Expression): Func | Terminal {
         if (expression.type == 'Char') {
-            return new Terminal((expression as any).value);
+            return this.parseChar(expression);
         } else if (expression.type == 'Assertion' && expression.kind == '^') {
             return new Func(Func.Types.lineBegin);
         } else if (expression.type == 'Assertion' && expression.kind == '$') {
@@ -97,6 +97,16 @@ export default class IndividualFactory {
             return node;
         } else {
             return new Terminal((expression as any).value);
+        }
+    }
+
+    public parseChar(char: regexp.Node.Char): Func | Terminal {
+        if (char.kind === 'simple') {
+            return new Terminal(char.value);
+        } else if (char.kind === 'meta') {
+            if (char.value === '.') return new Func(FuncTypes.anyChar);
+        } else {
+            throw new Error(`No kind ${char.kind} on Char`);
         }
     }
 

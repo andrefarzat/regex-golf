@@ -7,7 +7,6 @@ import Constructed_RRLS from "../../src/localsearch/Constructed_RRLS";
 
 export default class Constructed_RRLSTest {
 
-    @FocusTest
     @TestCase("from python file")
     public testGenerateInitialIndividual() {
         let rrls = new Constructed_RRLS('warmup');
