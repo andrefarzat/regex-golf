@@ -42,7 +42,14 @@ def findregex(winners, losers, k=4):
 
 def matches(regex, strings):
     "Return a set of all the strings that are matched by regex."
-    return {s for s in strings if re.search(regex, s)}
+    result = set()
+    for s in strings:
+        try:
+            if re.search(regex, s):
+                result.add(s)
+        except:
+            pass
+    return result
 
 
 OR = '|'.join # Join a sequence of strings with '|' between them
@@ -86,7 +93,7 @@ def file_get_contents(instance_name, filename):
     for line in content.split('\n'):
         line = line.strip()
         if line != '':
-            lines.append(line)
+            lines.append(line.replace("*", r"\*"))
     return set(lines)
 
 def main():
