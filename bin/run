@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import datetime, os
 from subprocess import call
+from threading import Thread
 import sys
 
 PROGRAMS = ['Constructed_RRLS', 'ILS_Shrink']
@@ -23,9 +24,16 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          4323456912, 8361101999, 9935136846, 5217407358, 5619256299, 4560422870,
          5236888092, 1337360711, 7659837985, 2521100877, 8801535107, 9651599436]
 
-DEPTHS = [1, 3, 5]
+DEPTHS = [5]
+
+TIMEOUT = 150  # two minutes
 
 FOLDER_NAME = 'norvig'
+
+
+def execute(cmd):
+    cmd = list(map(str, cmd))
+    call(cmd, shell=os.name == 'nt')
 
 
 for program in PROGRAMS:
@@ -55,5 +63,7 @@ for program in PROGRAMS:
                        "--log-level", 1,
                        "--csv", csvFilePath]
 
-                cmd = list(map(str, cmd))
-                call(cmd, shell=os.name == 'nt')
+                thread = Thread(target=execute, args=(cmd,))
+                thread.start()
+                thread.join(timeout=TIMEOUT)
+

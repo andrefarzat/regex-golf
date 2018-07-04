@@ -13,13 +13,13 @@
                 "run-script",
                 "localsearch",
                 "--",
-                "--name", "ILS_Shrink",
-                "--instance", "warmup",
+                "--name", "Constructed_RRLS",
+                "--instance", "powers",
                 "--depth", "5",
                 "--index", "0",
-                "--seed", "4105328976",
+                "--seed", "2967301147",
                 "--log-level", "1",
-                "--csv", "HOJE/ILS_Shrink.csv"
+                "--csv", "HOJE/Constructed_RRLS.csv"
             ],
             "preLaunchTask": "tsc: build - tsconfig.json",
             "port": 9229
@@ -47,7 +47,15 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/localsearch/index.ts",
-            "args": ["--name", "ILS_Shrink", "--instance", "ranges", "--depth", "5", "--index", "0", "--seed", "4105328976", "--log-level", "1", "--csv", "HOJE/ILS_Shrink.csv"],
+            "args": [
+                "--name","Constructed_RRLS",
+                "--instance", "powers",
+                "--depth", "1",
+                "--index", "0",
+                "--seed", "2967301147",
+                "--log-level", "1",
+                "--csv", "HOJE/Constructed_RRLS.csv"
+            ],
             "protocol": "inspector",
             "internalConsoleOptions": "openOnSessionStart",
             "preLaunchTask": "tsc: build - tsconfig.json",
