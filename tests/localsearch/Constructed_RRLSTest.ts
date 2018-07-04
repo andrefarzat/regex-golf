@@ -7,17 +7,17 @@ import Constructed_RRLS from "../../src/localsearch/Constructed_RRLS";
 
 export default class Constructed_RRLSTest {
 
-    @TestCase("from python file")
-    public testGenerateInitialIndividual() {
-        let rrls = new Constructed_RRLS('warmup');
+    @Test("from python file")
+    @TestCase('warmup', 'f.o')
+    public testGenerateInitialIndividual(instanceName: string, expectedResult: string) {
+        let rrls = new Constructed_RRLS(instanceName);
         rrls.init();
 
-        let expectedResult = 'f.o';
         let result = rrls.generateInitialIndividual();
         Expect(result.toString()).toEqual(expectedResult);
     }
 
-    @TestCase("subparts")
+    @Test("subparts")
     public testSubparts() {
         let rrls = new Constructed_RRLS('warmup');
 
@@ -26,7 +26,7 @@ export default class Constructed_RRLSTest {
         Expect(Array.from(result)).toEqual(Array.from(expectedResult));
     }
 
-    @TestCase("dotify")
+    @Test("dotify")
     public testDotify() {
         let rrls = new Constructed_RRLS('warmup');
 
@@ -35,11 +35,12 @@ export default class Constructed_RRLSTest {
         Expect(Array.from(result)).toEqual(Array.from(expectedResult));
     }
 
-    @TestCase("product")
+    @Test("product")
     public testProduct() {
         let rrls = new Constructed_RRLS('warmup');
 
-        let expectedResult = [['f', 'a', '1'],
+        let expectedResult = [
+            ['f', 'a', '1'],
             ['f', 'a', '2'],
             ['f', 'a', '3'],
             ['f', 'b', '1'],
@@ -72,7 +73,7 @@ export default class Constructed_RRLSTest {
     }
 
     @IgnoreTest('Not implemented')
-    @TestCase("regex_parts")
+    @Test("regex_parts")
     public testRegexParts() {
         let rrls = new Constructed_RRLS('warmup');
 
@@ -82,7 +83,7 @@ export default class Constructed_RRLSTest {
         // Expect(Array.from(result)).toEqual(Array.from(expectedResult));
     }
 
-    // @TestCase("findregex")
+    // @Test("findregex")
     // public testFindRegex() {
     //     let rrls = new Constructed_RRLS('warmup');
 
