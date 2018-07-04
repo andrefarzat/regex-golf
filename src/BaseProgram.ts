@@ -1,7 +1,5 @@
-import Func from "./nodes/Func";
 import Individual from "./models/Individual";
 import IndividualFactory from "./models/IndividualFactory";
-import Terminal from "./nodes/Terminal";
 import Utils from "./Utils";
 import * as cp from 'child_process';
 
@@ -105,7 +103,7 @@ export default abstract class BaseProgram {
 
         return new Promise<number>((resolve, reject) => {
             let hasFinished = false;
-            // this.worker.send({ regex: ind.toString(), left: this.left, right: this.right });
+            this.worker.send({ regex: ind.toString(), left: this.left, right: this.right });
 
             let onmessage = function (result: any) {
                 hasFinished = true;
@@ -123,7 +121,7 @@ export default abstract class BaseProgram {
                 console.log(`Timed out in ${this.evaluationCount}`);
                 this.worker.removeListener('message', onmessage);
                 this.worker.kill();
-                // this.worker = cp.fork(__dirname + '/sub.js');
+                this.worker = cp.fork(__dirname + '/sub.js');
                 reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
             }, 1000);
         });
