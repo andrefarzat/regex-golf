@@ -11,7 +11,7 @@
 
 ## Other urls
 
-* Rregex golf: https://alf.nu/RegexGolf
+* Regex golf: https://alf.nu/RegexGolf
 * Dot vizualizer: http://www.webgraphviz.com/
 * Bartoli's automatic regex golf player: http://regex.inginf.units.it/golf/
 * Norvig's Regex golf implementation: https://www.oreilly.com/learning/regex-golf-with-peter-norvig

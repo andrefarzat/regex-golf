@@ -39,8 +39,8 @@ export default class Func implements Node {
 
     public constructor(type?: FuncTypes, left?: Node, right?: Node) {
         if (type) this.type = type;
-        if (left) this.left = left;
-        if (right) this.right = right;
+        this.left = left ? left : new Terminal();
+        this.right = right ? right : new Terminal();
     }
 
     public is(type: NodeTypes | FuncTypes): boolean {
