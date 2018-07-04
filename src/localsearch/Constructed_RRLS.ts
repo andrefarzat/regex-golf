@@ -12,7 +12,7 @@ import * as path from 'path';
  */
 export default class Constructed_RRLS extends RRLS {
     public generateInitialIndividual(): Individual {
-        let cmd = path.join(__dirname, '..', 'norvig', 'regexgolf.py');
+        let cmd = path.join('norvig', 'regexgolf.py');
         let norvigResult = cp.execSync(`${cmd} ${this.instanceName}`);
         let str = eval(norvigResult.toString());
         return this.factory.createFromString(str);
