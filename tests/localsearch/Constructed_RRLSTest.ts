@@ -7,8 +7,30 @@ import Constructed_RRLS from "../../src/localsearch/Constructed_RRLS";
 
 export default class Constructed_RRLSTest {
 
+    @FocusTest
     @Test("from python file")
+    @TestCase('abba', '.u|.hi|te|z|gy|t$|rs|rit')
+    @TestCase('alphabetical', 'es.n|r. r|e e| ae|a t|ne s|^rer|r es|^.nt|r sn')
+    @TestCase('aman-aplan', '^r|oo|d$|^..v|r..$|x|la|eb|ak|ten')
+    @TestCase('anchors', 'k$')
+    @TestCase('backrefs', 'l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g')
+    @TestCase('balance', '^.>$|^<><>$|^<<>>$|^<<<><<><>>>>$|^<<<><>><<<>>>>$|^<<<<<>>>><>><<>>$|^<<<<<>>><>><<<>>>><<>>$|^<<<<>>><<<<>><>><<<>>>>>$|^<<<<>>><<<><<>>><><<>>>><<>>$|^<<<>>><<><<<<>>>><<><<<>>>>>$|^<<<<<>>>><<<><>>>><<<<<>><>>>>$|^<<<<><<>>><<<>>>>><<<<<>><>>><<>>>$|^<<<<<>>><<>><<>>><<>>><<<<><<>>>><<<<>>>>>$|^<<<>><<<><<>>><<<>><>>>><><<<<><<>>>>><<<>>>$|^<<<>><><<<><>>>><<<<>><<>><<<>>>><<<<>>><<>><>>>$|^<<<><<<>>>><<<<>>><>>><<<>>><<<<>>><<<>><<<>><>>>>$|^<<<<>>>><<<><<>>>><><<<<>>>><<<><<<>><<>>>><<<<>>>>>$|^<<>><<<<<>>>>><<<<<>><<>>><<><<>>>><>><<><<<<<<>>>>>>>$|^<<<<<>>><<<>><>>><<<>>>><><<<><<<>><>>><>><<><<><<><>>><>>$|^<<><<<<>><>>>><<<><<<>>><<>>><<<>><<><<>>>><<<>><<<>><<>>>>>$|^<<<<<>><<>>><<>>><<><>><<>>><<<<<>>>>><<<><>><<<<>><>>>><<><>>$|^<<<<<>>>><><<<<>>>>><<<<>><<>>><<<>><>><<<<>><<>>><<>><<<>><>>>><>$|^<<>><<<<>><<<>>><<<>>>><>><<<<<>><>><<><>>><<>><<><><<<>><<>>>>><<<<<>>>>>$|^<<<<>>><<><<<>><>>><<><<><<>>><<>>>><<<><<<>>><<><<>>>><<<<>>><>><<<<>><<>>><><<>>>>$|^<<<<<>><>>>><<<>><<<<>>>>><<<<<>><>>><<<><<>>>><<<<>>>><<<<>>><<>>>><<<<<>><>><<<>><>>>>$|^<<<<>><<<>>>><<><<>>>><<<<>><>><<><<>><<><<>>>>><<<<<>>><<<>>>><<<<>><<>>><<<>>><<<>>>><<>>>$|^<<<<<>><>><>><<<<>>><<>><<>>>><<<<<>><<>>>><<<><<>>><<<>>>>><<<<<>><<>>><<<>><<>>>><<<<>>><>>><<<<>>>>$|^<<<<<>>>><<<<>>>><<<>>><<<<>>><<>>>><<<<><<>>><><<><<>>>><<><>>><<<<<>><<>>>><<<><<>>>><<<>><<<>><>>>>$|^<<<<<>><>><<><<>>>><>><<<<<>><<>>><<><<>>>><<<>>><<<><<>>><<<>>>><<<<>><<>>>>><<<<>>><<><<>><>><<<<>>><<<>>>>>$|^<<<<<>>>><><<<>><><<<>><<>>>>><<><<>><><<<<>><<>>><<<>><>>>><><<<><<<>>>><<><<>><<<>>>><><<<>>>><<<><<>>><<<>>><<<><<>>>><>>$|^<<<<<>>><<><>>><<<>>><<<<>>><>><<<<>><<>>><><<>>>><<<><<>>><<<<>>><<<>>>>><<<<>>><<<<>>><<>><<<>>>><<>>><<<><<<>>>><<><<><>>><<<<>><<>>><<<>>>><<><<>>>>$')
+    @TestCase('four', 'o.o|ara|vi|es|el..')
+    // @TestCase('glob', '')
+    @TestCase('it-never-ends', 'u$')
+    @TestCase('long-count', '^0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111$')
+    @TestCase('movies', 't.. |A|L|E')
+    @TestCase('names', 'e.$|a.$|a.o')
+    @TestCase('order', 'lo|^c|fi|os|de|cc|ps')
+    @TestCase('powers', '^x$|^x.$|^xxxx$|^xxxxxxxx$|^xxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$|^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$')
+    // @TestCase('powers-2', '')
+    // @TestCase('prime', '')
+    @TestCase('ranges', 'de|a..$|.b|ad|ff|ee')
+    // @TestCase('regex-of-regex', '')
+    // @TestCase('substraction', '')
+    @TestCase('triples', '4.2|.17|1.4|06|55|009|00$|602|0.2|003|015')
     @TestCase('warmup', 'f.o')
+    @TestCase('words', '^r|oo|d$|^..v|r..$|x|la|eb|ak|ten')
     public testGenerateInitialIndividual(instanceName: string, expectedResult: string) {
         let rrls = new Constructed_RRLS(instanceName);
         rrls.init();

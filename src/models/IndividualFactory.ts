@@ -79,7 +79,32 @@ export default class IndividualFactory {
             } else {
                 throw new Error('Unkown expression.type == Repetition');
             }
-        } else if (expression.type == 'CharacterClass') {
+        } else if (expression.type === 'Disjunction') {
+            let exp = expression as any;
+            let left = exp.left ? this.parseExpression(exp.left) : new Terminal();
+            let right = exp.right ? this.parseExpression(exp.right) : new Terminal();
+            return new Func(FuncTypes.or, left, right);
+        } else if (expression.type === 'Alternative') {
+            let nodes = expression.expressions.map(exp => this.parseExpression(exp));
+            let mainFunc = new Func(FuncTypes.concatenation);
+
+            let func = mainFunc;
+            for (let node of nodes) {
+                if (!func.left) {
+                    func.left = node;
+                } else {
+                    let right = new Func(FuncTypes.concatenation, node);
+                    func.right = right;
+                    func = right;
+                }
+            }
+
+            if (!func.right) {
+                func.right = new Terminal();
+            }
+
+            return mainFunc;
+        } else if (expression.type === 'CharacterClass') {
             if (expression.expressions.length == 1) {
                 let n = expression.expressions[0];
                 if (n.type === 'ClassRange') {

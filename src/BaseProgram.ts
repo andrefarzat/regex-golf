@@ -105,9 +105,9 @@ export default abstract class BaseProgram {
 
         return new Promise<number>((resolve, reject) => {
             let hasFinished = false;
-            this.worker.send({regex: ind.toString(), left: this.left, right: this.right});
+            // this.worker.send({ regex: ind.toString(), left: this.left, right: this.right });
 
-            let onmessage = function(result: any) {
+            let onmessage = function (result: any) {
                 hasFinished = true;
                 ind.matchesOnLeft = result.matchesOnLeft;
                 ind.matchesOnRight = result.matchesOnRight;
@@ -123,7 +123,7 @@ export default abstract class BaseProgram {
                 console.log(`Timed out in ${this.evaluationCount}`);
                 this.worker.removeListener('message', onmessage);
                 this.worker.kill();
-                this.worker = cp.fork(__dirname + '/sub.js');
+                // this.worker = cp.fork(__dirname + '/sub.js');
                 reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
             }, 1000);
         });
