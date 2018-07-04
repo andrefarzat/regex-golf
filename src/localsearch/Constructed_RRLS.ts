@@ -3,6 +3,7 @@ import Terminal from '../nodes/Terminal';
 import Func from '../nodes/Func';
 import RRLS from './RRLS';
 import * as cp from 'child_process';
+import * as os from 'os';
 
 
 /**
@@ -11,7 +12,8 @@ import * as cp from 'child_process';
  */
 export default class Constructed_RRLS extends RRLS {
     public generateInitialIndividual(): Individual {
-        let norvigResult = cp.execSync(`./norvig/regexgolf.py ${this.instanceName}`);
+        let cmd = os.platform() === 'win32' ? "norvig/regexgolf.py" : "./norvig/regexgolf.py";
+        let norvigResult = cp.execSync(`${cmd} ${this.instanceName}`);
         let str = eval(norvigResult.toString());
         return this.factory.createFromString(str);
     }
