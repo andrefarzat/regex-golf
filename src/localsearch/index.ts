@@ -178,7 +178,7 @@ async function main() {
 
     !function() {
         let bestSolution = program.getBestSolution();
-        // Nome, i, Depth, seed
+        // Nome, Depth, i, seed
         let csvLine: (string | number)[] = [program.instanceName, program.depth, flags.index, program.seed];
 
         let startTime = moment(program.startTime);

@@ -4,7 +4,7 @@ from subprocess import call
 from threading import Thread
 import sys
 
-PROGRAMS = ['ILS_Shrink', 'Constructed_RRLS']
+PROGRAMS = ['Constructed_RRLS', 'ILS_Shrink']
 
 INSTANCES = """warmup, anchors, ranges, backrefs, abba, aman-aplan, prime, four, order,
                triples, glob, balance, powers, long-count, alphabetical""".split(',')
@@ -12,10 +12,10 @@ INSTANCES = """warmup, anchors, ranges, backrefs, abba, aman-aplan, prime, four,
 i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 
 INSTANCES_TO_EXECUTE = [
-    INSTANCES[:4],
-    INSTANCES[4:8],
-    INSTANCES[8:12],
-    INSTANCES[12:]
+    [' anchors', ' ranges', ' backrefs'],
+    [' prime', ' four', ' long-count'],
+    [' glob', ' balance'],
+    [' powers', ' alphabetical'],
 ]
 
 SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
