@@ -29,6 +29,8 @@ export default class IndividualFactory {
             let node = this.parseExpression(expression);
             let isLast = ++i === expressions.length;
 
+            if (!node) continue;
+
             if (node instanceof Terminal) {
                 if (!currentFunc.left || currentFunc.left.isEmpty()) {
                     currentFunc.left = node;
@@ -52,8 +54,8 @@ export default class IndividualFactory {
             }
         }
 
-        if (!currentFunc.left)  currentFunc.left  = new Terminal('');
-        if (!currentFunc.right) currentFunc.right = new Terminal('');
+        if (currentFunc && !currentFunc.left)  currentFunc.left  = new Terminal('');
+        if (currentFunc && !currentFunc.right) currentFunc.right = new Terminal('');
         return ind;
     }
 

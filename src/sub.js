@@ -1,5 +1,6 @@
-process.on('message', function({regex, left, right}) {
+process.on('message', function({regex, index, left, right}) {
     let result = {
+        index,
         matchesOnLeft: 0,
         ourFitness: 0,
         matchesOnRight: 0,

@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 import Func from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import Node from "../nodes/Node";
@@ -12,7 +14,11 @@ export default class Individual {
     public matchesOnLeft: number = 0;
     public matchesOnRight: number = 0;
     public ourFitness: number = 0;
+    public evaluationStartTime?: Date;
+    public evaluationEndTime?: Date;
+
     public evaluationIndex: number = undefined;
+
     public createdDate = new Date();
     public hasTimedOut = false;
 
@@ -22,6 +28,11 @@ export default class Individual {
 
     public get fitness(): number {
         return this.matchesOnLeft - this.matchesOnRight;
+    }
+
+    public get evaluationTime(): number {
+        if (!this.evaluationEndTime) return 0;
+        return moment(this.evaluationEndTime).diff(this.evaluationStartTime, 'millisecond');
     }
 
     public toCSV(withDot: boolean = false): string {

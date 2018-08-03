@@ -2,6 +2,8 @@ import Individual from "./models/Individual";
 import IndividualFactory from "./models/IndividualFactory";
 import Utils from "./Utils";
 import * as cp from 'child_process';
+import * as moment from 'moment';
+import { Evaluator } from "./Evaluator";
 
 
 export default abstract class BaseProgram {
@@ -15,7 +17,7 @@ export default abstract class BaseProgram {
     public endTime: Date;
     public seed: number;
     public index: number;
-    public worker = cp.fork(__dirname + '/sub.js');
+    public evaluator: Evaluator;
 
     public get validLeftChars(): string[] {
         return Object.keys(this.chars.left);
@@ -37,6 +39,7 @@ export default abstract class BaseProgram {
         let instance = Utils.loadInstance(instanceName);
         this.left = instance.left;
         this.right = instance.right;
+        this.evaluator = new Evaluator(instance.left, instance.right);
     }
 
     public init(): void {
@@ -92,39 +95,9 @@ export default abstract class BaseProgram {
         }
     }
 
-    public async evaluate(ind: Individual): Promise<number> {
-        if (ind.isEvaluated) return Promise.resolve(ind.fitness);
-
-        ind.matchesOnLeft = 0;
-        ind.matchesOnRight = 0;
-        ind.ourFitness = 0;
+    public async evaluate(ind: Individual) {
         this.evaluationCount += 1;
-        ind.evaluationIndex = this.evaluationCount;
-
-        return new Promise<number>((resolve, reject) => {
-            let hasFinished = false;
-            this.worker.send({ regex: ind.toString(), left: this.left, right: this.right });
-
-            let onmessage = function (result: any) {
-                hasFinished = true;
-                ind.matchesOnLeft = result.matchesOnLeft;
-                ind.matchesOnRight = result.matchesOnRight;
-                ind.ourFitness = result.ourFitness;
-                resolve(ind.fitness);
-            };
-
-            this.worker.once('message', onmessage);
-
-            setTimeout(() => {
-                if (hasFinished) return;
-                ind.hasTimedOut = true;
-                console.log(`Timed out in ${this.evaluationCount}`);
-                this.worker.removeListener('message', onmessage);
-                this.worker.kill();
-                this.worker = cp.fork(__dirname + '/sub.js');
-                reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
-            }, 1000);
-        });
+        return this.evaluator.evaluate(ind, this.evaluationCount);
     }
 
     public getMaxFitness(): number {
@@ -132,6 +105,6 @@ export default abstract class BaseProgram {
     }
 
     public finish() {
-        this.worker.kill();
+        this.evaluator.finish();
     }
 }

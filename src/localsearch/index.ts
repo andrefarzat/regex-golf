@@ -190,6 +190,7 @@ async function main() {
             csvLine.push(bestSolution.fitness); // Melhor_fitness
             csvLine.push(bestSolution.ourFitness); // Nossa_fitness
             csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
+            csvLine.push(bestSolution.evaluationTime); // Tempo_avaliacao
             csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds'))); // Tempo_para_encontrar_melhor_solucao
         } else {
             csvLine.push('N/A'); // Melhor_solucao
@@ -197,6 +198,7 @@ async function main() {
             csvLine.push('N/A'); // Melhor_fitness
             csvLine.push('N/A'); // Nossa_fitness
             csvLine.push('N/A'); // Numero_de_comparacoes
+            csvLine.push('N/A'); // Tempo_avaliacao
             csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
         }
 
