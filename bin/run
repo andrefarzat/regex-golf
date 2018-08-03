@@ -4,7 +4,7 @@ from subprocess import call
 from threading import Thread
 import sys
 
-PROGRAMS = ['Constructed_RRLS', 'ILS_Shrink']
+PROGRAMS = ['ILS_Shrink', 'Constructed_RRLS']
 
 INSTANCES = """warmup, anchors, ranges, backrefs, abba, aman-aplan, prime, four, order,
                triples, glob, balance, powers, long-count, alphabetical""".split(',')
