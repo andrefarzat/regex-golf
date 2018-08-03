@@ -28,7 +28,7 @@ DEPTHS = [5]
 
 TIMEOUT = 150  # two and half minutes
 
-FOLDER_NAME = 'norvig2'
+FOLDER_NAME = 'norvig_now'
 
 
 def execute(cmd):
