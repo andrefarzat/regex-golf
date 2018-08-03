@@ -47,4 +47,8 @@ export default class Terminal implements Node {
     public asFunc(): never {
         throw new Error(`Cannot convert Terminal to Function!`);
     }
+
+    public isEmpty() {
+        return this.value === '';
+    }
 }

@@ -163,4 +163,8 @@ export default class Func implements Node {
     public asFunc(): Func {
         return this;
     }
+
+    public isEmpty() {
+        return false;
+    }
 }

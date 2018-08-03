@@ -12,6 +12,7 @@ export default interface Node {
     toDot(i: number): string;
     toRegex(): RegExp;
     readonly nodeType: NodeTypes;
+    isEmpty(): boolean;
 
     is(type: NodeTypes | FuncTypes): boolean;
     equals(node: Node): boolean;

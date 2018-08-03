@@ -30,7 +30,7 @@ export default class IndividualFactory {
             let isLast = ++i === expressions.length;
 
             if (node instanceof Terminal) {
-                if (!currentFunc.left) {
+                if (!currentFunc.left || currentFunc.left.isEmpty()) {
                     currentFunc.left = node;
                 } else if (isLast) {
                     currentFunc.right = node;
