@@ -49,6 +49,12 @@ export class Evaluator {
         ind.ourFitness = 0;
         ind.evaluationIndex = index;
 
+        return ind.hasComplexEvaluation()
+            ? this.evaluateViaSub(ind)
+            : Promise.resolve(this.evaluateLocal(ind));
+    }
+
+    public async evaluateViaSub(ind: Individual) {
         return new Promise<number>((resolve, reject) => {
             this.cache[ind.evaluationIndex] = ind;
 
@@ -65,7 +71,7 @@ export class Evaluator {
                     if (ind.evaluationEndTime) {
                         resolve(ind.fitness);
                     } else if (this.isWorking === false) {
-                        setTimeout(fn, 10);
+                        setTimeout(fn, 0);
                     } else if (diff > 100) {
                         console.log('timedout');
                         ind.hasTimedOut = true;
@@ -82,10 +88,35 @@ export class Evaluator {
         });
     }
 
+    public evaluateLocal(ind: Individual) {
+        ind.evaluationStartTime = new Date();
+        let regex = new RegExp(ind.toString());
+
+        for (let name of this.left) {
+            if (regex.test(name)) {
+                ind.matchesOnLeft += 1;
+                ind.ourFitness += 1;
+            }
+        }
+
+        for (let name of this.right) {
+            if (regex.test(name)) {
+                ind.matchesOnRight += 1;
+            } else {
+                ind.ourFitness += 1;
+            }
+        }
+
+        ind.evaluationEndTime = new Date();
+        return ind.fitness;
+    }
+
     public cleanWorker() {
-        this.worker.removeAllListeners();
-        this.worker.kill();
-        this.worker = undefined;
+        if (this.worker) {
+            this.worker.removeAllListeners();
+            this.worker.kill();
+            this.worker = undefined;
+        }
     }
 
 

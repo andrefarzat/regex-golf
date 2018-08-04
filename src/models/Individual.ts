@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import Func from "../nodes/Func";
+import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import Node from "../nodes/Node";
 import NodeShrinker from '../NodeShrinker';
@@ -18,6 +18,8 @@ export default class Individual {
     public evaluationEndTime?: Date;
 
     public evaluationIndex: number = undefined;
+
+    public readonly COMPLEX_FUNC_TYPES = [FuncTypes.backref, FuncTypes.oneOrMore, FuncTypes.zeroOrMore];
 
     public createdDate = new Date();
     public hasTimedOut = false;
@@ -76,6 +78,10 @@ export default class Individual {
         if (str.length == 0) return false;
         if (str.substr(-1) == '|') return false;
         return true;
+    }
+
+    public hasComplexEvaluation(): boolean {
+        return this.tree.getFuncs().some(func => this.COMPLEX_FUNC_TYPES.includes(func.type));
     }
 
     public clone(): Individual {

@@ -97,6 +97,12 @@ export default abstract class BaseProgram {
 
     public async evaluate(ind: Individual) {
         this.evaluationCount += 1;
+
+        if (this.evaluationCount % 1000 === 0) {
+            let currentTime = moment().diff(this.startTime, 'seconds');
+            console.log(`${this.evaluationCount} evaludated in ${currentTime} seconds`);
+        }
+
         return this.evaluator.evaluate(ind, this.evaluationCount);
     }
 

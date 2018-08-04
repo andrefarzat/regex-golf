@@ -4,7 +4,7 @@ from subprocess import call
 from threading import Thread
 import sys
 
-PROGRAMS = ['ILS_Shrink']
+PROGRAMS = ['ILS_Shrink', 'Constructed_RRLS']
 
 INSTANCES = """warmup, anchors, ranges, backrefs, abba, aman-aplan, prime, four, order,
                triples, glob, balance, powers, long-count, alphabetical""".split(',')
@@ -12,10 +12,10 @@ INSTANCES = """warmup, anchors, ranges, backrefs, abba, aman-aplan, prime, four,
 i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 
 INSTANCES_TO_EXECUTE = [
-    [' anchors', ' ranges', ' backrefs'],
-    [' prime', ' four', ' long-count'],
-    [' glob', ' balance'],
-    [' powers', ' alphabetical'],
+    INSTANCES[:4],
+    INSTANCES[4:8],
+    INSTANCES[8:12],
+    INSTANCES[12:],
 ]
 
 SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
@@ -26,9 +26,7 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
 
 DEPTHS = [5]
 
-TIMEOUT = 150  # two and half minutes
-
-FOLDER_NAME = 'norvig_now'
+FOLDER_NAME = 'norvig_emcasa'
 
 
 def execute(cmd):
@@ -65,5 +63,5 @@ for program in PROGRAMS:
 
                 thread = Thread(target=execute, args=(cmd,))
                 thread.start()
-                thread.join(timeout=TIMEOUT)
+                thread.join()
 
