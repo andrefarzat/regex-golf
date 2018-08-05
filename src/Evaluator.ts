@@ -1,6 +1,7 @@
 import * as cp from 'child_process';
 import * as moment from 'moment';
 import Individual from './models/Individual';
+import Logger from './Logger';
 
 interface EvaluationResult {
     index: number;
@@ -49,9 +50,13 @@ export class Evaluator {
         ind.ourFitness = 0;
         ind.evaluationIndex = index;
 
-        return ind.hasComplexEvaluation()
-            ? this.evaluateViaSub(ind)
-            : Promise.resolve(this.evaluateLocal(ind));
+        if (ind.hasComplexEvaluation()) {
+            // console.log(`Complex evaluation: ${ind.toString()}`);
+            return this.evaluateViaSub(ind);
+        } else {
+            // console.log(`Simple evaluation: ${ind.toString()}`);
+            return Promise.resolve(this.evaluateLocal(ind));
+        }
     }
 
     public async evaluateViaSub(ind: Individual) {
@@ -69,16 +74,26 @@ export class Evaluator {
                     let diff = now.diff(ind.evaluationStartTime, 'milliseconds');
 
                     if (ind.evaluationEndTime) {
+                        // console.log(`resolved: ${ind.toString()}`);
                         resolve(ind.fitness);
                     } else if (this.isWorking === false) {
-                        setTimeout(fn, 0);
+                        if (diff > 2000) {
+                            console.log('timedout via worker: ', ind.toString());
+                            ind.hasTimedOut = true;
+                            ind.evaluationEndTime = now.toDate();
+                            this.cleanWorker();
+                            reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
+                        } else {
+                            setTimeout(fn, 0);
+                        }
                     } else if (diff > 100) {
-                        console.log('timedout');
+                        console.log('timedout: ', ind.toString());
                         ind.hasTimedOut = true;
                         ind.evaluationEndTime = now.toDate();
-                        this.cleanWorker();
+                        setImmediate(() => this.cleanWorker());
                         reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
                     } else {
+                        // console.log(`tick: ${ind.toString()}`);
                         setTimeout(fn, 0);
                     }
                 };
