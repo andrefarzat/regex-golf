@@ -1,0 +1,271 @@
+Nome,Depth,i,seed,Melhor_solucao,Melhor_solucao_shrunk,Melhor_fitness,Nossa_fitness,Numero_de_comparacoes,Tempo_avaliacao,Tempo_para_encontrar_melhor_solucao,Tempo_total,Timed_out
+warmup,5,1,2967301147,f.o,f.o,21,42,1,0,175,32668,false
+warmup,5,1,5600405384,f.o,f.o,21,42,1,0,157,34680,false
+warmup,5,2,1632819610,foo,{0}foo,21,42,273493,0,15358,33532,false
+warmup,5,3,1412034944,f.o,f.o,21,42,1,1,164,36057,false
+warmup,5,4,9724161943,f.o,f.o,21,42,1,0,161,35078,false
+warmup,5,5,4037724866,f.o,f.o,21,42,1,0,171,32697,false
+warmup,5,6,8370032799,f.o,f.o,21,42,1,0,149,35033,false
+warmup,5,7,2767986875,f.o,f.o,21,42,1,0,164,32517,false
+warmup,5,8,3141506592,f.o,f.o,21,42,1,0,216,37706,false
+warmup,5,9,3313543896,f.o,f.o,21,42,1,0,175,34791,false
+warmup,5,10,8657690939,f.o,f.o,21,42,1,0,174,34409,false
+warmup,5,11,9696640194,f.o,f.o,21,42,1,0,155,36211,false
+warmup,5,12,6621545651,f.o,f.o,21,42,1,0,175,31968,false
+warmup,5,13,2492462788,f.o,f.o,21,42,1,1,155,37593,false
+warmup,5,14,3404588599,f.o,f.o,21,42,1,0,173,36386,false
+warmup,5,15,2330977742,f.o,f.o,21,42,1,0,166,38055,false
+warmup,5,16,6361187489,foo,foo,21,42,324695,0,18421,33936,false
+warmup,5,17,2805026820,f.o,f.o,21,42,1,0,161,33395,false
+warmup,5,18,4323456912,f.o,f.o,21,42,1,1,169,31239,false
+warmup,5,19,8361101999,f.o,f.o,21,42,1,0,153,33001,false
+warmup,5,20,9935136846,f.o,f.o,21,42,1,1,196,32329,false
+warmup,5,21,5217407358,f.o,f.o,21,42,1,0,155,35012,false
+warmup,5,22,5619256299,f.o,f.o,21,42,1,0,153,34974,false
+warmup,5,23,4560422870,f.o,f.o,21,42,1,0,185,34808,false
+warmup,5,24,5236888092,f.o,f.o,21,42,1,0,162,37913,false
+warmup,5,25,1337360711,f.o,f.o,21,42,1,0,178,38720,false
+warmup,5,26,7659837985,f.o,f.o,21,42,1,0,151,34813,false
+warmup,5,27,2521100877,f.o,f.o,21,42,1,0,159,32166,false
+warmup,5,28,8801535107,f.o,f.o,21,42,1,0,170,38239,false
+warmup,5,29,9651599436,f.o,f.o,21,42,1,0,170,38598,false
+anchors,5,1,2967301147,k$,k$,21,42,1,0,168,29910,false
+anchors,5,1,5600405384,k$,k$,21,42,1,0,174,30848,false
+anchors,5,2,1632819610,k$,k$,21,42,1,0,175,215347,true
+anchors,5,3,1412034944,k$,k$,21,42,1,0,247,36351,false
+anchors,5,4,9724161943,k$,k$,21,42,1,0,207,33694,false
+anchors,5,5,4037724866,k$,k$,21,42,1,0,168,32926,false
+anchors,5,6,8370032799,k$,k$,21,42,1,0,166,32709,false
+anchors,5,7,2767986875,k$,k$,21,42,1,1,165,30741,false
+anchors,5,8,3141506592,k$,k$,21,42,1,1,182,39553,false
+anchors,5,9,3313543896,k$,k$,21,42,1,1,178,29141,false
+anchors,5,10,8657690939,k$,k$,21,42,1,0,187,30939,false
+anchors,5,11,9696640194,k$,k$,21,42,1,0,200,31256,false
+anchors,5,12,6621545651,k$,k$,21,42,1,0,257,31523,false
+anchors,5,13,2492462788,k$,k$,21,42,1,1,187,31352,false
+anchors,5,14,3404588599,k$,k$,21,42,1,0,188,30826,false
+anchors,5,15,2330977742,k$,k$,21,42,1,0,195,33322,false
+anchors,5,16,6361187489,k$,k$,21,42,1,0,191,30410,false
+anchors,5,17,2805026820,k$,k$,21,42,1,1,203,33190,false
+anchors,5,18,4323456912,k$,k$,21,42,1,1,179,30766,false
+anchors,5,19,8361101999,k$,k$,21,42,1,1,183,32086,false
+anchors,5,20,9935136846,k$,k$,21,42,1,0,180,30517,false
+anchors,5,21,5217407358,k$,k$,21,42,1,0,195,32005,false
+anchors,5,22,5619256299,k$,k$,21,42,1,0,206,32128,false
+anchors,5,23,4560422870,k$,k$,21,42,198273,0,10657,30888,false
+anchors,5,24,5236888092,k$,k$,21,42,1,0,175,60668,true
+anchors,5,25,1337360711,k$,k$,21,42,1,1,185,35697,false
+anchors,5,26,7659837985,k$,k$,21,42,1,0,196,31825,false
+anchors,5,27,2521100877,k$,k$,21,42,1,1,180,30965,false
+anchors,5,28,8801535107,k$,k$,21,42,1,0,181,34711,false
+anchors,5,29,9651599436,k$,k$,21,42,1,0,180,32851,false
+ranges,5,1,2967301147,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,17692,0,9116,103208,true
+ranges,5,1,5600405384,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,59328,0,14579,113148,true
+ranges,5,2,1632819610,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,282154,0,64110,125983,true
+ranges,5,3,1412034944,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,136029,0,27580,96718,true
+ranges,5,4,9724161943,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,22404,0,9232,113431,true
+ranges,5,5,4037724866,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,582834,0,95363,97997,true
+ranges,5,6,8370032799,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,104754,0,21251,110110,true
+ranges,5,7,2767986875,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,98975,0,20180,113303,true
+ranges,5,8,3141506592,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,242370,0,52882,107958,true
+ranges,5,9,3313543896,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,431360,0,74555,115505,true
+ranges,5,10,8657690939,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,17544,0,8818,97169,true
+ranges,5,11,9696640194,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,224763,0,44029,105888,true
+ranges,5,12,6621545651,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,69571,0,15522,114104,true
+ranges,5,13,2492462788,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,251936,0,47353,154403,true
+ranges,5,14,3404588599,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,219678,0,42967,118831,true
+ranges,5,15,2330977742,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,279931,0,66649,121962,true
+ranges,5,16,6361187489,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,194836,0,38033,119039,true
+ranges,5,17,2805026820,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,135173,0,34246,126236,true
+ranges,5,18,4323456912,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,49589,0,14372,109268,true
+ranges,5,19,8361101999,de|a..$|.b|ad|ff|ee,de|a..$|.b|ad|ff|ee,21,42,1,0,206,105620,true
+ranges,5,20,9935136846,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,17647,0,9208,131527,true
+ranges,5,21,5217407358,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,100400,1,34345,116071,true
+ranges,5,22,5619256299,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,120752,0,38247,131478,true
+ranges,5,23,4560422870,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,165580,0,33389,108812,true
+ranges,5,24,5236888092,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,40315,0,12662,98224,true
+ranges,5,25,1337360711,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,243583,0,44042,109748,true
+ranges,5,26,7659837985,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,151463,0,28888,108453,true
+ranges,5,27,2521100877,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,59356,0,14891,94086,true
+ranges,5,28,8801535107,[a-f]\w[a-f][a-f]$,[a-f]\w[a-f][a-f]$,21,42,411520,1,82530,114700,true
+ranges,5,29,9651599436,^[a-f][a-e]\w[a-f],^[a-f][a-e]\w[a-f],21,42,323852,0,79105,125291,true
+backrefs,5,1,2967301147,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,883,71441,true
+backrefs,5,1,5600405384,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,927,71996,true
+backrefs,5,2,1632819610,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,800,70229,true
+backrefs,5,3,1412034944,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,897,72828,true
+backrefs,5,4,9724161943,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,905,71587,true
+backrefs,5,5,4037724866,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,921,72580,true
+backrefs,5,6,8370032799,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,854,73644,true
+backrefs,5,7,2767986875,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,842,82025,true
+backrefs,5,8,3141506592,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,1130,73705,true
+backrefs,5,9,3313543896,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,865,81472,true
+backrefs,5,10,8657690939,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,1378,75919,true
+backrefs,5,11,9696640194,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,888,73777,true
+backrefs,5,12,6621545651,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,891,75373,true
+backrefs,5,13,2492462788,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,886,74244,true
+backrefs,5,14,3404588599,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,903,73350,true
+backrefs,5,15,2330977742,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,871,77962,true
+backrefs,5,16,6361187489,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,920,71958,true
+backrefs,5,17,2805026820,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,841,72884,true
+backrefs,5,18,4323456912,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,884,76416,true
+backrefs,5,19,8361101999,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,863,76204,true
+backrefs,5,20,9935136846,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,1021,76916,true
+backrefs,5,21,5217407358,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,874,76992,true
+backrefs,5,22,5619256299,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,866,74992,true
+backrefs,5,23,4560422870,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,1026,76163,true
+backrefs,5,24,5236888092,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,926,73750,true
+backrefs,5,25,1337360711,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,869,74583,true
+backrefs,5,26,7659837985,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,1058,77066,true
+backrefs,5,27,2521100877,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,1,869,75509,true
+backrefs,5,28,8801535107,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,887,76280,true
+backrefs,5,29,9651599436,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,l$|e.a|e.t|r.u|o.h|u.t|oa|yh|ry|l.g,21,42,1,0,853,72111,true
+abba,5,1,2967301147,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,515,37820,false
+abba,5,1,5600405384,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,528,117913,true
+abba,5,2,1632819610,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,562,149006,true
+abba,5,3,1412034944,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,559,226765,true
+abba,5,4,9724161943,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,562,43154,false
+abba,5,5,4037724866,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,566,115075,true
+abba,5,6,8370032799,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,558,184002,true
+abba,5,7,2767986875,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,542,71534,true
+abba,5,8,3141506592,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,550,37923,false
+abba,5,9,3313543896,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,531,37261,false
+abba,5,10,8657690939,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,1,568,146864,true
+abba,5,11,9696640194,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,1,555,238752,true
+abba,5,12,6621545651,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,542,39695,false
+abba,5,13,2492462788,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,1,552,134414,true
+abba,5,14,3404588599,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,524,279862,true
+abba,5,15,2330977742,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,569,67448,true
+abba,5,16,6361187489,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,537,239597,true
+abba,5,17,2805026820,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,560,151070,true
+abba,5,18,4323456912,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,555,164076,true
+abba,5,19,8361101999,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,1,547,63322,true
+abba,5,20,9935136846,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,517,41768,false
+abba,5,21,5217407358,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,1,545,40526,false
+abba,5,22,5619256299,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,797,326931,true
+abba,5,23,4560422870,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,1,609,41765,false
+abba,5,24,5236888092,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,555,158573,true
+abba,5,25,1337360711,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,551,138145,true
+abba,5,26,7659837985,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,554,40365,false
+abba,5,27,2521100877,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,1,551,38216,false
+abba,5,28,8801535107,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,1,571,143019,true
+abba,5,29,9651599436,.u|.hi|te|z|gy|t$|rs|rit,.u|.hi|te|z|gy|t$|rs|rit,21,43,1,0,542,40875,false
+aman-aplan,5,1,2967301147,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,386,79911,true
+aman-aplan,5,1,5600405384,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,386,73330,true
+aman-aplan,5,2,1632819610,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,1,396,78867,true
+aman-aplan,5,3,1412034944,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,1,382,79564,true
+aman-aplan,5,4,9724161943,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,386,71889,true
+aman-aplan,5,5,4037724866,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,386,72389,true
+aman-aplan,5,6,8370032799,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,1,381,147277,true
+aman-aplan,5,7,2767986875,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,383,75163,true
+aman-aplan,5,8,3141506592,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,384,78525,true
+aman-aplan,5,9,3313543896,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,1,381,114881,true
+aman-aplan,5,10,8657690939,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,393,71669,true
+aman-aplan,5,11,9696640194,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,1,388,89039,true
+aman-aplan,5,12,6621545651,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,382,71255,true
+aman-aplan,5,13,2492462788,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,396,69100,true
+aman-aplan,5,14,3404588599,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,1,366,75554,true
+aman-aplan,5,15,2330977742,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,398,76458,true
+aman-aplan,5,16,6361187489,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,417,71548,true
+aman-aplan,5,17,2805026820,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,402,78920,true
+aman-aplan,5,18,4323456912,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,387,75402,true
+aman-aplan,5,19,8361101999,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,1,388,84731,true
+aman-aplan,5,20,9935136846,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,386,70662,true
+aman-aplan,5,21,5217407358,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,393,73821,true
+aman-aplan,5,22,5619256299,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,390,80017,true
+aman-aplan,5,23,4560422870,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,392,72855,true
+aman-aplan,5,24,5236888092,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,462,85446,true
+aman-aplan,5,25,1337360711,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,393,77533,true
+aman-aplan,5,26,7659837985,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,421,72622,true
+aman-aplan,5,27,2521100877,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,396,78262,true
+aman-aplan,5,28,8801535107,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,386,77254,true
+aman-aplan,5,29,9651599436,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,^r|oo|d$|^..v|r..$|x|la|eb|ak|ten,19,40,1,0,388,78891,true
+order,5,1,2967301147,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,323,57193,false
+order,5,1,5600405384,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,301,50780,false
+order,5,2,1632819610,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,303,50059,false
+order,5,3,1412034944,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,298,54282,false
+order,5,4,9724161943,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,303,56234,false
+order,5,5,4037724866,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,296,48813,false
+order,5,6,8370032799,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,310,57635,false
+order,5,7,2767986875,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,296,50180,false
+order,5,8,3141506592,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,1,308,52593,false
+order,5,9,3313543896,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,305,50069,false
+order,5,10,8657690939,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,312,55439,false
+order,5,11,9696640194,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,317,51886,false
+order,5,12,6621545651,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,321,56101,false
+order,5,13,2492462788,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,300,56968,false
+order,5,14,3404588599,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,324,58592,false
+order,5,15,2330977742,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,300,54897,false
+order,5,16,6361187489,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,290,57522,false
+order,5,17,2805026820,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,321,54415,false
+order,5,18,4323456912,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,304,53637,false
+order,5,19,8361101999,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,1,306,52380,false
+order,5,20,9935136846,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,300,56326,false
+order,5,21,5217407358,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,337,60801,true
+order,5,22,5619256299,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,467,63410,true
+order,5,23,4560422870,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,331,56830,false
+order,5,24,5236888092,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,301,74773,true
+order,5,25,1337360711,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,331,266755,true
+order,5,26,7659837985,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,323,70144,true
+order,5,27,2521100877,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,1,331,60978,true
+order,5,28,8801535107,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,9,366,74048,true
+order,5,29,9651599436,lo|^c|fi|os|de|cc|ps,lo|^c|fi|os|de|cc|ps,21,42,1,0,348,74152,true
+triples,5,1,2967301147,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,418,193928,true
+triples,5,1,5600405384,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,478,266031,true
+triples,5,2,1632819610,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,454,194322,true
+triples,5,3,1412034944,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,429,252892,true
+triples,5,4,9724161943,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,1,513,157805,true
+triples,5,5,4037724866,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,499,196178,true
+triples,5,6,8370032799,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,470,198282,true
+triples,5,7,2767986875,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,517,218690,true
+triples,5,8,3141506592,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,477,189887,true
+triples,5,9,3313543896,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,489,213946,true
+triples,5,10,8657690939,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,1,433,245041,true
+triples,5,11,9696640194,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,522,239524,true
+triples,5,12,6621545651,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,583,178461,true
+triples,5,13,2492462788,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,532,143436,true
+triples,5,14,3404588599,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,519,222765,true
+triples,5,15,2330977742,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,709,200647,true
+triples,5,16,6361187489,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,509,188053,true
+triples,5,17,2805026820,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,475,137615,true
+triples,5,18,4323456912,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,435,220963,true
+triples,5,19,8361101999,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,590,286447,true
+triples,5,20,9935136846,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,489,220448,true
+triples,5,21,5217407358,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,577,197058,true
+triples,5,22,5619256299,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,504,157289,true
+triples,5,23,4560422870,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,530,220205,true
+triples,5,24,5236888092,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,692,209992,true
+triples,5,25,1337360711,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,440,182598,true
+triples,5,26,7659837985,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,454,121672,true
+triples,5,27,2521100877,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,502,144031,true
+triples,5,28,8801535107,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,0,532,214231,true
+triples,5,29,9651599436,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,4.2|.17|1.4|06|55|009|00$|602|0.2|003|015,21,42,1,1,562,168319,true
+glob,5,1,2967301147,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1533,84311,true
+glob,5,1,5600405384,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1350,266294,true
+glob,5,2,1632819610,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1577,103191,true
+glob,5,3,1412034944,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1408,87511,true
+glob,5,4,9724161943,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1495,82513,true
+glob,5,5,4037724866,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1449,80023,true
+glob,5,6,8370032799,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1460,80258,true
+glob,5,7,2767986875,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1452,77914,true
+glob,5,8,3141506592,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1503,72986,true
+glob,5,9,3313543896,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1446,80476,true
+glob,5,10,8657690939,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1468,84408,true
+glob,5,11,9696640194,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1450,82243,true
+glob,5,12,6621545651,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1452,79799,true
+glob,5,13,2492462788,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1556,78232,true
+glob,5,14,3404588599,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1495,73441,true
+glob,5,15,2330977742,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1415,83037,true
+glob,5,16,6361187489,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1408,77844,true
+glob,5,17,2805026820,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1330,77588,true
+glob,5,18,4323456912,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1413,77289,true
+glob,5,19,8361101999,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1454,81619,true
+glob,5,20,9935136846,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1462,88760,true
+glob,5,21,5217407358,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1401,80824,true
+glob,5,22,5619256299,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1519,81471,true
+glob,5,23,4560422870,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1345,83750,true
+glob,5,24,5236888092,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1374,88151,true
+glob,5,25,1337360711,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1503,81449,true
+glob,5,26,7659837985,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1452,87077,true
+glob,5,27,2521100877,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1473,89523,true
+glob,5,28,8801535107,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,1,1521,86017,true
+glob,5,29,9651599436,y.|^p|de|fa|i.o|r.a| b|rr|ro,y.|^p|de|fa|i.o|r.a| b|rr|ro,21,42,1,0,1547,92368,true
