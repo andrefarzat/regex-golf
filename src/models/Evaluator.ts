@@ -1,7 +1,7 @@
 import * as cp from 'child_process';
 import * as moment from 'moment';
-import Individual from './models/Individual';
-import Logger from './Logger';
+import Individual from '../models/Individual';
+import { resolve } from 'dns';
 
 interface EvaluationResult {
     index: number;
@@ -13,28 +13,39 @@ interface EvaluationResult {
 export default class Evaluator {
     public worker: cp.ChildProcess;
     public cache: {[key: number]: Individual} = {};
-    private isWorking = false;
-    public isFree = true;
 
     public constructor(public left: string[], public right: string[]) {
         this.onMessage = this.onMessage.bind(this);
     }
 
-    public getWorker(): cp.ChildProcess {
-        if (! this.worker) {
-            this.isWorking = false;
-            this.worker = cp.fork(__dirname + '/sub.js');
-            this.worker.on('message', this.onMessage);
+    public async getWorker(): Promise<cp.ChildProcess> {
+        if (this.worker) {
+            if (!this.worker.connected) {
+                this.cleanWorker();
+                return this.getWorker();
+            }
+
+            return Promise.resolve(this.worker);
         }
 
-        return this.worker;
+        this.worker = cp.fork(__dirname + '/sub.js');
+
+        return new Promise<cp.ChildProcess>((resolve) => {
+            this.worker.once('message', () => {
+                this.worker.on('message', this.onMessage);
+                resolve(this.worker);
+            });
+            this.worker.send({regex: ''});
+        });
     }
 
     public onMessage(result: EvaluationResult) {
-        this.isFree = true;
-        this.isWorking = true;
+        if (typeof result === 'string') return;
         let ind = this.cache[result.index];
-        if (!ind) throw new Error('How come?');
+
+        if (!ind) {
+            throw new Error('How come?');
+        }
 
         ind.evaluationEndTime = new Date();
         ind.matchesOnLeft = result.matchesOnLeft;
@@ -46,7 +57,6 @@ export default class Evaluator {
 
     public async evaluate(ind: Individual, index: number): Promise<number> {
         if (ind.isEvaluated) return Promise.resolve(ind.fitness);
-        this.isFree = false;
 
         ind.matchesOnLeft = 0;
         ind.matchesOnRight = 0;
@@ -58,16 +68,15 @@ export default class Evaluator {
             return this.evaluateViaSub(ind);
         } else {
             // console.log(`Simple evaluation: ${ind.toString()}`);
-            this.isFree = true;
             return Promise.resolve(this.evaluateLocal(ind));
         }
     }
 
     public async evaluateViaSub(ind: Individual) {
-        return new Promise<number>((resolve, reject) => {
+        return new Promise<number>(async (resolve, reject) => {
             this.cache[ind.evaluationIndex] = ind;
 
-            let worker = this.getWorker();
+            let worker = await this.getWorker();
             worker.send({ regex: ind.toString(), index: ind.evaluationIndex, left: this.left, right: this.right }, err => {
                 if (err) return console.log("Super error", err);
 
@@ -80,18 +89,8 @@ export default class Evaluator {
                     if (ind.evaluationEndTime) {
                         // console.log(`resolved: ${ind.toString()}`);
                         resolve(ind.fitness);
-                    } else if (this.isWorking === false) {
-                        if (diff > 2000) {
-                            console.log('timedout via worker: ', ind.toString());
-                            ind.hasTimedOut = true;
-                            ind.evaluationEndTime = now.toDate();
-                            this.cleanWorker();
-                            reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
-                        } else {
-                            setTimeout(fn, 0);
-                        }
-                    } else if (diff > 100) {
-                        console.log('timedout: ', ind.toString());
+                    } else if (diff > 1000) {
+                        console.log('timedout: ', diff, ind.toString());
                         ind.hasTimedOut = true;
                         ind.evaluationEndTime = now.toDate();
                         setImmediate(() => this.cleanWorker());
@@ -136,10 +135,7 @@ export default class Evaluator {
             this.worker.kill();
             this.worker = undefined;
         }
-
-        this.isFree = true;
     }
-
 
     public finish() {
         this.cleanWorker();

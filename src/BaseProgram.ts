@@ -3,7 +3,7 @@ import IndividualFactory from "./models/IndividualFactory";
 import Utils from "./Utils";
 import * as cp from 'child_process';
 import * as moment from 'moment';
-import Evaluator from "./Evaluator";
+import EvaluatorFactory from "./models/EvaluatorFactory";
 
 
 export default abstract class BaseProgram {
@@ -17,7 +17,6 @@ export default abstract class BaseProgram {
     public endTime: Date;
     public seed: number;
     public index: number;
-    public evaluator: Evaluator;
 
     public get validLeftChars(): string[] {
         return Object.keys(this.chars.left);
@@ -39,7 +38,6 @@ export default abstract class BaseProgram {
         let instance = Utils.loadInstance(instanceName);
         this.left = instance.left;
         this.right = instance.right;
-        this.evaluator = new Evaluator(instance.left, instance.right);
     }
 
     public init(): void {
@@ -68,18 +66,9 @@ export default abstract class BaseProgram {
         return this.left.every(name => ind.test(name));
     }
 
-    public async isValid(ind: Individual): Promise<boolean> {
-        try {
-            await this.evaluate(ind);
-            return ind.fitness >= this.left.length;
-        } catch {
-            return false;
-        }
-    }
-
     public async isBest(ind: Individual): Promise<boolean> {
         try {
-            let fitness = await this.evaluate(ind);
+            let fitness = ind.fitness;
             return fitness >= this.getMaxFitness();
         } catch {
             return false;
@@ -95,22 +84,13 @@ export default abstract class BaseProgram {
         }
     }
 
-    public async evaluate(ind: Individual) {
-        this.evaluationCount += 1;
-
-        if (this.evaluationCount % 1000 === 0) {
-            let currentTime = moment().diff(this.startTime, 'seconds');
-            console.log(`${this.evaluationCount} evaludated in ${currentTime} seconds`);
-        }
-
-        return this.evaluator.evaluate(ind, this.evaluationCount);
-    }
-
     public getMaxFitness(): number {
         return this.left.length;
     }
 
-    public finish() {
-        this.evaluator.finish();
+    public async evaluate(ind: Individual) {
+        let factory = EvaluatorFactory.getInstance(this);
+        let evaluator = await factory.getFreeEvaluator();
+        return evaluator.evaluate(ind, 0);
     }
 }

@@ -3,44 +3,22 @@ import BaseProgram from "../BaseProgram";
 import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import RangeFunc from "../nodes/RangeFunc";
-import Evaluator from '../Evaluator';
-import { EACCES } from "constants";
+import Evaluator from './Evaluator';
+import EvaluatorFactory from "./EvaluatorFactory";
 
 
 export default class Neighborhood {
     public constructor(public solution: Individual, public program: BaseProgram) {}
     public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
-    private evaluators: Evaluator[] = [];
-    private readonly MAX_EVALUATORS = 10;
 
     public get factory() {
         return this.program.factory;
     }
 
-    public async getFreeEvaluator() {
-        return new Promise<Evaluator>((resolve, reject) => {
-            if (this.evaluators.length < this.MAX_EVALUATORS) {
-                let evaluator = new Evaluator(this.program.left, this.program.right);
-                this.evaluators.push(evaluator);
-                return resolve(evaluator);
-            }
+    public evaluate(evalFn: (ind: Individual) => void): Promise<void> {
+        let factory = EvaluatorFactory.getInstance(this.program);
 
-            let fn = () => {
-                for (let evaluator of this.evaluators) {
-                    if (evaluator.isFree) {
-                        return resolve(evaluator);
-                    }
-                }
-
-                setImmediate(fn);
-            };
-
-            fn();
-        });
-    }
-
-    public async evaluate(evalFn: (ind: Individual) => void) {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>(async (resolve) => {
             let hood = this.getGenerator();
             let i = 0;
             let count = 0;
@@ -53,17 +31,29 @@ export default class Neighborhood {
                 }
 
                 if (!ind.value.isValid()) {
-                    fn();
+                    setImmediate(fn);
                     return;
                 }
 
                 count += 1;
 
-                let evaluator = await this.getFreeEvaluator();
-                await evaluator.evaluate(ind.value, i++);
-                evalFn(ind.value);
-                count -= 1;
+                let evaluator: Evaluator;
+                try {
+                    evaluator = await factory.getFreeEvaluator();
+                    await evaluator.evaluate(ind.value, i++);
+                    evalFn(ind.value);
+                } catch {
+
+                } finally {
+                    count -= 1;
+                    factory.setEvaluatorFree(evaluator);
+                    setImmediate(fn);
+                }
             };
+
+            for(let i = 0; i < 100; i ++) {
+                setImmediate(fn);
+            }
         });
     }
 

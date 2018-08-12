@@ -1,4 +1,11 @@
 process.on('message', function({regex, index, left, right}) {
+
+    if (regex === '') {
+        process.send('');
+        return;
+    }
+
+
     let result = {
         index,
         matchesOnLeft: 0,

@@ -102,19 +102,26 @@ async function main() {
         if (program.shouldStop()) break;
 
         // 6.4 Evaluate Neighborhood
-        let neighborhood = new Neighborhood(currentSolution, this);
-        await neighborhood.evaluate(ind => {
-            logger.logSolution(ind);
+        let neighborhood = new Neighborhood(currentSolution, program);
 
-            // 6.4.1. Neighbor is better than current solution ?
-            //        Then -> Current = Neighbor
-            //             -> Seta que encontrou melhor
-            if (ind.isBetterThan(currentSolution)) {
-                currentSolution = ind;
-                hasFoundBetter = true;
-                logger.log(2, `[Found better] ${ind.toString()} [from fitness ${currentSolution.fitness} to ${ind.fitness}]`);
-            }
-        });
+        try {
+
+            await neighborhood.evaluate(ind => {
+                logger.logSolution(ind);
+
+                // 6.4.1. Neighbor is better than current solution ?
+                //        Then -> Current = Neighbor
+                //             -> Seta que encontrou melhor
+                if (ind.isBetterThan(currentSolution)) {
+                    currentSolution = ind;
+                    hasFoundBetter = true;
+                    logger.log(2, `[Found better] ${ind.toString()} [from fitness ${currentSolution.fitness} to ${ind.fitness}]`);
+                }
+            });
+        } catch (e) {
+            console.log('Neighborhood error: ' + e.message);
+        }
+
 
         // 6.5. Não encontrou melhor?
         //      Then -> Loga solução local
@@ -193,7 +200,6 @@ async function main() {
     }();
 
     logger.logProgramEnd();
-    program.finish();
 }
 
 (async function() {
