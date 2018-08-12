@@ -10,10 +10,11 @@ interface EvaluationResult {
     matchesOnRight: number;
 }
 
-export class Evaluator {
+export default class Evaluator {
     public worker: cp.ChildProcess;
     public cache: {[key: number]: Individual} = {};
     private isWorking = false;
+    public isFree = true;
 
     public constructor(public left: string[], public right: string[]) {
         this.onMessage = this.onMessage.bind(this);
@@ -30,6 +31,7 @@ export class Evaluator {
     }
 
     public onMessage(result: EvaluationResult) {
+        this.isFree = true;
         this.isWorking = true;
         let ind = this.cache[result.index];
         if (!ind) throw new Error('How come?');
@@ -44,6 +46,7 @@ export class Evaluator {
 
     public async evaluate(ind: Individual, index: number): Promise<number> {
         if (ind.isEvaluated) return Promise.resolve(ind.fitness);
+        this.isFree = false;
 
         ind.matchesOnLeft = 0;
         ind.matchesOnRight = 0;
@@ -55,6 +58,7 @@ export class Evaluator {
             return this.evaluateViaSub(ind);
         } else {
             // console.log(`Simple evaluation: ${ind.toString()}`);
+            this.isFree = true;
             return Promise.resolve(this.evaluateLocal(ind));
         }
     }
@@ -132,6 +136,8 @@ export class Evaluator {
             this.worker.kill();
             this.worker = undefined;
         }
+
+        this.isFree = true;
     }
 
 

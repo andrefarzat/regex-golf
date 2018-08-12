@@ -13,6 +13,7 @@ import Logger from '../Logger';
 import Utils from '../Utils';
 import Constructed_RRLS from "./Constructed_RRLS";
 import Individual from "../models/Individual";
+import Neighborhood from '../models/Neighborhood';
 
 
 args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS", "Constructed_RRLS"')
@@ -100,41 +101,22 @@ async function main() {
         //      Then -> Stop !
         if (program.shouldStop()) break;
 
-        // 6.4. Generate Neighborhood
-        let neighborhood = program.generateNeighborhood(currentSolution);
+        // 6.4 Evaluate Neighborhood
+        let neighborhood = new Neighborhood(currentSolution, this);
+        await neighborhood.evaluate(ind => {
+            logger.logSolution(ind);
 
-        // 6.5. Loop
-        do {
-            // 6.5.1. Tem neighbor ?
-            //        Then -> Avalia neighbor
-            //        Else -> Stop !
-            let neighbor = neighborhood.next();
-            if (neighbor.done) break;
-            if (!neighbor.value.isValid()) {
-                // FIXME: We should not generate invalid individuals
-                logger.logInvalidSolution(neighbor.value);
-                continue;
-            }
-
-            try {
-                await program.evaluate(neighbor.value);
-            } catch {
-                logger.logTimedoutSolution(neighbor.value);
-            }
-
-            logger.logSolution(neighbor.value);
-
-            // 6.5.2. Neighbor is better than current solution ?
+            // 6.4.1. Neighbor is better than current solution ?
             //        Then -> Current = Neighbor
             //             -> Seta que encontrou melhor
-            if (neighbor.value.isBetterThan(currentSolution)) {
-                currentSolution = neighbor.value;
+            if (ind.isBetterThan(currentSolution)) {
+                currentSolution = ind;
                 hasFoundBetter = true;
-                logger.log(2, `[Found better] ${neighbor.value.toString()} [from fitness ${currentSolution.fitness} to ${neighbor.value.fitness}]`);
+                logger.log(2, `[Found better] ${ind.toString()} [from fitness ${currentSolution.fitness} to ${ind.fitness}]`);
             }
-        } while (true);
+        });
 
-        // 6.6. Não encontrou melhor?
+        // 6.5. Não encontrou melhor?
         //      Then -> Loga solução local
         //           -> Realizar o restart
         if (!hasFoundBetter) {

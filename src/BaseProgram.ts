@@ -3,7 +3,7 @@ import IndividualFactory from "./models/IndividualFactory";
 import Utils from "./Utils";
 import * as cp from 'child_process';
 import * as moment from 'moment';
-import { Evaluator } from "./Evaluator";
+import Evaluator from "./Evaluator";
 
 
 export default abstract class BaseProgram {

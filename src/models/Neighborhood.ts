@@ -3,15 +3,68 @@ import BaseProgram from "../BaseProgram";
 import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import RangeFunc from "../nodes/RangeFunc";
-import { NOTFOUND } from "dns";
+import Evaluator from '../Evaluator';
+import { EACCES } from "constants";
 
 
 export default class Neighborhood {
     public constructor(public solution: Individual, public program: BaseProgram) {}
     public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
+    private evaluators: Evaluator[] = [];
+    private readonly MAX_EVALUATORS = 10;
 
     public get factory() {
         return this.program.factory;
+    }
+
+    public async getFreeEvaluator() {
+        return new Promise<Evaluator>((resolve, reject) => {
+            if (this.evaluators.length < this.MAX_EVALUATORS) {
+                let evaluator = new Evaluator(this.program.left, this.program.right);
+                this.evaluators.push(evaluator);
+                return resolve(evaluator);
+            }
+
+            let fn = () => {
+                for (let evaluator of this.evaluators) {
+                    if (evaluator.isFree) {
+                        return resolve(evaluator);
+                    }
+                }
+
+                setImmediate(fn);
+            };
+
+            fn();
+        });
+    }
+
+    public async evaluate(evalFn: (ind: Individual) => void) {
+        return new Promise<void>((resolve, reject) => {
+            let hood = this.getGenerator();
+            let i = 0;
+            let count = 0;
+
+            let fn = async () => {
+                let ind = hood.next();
+                if (ind.done) {
+                    if (count === 0) resolve();
+                    return;
+                }
+
+                if (!ind.value.isValid()) {
+                    fn();
+                    return;
+                }
+
+                count += 1;
+
+                let evaluator = await this.getFreeEvaluator();
+                await evaluator.evaluate(ind.value, i++);
+                evalFn(ind.value);
+                count -= 1;
+            };
+        });
     }
 
     public * getGenerator() {
