@@ -35,12 +35,21 @@ export default class Neighborhood {
                     return;
                 }
 
+                ind.value.evaluationIndex = this.program.getNextEvaluationIndex();
+
+                if (!ind.value.hasComplexEvaluation()) {
+                    this.program.evaluateLocal(ind.value)
+                    evalFn(ind.value);
+                    setImmediate(fn);
+                    return;
+                }
+
                 count += 1;
 
                 let evaluator: Evaluator;
                 try {
                     evaluator = await factory.getFreeEvaluator();
-                    await evaluator.evaluate(ind.value, i++);
+                    await evaluator.evaluate(ind.value);
                     evalFn(ind.value);
                 } catch {
 

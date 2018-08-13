@@ -55,21 +55,14 @@ export default class Evaluator {
         this.cache[result.index] = undefined;
     }
 
-    public async evaluate(ind: Individual, index: number): Promise<number> {
+    public async evaluate(ind: Individual): Promise<number> {
         if (ind.isEvaluated) return Promise.resolve(ind.fitness);
 
         ind.matchesOnLeft = 0;
         ind.matchesOnRight = 0;
         ind.ourFitness = 0;
-        ind.evaluationIndex = index;
 
-        if (ind.hasComplexEvaluation()) {
-            // console.log(`Complex evaluation: ${ind.toString()}`);
-            return this.evaluateViaSub(ind);
-        } else {
-            // console.log(`Simple evaluation: ${ind.toString()}`);
-            return Promise.resolve(this.evaluateLocal(ind));
-        }
+        return this.evaluateViaSub(ind);
     }
 
     public async evaluateViaSub(ind: Individual) {
@@ -104,29 +97,6 @@ export default class Evaluator {
                 fn();
             });
         });
-    }
-
-    public evaluateLocal(ind: Individual) {
-        ind.evaluationStartTime = new Date();
-        let regex = new RegExp(ind.toString());
-
-        for (let name of this.left) {
-            if (regex.test(name)) {
-                ind.matchesOnLeft += 1;
-                ind.ourFitness += 1;
-            }
-        }
-
-        for (let name of this.right) {
-            if (regex.test(name)) {
-                ind.matchesOnRight += 1;
-            } else {
-                ind.ourFitness += 1;
-            }
-        }
-
-        ind.evaluationEndTime = new Date();
-        return ind.fitness;
     }
 
     public cleanWorker() {

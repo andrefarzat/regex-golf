@@ -91,6 +91,33 @@ export default abstract class BaseProgram {
     public async evaluate(ind: Individual) {
         let factory = EvaluatorFactory.getInstance(this);
         let evaluator = await factory.getFreeEvaluator();
-        return evaluator.evaluate(ind, 0);
+        return evaluator.evaluate(ind);
+    }
+
+    public evaluateLocal(ind: Individual) {
+        ind.evaluationStartTime = new Date();
+        let regex = new RegExp(ind.toString());
+
+        for (let name of this.left) {
+            if (regex.test(name)) {
+                ind.matchesOnLeft += 1;
+                ind.ourFitness += 1;
+            }
+        }
+
+        for (let name of this.right) {
+            if (regex.test(name)) {
+                ind.matchesOnRight += 1;
+            } else {
+                ind.ourFitness += 1;
+            }
+        }
+
+        ind.evaluationEndTime = new Date();
+        return ind.fitness;
+    }
+
+    public getNextEvaluationIndex(): number {
+        return this.evaluationCount ++;
     }
 }
