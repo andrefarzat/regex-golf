@@ -33,7 +33,6 @@ export default class EvaluatorFactory {
                     let evaluator = new Evaluator(this.program.left, this.program.right);
                     let len = this.evaluators.push(evaluator);
                     this.evaluatorsStatus[len - 1] = false;
-                    console.log('Evaluator created index:', len - 1);
                     return resolve(evaluator);
                 } else {
                     setImmediate(fn);
@@ -47,5 +46,11 @@ export default class EvaluatorFactory {
     public setEvaluatorFree(evaluator: Evaluator) {
         let index = this.evaluators.indexOf(evaluator);
         this.evaluatorsStatus[index] = true;
+    }
+
+    public close() {
+        for (let evaluator of this.evaluators) {
+            evaluator.finish();
+        }
     }
 }

@@ -14,6 +14,7 @@ import Utils from '../Utils';
 import Constructed_RRLS from "./Constructed_RRLS";
 import Individual from "../models/Individual";
 import Neighborhood from '../models/Neighborhood';
+import EvaluatorFactory from '../models/EvaluatorFactory';
 
 
 args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS", "Constructed_RRLS"')
@@ -200,6 +201,7 @@ async function main() {
     }();
 
     logger.logProgramEnd();
+    EvaluatorFactory.getInstance(this).close();
 }
 
 (async function() {
