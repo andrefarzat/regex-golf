@@ -35,7 +35,7 @@ def execute(cmd):
 
 
 for program in PROGRAMS:
-    for instance in INSTANCES_TO_EXECUTE[i]:
+    for instance in INSTANCES:
         instance = instance.strip()
         for depth in DEPTHS:
             for index, seed in enumerate(SEEDS):
