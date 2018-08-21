@@ -34,12 +34,7 @@ export default abstract class LocalSearch extends BaseProgram {
     }
 
     public async addLocalSolution(ind: Individual) {
-        try {
-            await this.evaluate(ind);
-            this.localSolutions.push(ind);
-        } catch {
-            // pass
-        }
+        this.localSolutions.push(ind);
     }
 
     public generateInitialIndividual(): Individual {
@@ -47,11 +42,6 @@ export default abstract class LocalSearch extends BaseProgram {
     }
 
     public abstract async restartFromSolution(ind: Individual): Promise<Individual>;
-
-    public generateNeighborhood(solution: Individual) {
-        let hood = new Neighborhood(solution, this);
-        return hood.getGenerator();
-    }
 
     public getBestSolution(): Individual | undefined {
         return this.solutions.length > 0 ? this.solutions[0] : this.localSolutions[0];

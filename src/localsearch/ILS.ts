@@ -31,12 +31,6 @@ export default class ILS extends LocalSearch {
             ind = neo;
         }
 
-        try {
-            await this.evaluate(ind);
-        } catch {
-            // throw new Error("generated an invalid individual");
-        }
-
         return ind;
     }
 }

@@ -64,6 +64,7 @@ async function main() {
     // 1. Carrega a instância do problema
     // 2. Instância o programa
     let program = getProgram();
+    EvaluatorFactory.setProgram(program);
 
     // 3. Seta o Budget
     program.budget = flags.budget;
@@ -114,9 +115,9 @@ async function main() {
                 //        Then -> Current = Neighbor
                 //             -> Seta que encontrou melhor
                 if (ind.isBetterThan(currentSolution)) {
+                    logger.log(2, `[Found better] [from: ${currentSolution.toString()} fitness: ${currentSolution.fitness}] [to: ${ind.toString()} fitness: ${ind.fitness}]`);
                     currentSolution = ind;
                     hasFoundBetter = true;
-                    logger.log(2, `[Found better] ${ind.toString()} [from fitness ${currentSolution.fitness} to ${ind.fitness}]`);
                 }
             });
         } catch (e) {

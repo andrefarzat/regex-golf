@@ -25,37 +25,16 @@ export default class Neighborhood {
             if (!ind.isValid()) continue;
 
             await this.waitFor(() => i < this.maxSimultaneousEvaluations);
-
             i ++;
-            ind.evaluationIndex = this.program.getNextEvaluationIndex();
 
             setImmediate(async () => {
-                await this.evaluateInd(ind);
+                await EvaluatorFactory.evaluate(ind);
                 evalFn(ind);
                 i --;
             });
         }
 
         await this.waitFor(() => i == 0);
-    }
-
-    public async evaluateInd(ind: Individual) {
-        if (!ind.hasComplexEvaluation()) {
-            this.program.evaluateLocal(ind);
-            return;
-        }
-
-        let factory = EvaluatorFactory.getInstance(this.program);
-        let evaluator: Evaluator;
-
-        try {
-            evaluator = await factory.getFreeEvaluator();
-            await evaluator.evaluate(ind);
-        } catch {
-            // TODO: Log here
-        } finally {
-            factory.setEvaluatorFree(evaluator);
-        }
     }
 
     public async waitFor(conditionFn: () => boolean) {

@@ -1,5 +1,7 @@
 import ILS from './ILS';
 import Individual from '../models/Individual';
+import Evaluator from '../models/Evaluator';
+import EvaluatorFactory from '../models/EvaluatorFactory';
 
 
 export default class ILS_Shrink extends ILS {
@@ -12,7 +14,8 @@ export default class ILS_Shrink extends ILS {
         }
 
         try {
-            await this.evaluate(shunkCurrentSolution);
+            let factory = EvaluatorFactory.getInstance(this);
+            await EvaluatorFactory.evaluate(shunkCurrentSolution);
         } catch {
             return super.restartFromSolution(ind);
         }
