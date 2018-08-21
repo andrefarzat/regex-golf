@@ -5,6 +5,7 @@ import Terminal from "../nodes/Terminal";
 import RangeFunc from "../nodes/RangeFunc";
 import Evaluator from './Evaluator';
 import EvaluatorFactory from "./EvaluatorFactory";
+import { NodeTypes } from "../nodes/Node";
 
 
 export default class Neighborhood {
@@ -72,6 +73,8 @@ export default class Neighborhood {
 
         // Removing a node
         for (let node of nodes) {
+            if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+
             let neo = this.factory.removeNode(solution, node);
             if (neo.isValid()) yield neo;
         }
@@ -92,6 +95,8 @@ export default class Neighborhood {
 
         // Replacing / Swap
         for (let terminal of terminals) {
+            if (terminal.value == '') continue;
+
             for (let char of this.program.validLeftChars) {
                 let neo = this.factory.replaceNode(solution, terminal, new Terminal(char));
                 if (neo.isValid()) yield neo;
@@ -106,6 +111,8 @@ export default class Neighborhood {
         // Concatenating
         for (let char of this.program.validLeftChars) {
             for (let node of nodes) {
+                if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+
                 let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
                 if (neo.isValid()) yield neo;
 
@@ -126,6 +133,8 @@ export default class Neighborhood {
         // Operator: Or
         for (let char of this.program.validLeftChars) {
             for (let terminal of terminals) {
+                if (terminal.value == '') continue;
+
                 let func = new Func();
                 func.type = Func.Types.or;
                 for (let side of ['left', 'right']) {
@@ -161,6 +170,8 @@ export default class Neighborhood {
         }
 
         for (let node of nodes) {
+            if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+
             for(let range of ranges) {
                 let neo = this.factory.replaceNode(solution, node, range);
                 if (neo.isValid()) yield neo;
@@ -178,6 +189,8 @@ export default class Neighborhood {
             func.right = new Terminal(char);
 
             for (let node of nodes) {
+                if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+
                 let neo = this.factory.replaceNode(solution, node, func);
                 if (neo.isValid()) yield neo;
 
@@ -189,16 +202,19 @@ export default class Neighborhood {
         // Operator: Concatenation (but from right chars not in left)
         for (let char of this.program.rightCharsNotInLeft) {
             for (let node of nodes) {
+                if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
                 let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
                 if (neo.isValid()) yield neo;
             }
         }
 
         // Operators: zeroOrMore, oneOrMore, anyChar and optional
-        for (let funcType of [FuncTypes.zeroOrMore, FuncTypes.oneOrMore, FuncTypes.anyChar, FuncTypes.optional]) {
+        for (let funcType of [FuncTypes.anyChar, FuncTypes.optional]) {
             let func = new Func(funcType, new Terminal(''), new Terminal(''));
 
             for (let node of nodes) {
+                if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+
                 let neo = this.factory.replaceNode(solution, node, func);
                 if (neo.isValid()) yield neo;
 
@@ -209,6 +225,8 @@ export default class Neighborhood {
 
         // Operator: Backref
         for (let node of nodes) {
+            if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+
             let nodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(node, solution);
             if (nodeIsWrappedByGroup) continue;
 

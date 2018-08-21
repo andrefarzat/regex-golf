@@ -98,20 +98,30 @@ export default abstract class BaseProgram {
         ind.evaluationStartTime = new Date();
         let regex = new RegExp(ind.toString());
 
+        let result = {
+            matchesOnLeft: 0,
+            ourFitness: 0,
+            matchesOnRight: 0,
+        };
+
         for (let name of this.left) {
             if (regex.test(name)) {
-                ind.matchesOnLeft += 1;
-                ind.ourFitness += 1;
+                result.matchesOnLeft += 1;
+                result.ourFitness += 1;
             }
         }
 
         for (let name of this.right) {
             if (regex.test(name)) {
-                ind.matchesOnRight += 1;
+                result.matchesOnRight += 1;
             } else {
-                ind.ourFitness += 1;
+                result.ourFitness += 1;
             }
         }
+
+        ind.matchesOnLeft = result.matchesOnLeft;
+        ind.matchesOnRight = result.matchesOnRight;
+        ind.ourFitness = result.ourFitness;
 
         ind.evaluationEndTime = new Date();
         return ind.fitness;

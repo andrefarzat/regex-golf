@@ -6,7 +6,7 @@ import Constructed_RRLS from "../../src/localsearch/Constructed_RRLS";
 
 export default class Constructed_RRLSTest {
 
-    @Test("from python file")
+    @IgnoreTest("from python file")
     @TestCase('abba', '.u|.hi|te|z|gy|t$|rs|rit')
     @TestCase('alphabetical', 'es.n|r. r|e e| ae|a t|ne s|^rer|r es|^.nt|r sn')
     @TestCase('aman-aplan', '^r|oo|d$|^..v|r..$|x|la|eb|ak|ten')
