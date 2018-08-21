@@ -10,59 +10,57 @@ import EvaluatorFactory from "./EvaluatorFactory";
 export default class Neighborhood {
     public constructor(public solution: Individual, public program: BaseProgram) {}
     public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
+    public maxSimultaneousEvaluations = 2;
+    protected hood?: IterableIterator<Individual>;
 
     public get factory() {
         return this.program.factory;
     }
 
-    public evaluate(evalFn: (ind: Individual) => void): Promise<void> {
+    public async evaluate(evalFn: (ind: Individual) => void) {
+        let i = 0;
+
+        for (let ind of this.getGenerator()) {
+            if (!ind.isValid()) continue;
+
+            await this.waitFor(() => i < this.maxSimultaneousEvaluations);
+
+            i ++;
+            ind.evaluationIndex = this.program.getNextEvaluationIndex();
+
+            setImmediate(async () => {
+                await this.evaluateInd(ind);
+                evalFn(ind);
+                i --;
+            });
+        }
+
+        await this.waitFor(() => i == 0);
+    }
+
+    public async evaluateInd(ind: Individual) {
+        if (!ind.hasComplexEvaluation()) {
+            this.program.evaluateLocal(ind);
+            return;
+        }
+
         let factory = EvaluatorFactory.getInstance(this.program);
+        let evaluator: Evaluator;
 
-        return new Promise<void>(async (resolve) => {
-            let hood = this.getGenerator();
-            let i = 0;
-            let count = 0;
+        try {
+            evaluator = await factory.getFreeEvaluator();
+            await evaluator.evaluate(ind);
+        } catch {
+            // TODO: Log here
+        } finally {
+            factory.setEvaluatorFree(evaluator);
+        }
+    }
 
-            let fn = async () => {
-                let ind = hood.next();
-                if (ind.done) {
-                    if (count === 0) resolve();
-                    return;
-                }
-
-                if (!ind.value.isValid()) {
-                    setImmediate(fn);
-                    return;
-                }
-
-                ind.value.evaluationIndex = this.program.getNextEvaluationIndex();
-
-                if (!ind.value.hasComplexEvaluation()) {
-                    this.program.evaluateLocal(ind.value)
-                    evalFn(ind.value);
-                    setImmediate(fn);
-                    return;
-                }
-
-                count += 1;
-
-                let evaluator: Evaluator;
-                try {
-                    evaluator = await factory.getFreeEvaluator();
-                    await evaluator.evaluate(ind.value);
-                    evalFn(ind.value);
-                } catch {
-
-                } finally {
-                    count -= 1;
-                    factory.setEvaluatorFree(evaluator);
-                    setImmediate(fn);
-                }
-            };
-
-            for(let i = 0; i < 100; i ++) {
-                setImmediate(fn);
-            }
+    public async waitFor(conditionFn: () => boolean) {
+        return new Promise<void>((resolve) => {
+            let fn = () => { conditionFn() ? resolve() : setImmediate(fn); };
+            fn();
         });
     }
 
