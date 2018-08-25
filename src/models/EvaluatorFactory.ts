@@ -1,5 +1,5 @@
 import Evaluator from "./Evaluator";
-import BaseProgram from "../BaseProgram";
+import LocalSearch from "../localsearch/LocalSearch";
 import Individual from "./Individual";
 
 
@@ -9,13 +9,13 @@ export default class EvaluatorFactory {
     private readonly MAX_EVALUATORS = 1000;
     protected static instance: EvaluatorFactory;
 
-    public constructor(public program: BaseProgram) { }
+    public constructor(public program: LocalSearch) { }
 
-    public static setProgram(program: BaseProgram) {
+    public static setProgram(program: LocalSearch) {
         EvaluatorFactory.getInstance(program);
     }
 
-    public static getInstance(program: BaseProgram) {
+    public static getInstance(program: LocalSearch) {
         if (this.instance === undefined) {
             this.instance = new EvaluatorFactory(program);
         }

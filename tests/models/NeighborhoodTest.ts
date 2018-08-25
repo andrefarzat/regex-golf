@@ -2,7 +2,7 @@ import { Expect, Test, AsyncTest, Timeout, TestCase, TestFixture, FocusTest, Ign
 
 
 import Neighborhood from "../../src/models/Neighborhood";
-import BaseProgram from "../../src/BaseProgram";
+import LocalSearch from "../../src/localsearch/LocalSearch";
 import ILS_Shrink from "../../src/localsearch/ILS_shrink";
 import Individual from "../../src/models/Individual";
 

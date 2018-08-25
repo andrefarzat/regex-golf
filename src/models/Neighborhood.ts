@@ -1,5 +1,5 @@
 import Individual from "./Individual";
-import BaseProgram from "../BaseProgram";
+import LocalSearch from "../localsearch/LocalSearch";
 import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import RangeFunc from "../nodes/RangeFunc";
@@ -9,7 +9,7 @@ import { NodeTypes } from "../nodes/Node";
 
 
 export default class Neighborhood {
-    public constructor(public solution: Individual, public program: BaseProgram) {}
+    public constructor(public solution: Individual, public program: LocalSearch) {}
     public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
     public maxSimultaneousEvaluations = 2;
     protected hood?: IterableIterator<Individual>;

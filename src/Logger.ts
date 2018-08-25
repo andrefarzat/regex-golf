@@ -2,14 +2,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as Moment from 'moment';
 
-import BaseProgram from "./BaseProgram";
 import Individual from './models/Individual';
 import LocalSearch from './localsearch/LocalSearch';
 import Utils from './Utils';
 
 export default class Logger {
     private logLevel = 3;
-    private program!: BaseProgram;
+    private program!: LocalSearch;
     private shouldLogEmptyLine = false;
     private reportRootDir!: string;
 

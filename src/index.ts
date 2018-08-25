@@ -4,17 +4,17 @@ const fs = require('fs');
 import * as path from 'path';
 import * as moment from "moment";
 
-import ILS from './ILS';
-import ILS_Shrink from './ILS_Shrink';
-import LocalSearch from './LocalSearch';
-import RRLS from './RRLS';
+import ILS from './localsearch/ILS';
+import ILS_Shrink from './localsearch/ILS_Shrink';
+import LocalSearch from './localsearch/LocalSearch';
+import RRLS from './localsearch/RRLS';
 
-import Logger from '../Logger';
-import Utils from '../Utils';
-import Constructed_RRLS from "./Constructed_RRLS";
-import Individual from "../models/Individual";
-import Neighborhood from '../models/Neighborhood';
-import EvaluatorFactory from '../models/EvaluatorFactory';
+import Logger from './Logger';
+import Utils from './Utils';
+import Constructed_RRLS from "./localsearch/Constructed_RRLS";
+import Individual from "./models/Individual";
+import Neighborhood from './models/Neighborhood';
+import EvaluatorFactory from './models/EvaluatorFactory';
 
 
 args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS", "Constructed_RRLS"')

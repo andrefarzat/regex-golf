@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "test": "ts-node tests/runner.ts",
-    "localsearch": "ts-node src/localsearch/index.ts",
+    "localsearch": "ts-node src/index.ts",
     "copy-instances": "cp -r instances dist"
   },
   "dependencies": {
