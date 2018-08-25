@@ -67,4 +67,17 @@ export default class Utils {
     static getNextId() {
         return this.idIndex++;
     }
+
+    static async waitFor(conditionFn: () => boolean) {
+        return new Promise<void>((resolve) => {
+            let fn = () => { conditionFn() ? resolve() : setImmediate(fn); };
+            fn();
+        });
+    }
+
+    static async wait(seconds: number) {
+        return new Promise<void>((resolve) => {
+            setTimeout(resolve, seconds * 1000);
+        });
+    }
 }

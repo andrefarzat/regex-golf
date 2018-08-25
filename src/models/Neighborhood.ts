@@ -6,6 +6,7 @@ import RangeFunc from "../nodes/RangeFunc";
 import Evaluator from './Evaluator';
 import EvaluatorFactory from "./EvaluatorFactory";
 import { NodeTypes } from "../nodes/Node";
+import Utils from "../Utils";
 
 
 export default class Neighborhood {
@@ -24,24 +25,15 @@ export default class Neighborhood {
         for (let ind of this.getGenerator()) {
             if (!ind.isValid()) continue;
 
-            await this.waitFor(() => i < this.maxSimultaneousEvaluations);
+            await Utils.waitFor(() => i < this.maxSimultaneousEvaluations);
             i ++;
 
-            setImmediate(async () => {
-                await EvaluatorFactory.evaluate(ind);
-                evalFn(ind);
-                i --;
-            });
+            await this.program.evaluator.evaluate(ind);
+            evalFn(ind);
+            i --;
         }
 
-        await this.waitFor(() => i == 0);
-    }
-
-    public async waitFor(conditionFn: () => boolean) {
-        return new Promise<void>((resolve) => {
-            let fn = () => { conditionFn() ? resolve() : setImmediate(fn); };
-            fn();
-        });
+        await Utils.waitFor(() => i == 0);
     }
 
     public * getGenerator() {

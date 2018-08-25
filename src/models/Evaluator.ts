@@ -80,7 +80,7 @@ export default class Evaluator {
                     if (ind.evaluationEndTime) {
                         // console.log(`resolved: ${ind.toString()}`);
                         resolve(ind.fitness);
-                    } else if (diff > 1000) {
+                    } else if (diff > 3000) {
                         console.log('timedout: ', diff, ind.toString());
                         ind.hasTimedOut = true;
                         ind.evaluationEndTime = now.toDate();

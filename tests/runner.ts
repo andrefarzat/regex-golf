@@ -1,3 +1,4 @@
+import fs = require('fs');
 import { TapBark } from "tap-bark";
 import { TestSet, TestRunner } from "alsatian";
 
@@ -7,8 +8,9 @@ import { TestSet, TestRunner } from "alsatian";
 
     const testRunner = new TestRunner();
 
+    let f = fs.createWriteStream('log.txt');
+
     testRunner.outputStream
-        .pipe(TapBark.create().getPipeable())
         .pipe(process.stdout);
 
     await testRunner.run(testSet);

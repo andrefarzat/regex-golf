@@ -146,6 +146,11 @@ export default class Individual {
     }
 
     public isBetterThan(ind: Individual): boolean {
+        if (!this.isEvaluated || !ind.isEvaluated) {
+            debugger;
+            throw 'Individual must have been evaluated';
+        }
+
         if (this.fitness > ind.fitness) {
             // Logger.log(3, `[Found better ${this.toString()}] from fitness ${ind.fitness} to ${this.fitness}`);
             return true;

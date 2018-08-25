@@ -1,19 +1,17 @@
-import { Expect, Test, AsyncTest, Timeout, TestCase, TestFixture, FocusTest, IgnoreTest } from "alsatian";
+import { Expect, Test, AsyncTest, Timeout, TestCase, TestFixture, FocusTest, IgnoreTest, Teardown } from "alsatian";
 
 
 import Neighborhood from "../../src/models/Neighborhood";
 import LocalSearch from "../../src/localsearch/LocalSearch";
 import ILS_Shrink from "../../src/localsearch/ILS_shrink";
 import Individual from "../../src/models/Individual";
+import EvaluatorFactory from "../../src/models/EvaluatorFactory";
 
 
+@TestFixture()
 export default class NeighborhoodTest {
 
-    @TestCase("Neighborhood test")
-    public test() {
-
-    }
-
+    @IgnoreTest()
     @Test("Neighborhood generator")
     public testGenerator() {
         let program = new ILS_Shrink('family');
@@ -25,7 +23,7 @@ export default class NeighborhoodTest {
         let hood = new Neighborhood(initialInd, program);
     }
 
-    @Timeout(60 * 1000)
+    @Timeout(2000)
     @AsyncTest("Neighborhood evaluation")
     public async testEvaluation() {
         let program = new ILS_Shrink('family');
@@ -38,17 +36,21 @@ export default class NeighborhoodTest {
         hood.maxSimultaneousEvaluations = 1000;
 
         let count = 0;
-        let currentBest: Individual;
+        let lastInd: Individual;
 
         await hood.evaluate(ind => {
             count++;
+            Expect(ind.evaluationIndex).toBeDefined();
+            lastInd = ind;
         });
 
+        Expect(lastInd.evaluationIndex).toBe(476);
         Expect(count).toBe(477);
     }
 
-
+    @Timeout(2000)
     @AsyncTest("Neighborhood removing")
+    @IgnoreTest('Incomplete')
     public async testRemoving() {
         let program = new ILS_Shrink('warmup');
         program.init();

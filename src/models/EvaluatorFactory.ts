@@ -4,39 +4,24 @@ import Individual from "./Individual";
 
 
 export default class EvaluatorFactory {
-    public static _program?: LocalSearch;
     private evaluators: Evaluator[] = [];
     private evaluatorsStatus: {[key: number]: boolean} = {};
     private readonly MAX_EVALUATORS = 1000;
-    protected static instance: EvaluatorFactory;
+    public evaluationCount = 0;
 
-    public constructor(public program: LocalSearch) { }
+    public constructor(public left: string[], public right: string[]) { }
 
-    public static setProgram(program: LocalSearch) {
-        this._program = program;
+    public getNextEvaluationIndex(): number {
+        return this.evaluationCount ++;
     }
 
-    public static getInstance() {
-        if (!this._program) {
-            throw new Error('You must setup the program first');
-        }
-
-        if (this.instance === undefined) {
-            this.instance = new EvaluatorFactory(this._program);
-        }
-
-        return this.instance;
-    }
-
-    public static async evaluate(ind: Individual): Promise<number> {
-        let instance = EvaluatorFactory.getInstance();
-
-        if (ind.isEvaluated) return ind.fitness;
-        ind.evaluationIndex = instance.program.getNextEvaluationIndex();
+    public async evaluate(ind: Individual): Promise<number> {
+        if (ind.isEvaluated) return Promise.resolve(ind.fitness);
+        ind.evaluationIndex = this.getNextEvaluationIndex();
 
         return ind.hasComplexEvaluation()
-            ? await instance.evaluateViaSub(ind)
-            : Promise.resolve(instance.evaluateSimple(ind));
+            ? this.evaluateViaSub(ind)
+            : Promise.resolve(this.evaluateSimple(ind));
     }
 
     protected async evaluateSimple(ind: Individual): Promise<number> {
@@ -46,17 +31,16 @@ export default class EvaluatorFactory {
             matchesOnRight: 0,
         };
 
-        let program = this.program;
         let regex = ind.toRegex();
 
-        for (let name of program.left) {
+        for (let name of this.left) {
             if (regex.test(name)) {
                 result.matchesOnLeft += 1;
                 result.ourFitness += 1;
             }
         }
 
-        for (let name of program.right) {
+        for (let name of this.right) {
             if (regex.test(name)) {
                 result.matchesOnRight += 1;
             } else {
@@ -77,8 +61,11 @@ export default class EvaluatorFactory {
         try {
             evaluator = await this.getFreeEvaluator();
             await evaluator.evaluate(ind);
-        } catch {
+        } catch(e) {
             // TODO: Log here
+            debugger;
+            console.log('Evaluator error', e);
+            process.exit();
         } finally {
             this.setEvaluatorFree(evaluator);
         }
@@ -98,7 +85,7 @@ export default class EvaluatorFactory {
                 }
 
                 if (this.evaluators.length < this.MAX_EVALUATORS) {
-                    let evaluator = new Evaluator(this.program.left, this.program.right);
+                    let evaluator = new Evaluator(this.left, this.right);
                     let len = this.evaluators.push(evaluator);
                     this.evaluatorsStatus[len - 1] = false;
                     return resolve(evaluator);

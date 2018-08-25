@@ -64,7 +64,6 @@ async function main() {
     // 1. Carrega a instância do problema
     // 2. Instância o programa
     let program = getProgram();
-    EvaluatorFactory.setProgram(program);
 
     // 3. Seta o Budget
     program.budget = flags.budget;
@@ -80,6 +79,7 @@ async function main() {
 
     // 5. Gera indivíduo inicial
     let currentSolution = program.generateInitialIndividual();
+    await program.evaluator.evaluate(currentSolution);
     logger.logInitialSolution(currentSolution);
 
     // 6. Loop
@@ -124,17 +124,19 @@ async function main() {
             console.log('Neighborhood error: ' + e.message);
         }
 
-
         // 6.5. Não encontrou melhor?
         //      Then -> Loga solução local
         //           -> Realizar o restart
         if (!hasFoundBetter) {
             program.addLocalSolution(currentSolution);
             currentSolution = await program.restartFromSolution(currentSolution);
+            await program.evaluator.evaluate(currentSolution);
             logger.logEmptyLine();
             logger.log(3, `[Jumped to] ${currentSolution.toString()}`);
         }
     } while (true);
+
+    program.evaluator.close();
 
     // 7. Apresentar resultados
     function sorter(a: Individual, b: Individual): number {
@@ -202,9 +204,9 @@ async function main() {
     }();
 
     logger.logProgramEnd();
-    EvaluatorFactory.getInstance().close();
 }
 
 (async function() {
     await main();
+    process.exit();
 })();

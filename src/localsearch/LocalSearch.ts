@@ -5,6 +5,7 @@ import { Moment } from "moment";
 import Neighborhood from "../models/Neighborhood";
 import IndividualFactory from "../models/IndividualFactory";
 import Utils from "../Utils";
+import EvaluatorFactory from "../models/EvaluatorFactory";
 
 export interface Solution {
     ind: Individual;
@@ -18,8 +19,8 @@ export default abstract class LocalSearch {
     public right: string[] = [];
     public chars: { left: { [key: string]: number }, right: { [key: string]: number } } = { left: {}, right: {} };
     public factory: IndividualFactory;
+    public evaluator: EvaluatorFactory;
     public currentBest: Individual = null;
-    public evaluationCount: number = 0;
     public startTime: Date;
     public endTime: Date;
     public seed: number;
@@ -59,6 +60,7 @@ export default abstract class LocalSearch {
         this.chars.left = this.extractUniqueChars(this.left);
         this.chars.right = this.extractUniqueChars(this.right);
         this.factory = new IndividualFactory(this.validLeftChars, this.validRightChars);
+        this.evaluator = new EvaluatorFactory(this.left, this.right);
     }
 
     public extractUniqueChars(text: string[]): { [key: string]: number } {
@@ -102,12 +104,8 @@ export default abstract class LocalSearch {
         return this.left.length;
     }
 
-    public getNextEvaluationIndex(): number {
-        return this.evaluationCount ++;
-    }
-
     public shouldStop(): boolean {
-        if (this.evaluationCount >= this.budget) {
+        if (this.evaluator.evaluationCount >= this.budget) {
             this.endTime = new Date();
             return true;
         }
