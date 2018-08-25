@@ -14,7 +14,7 @@ export default class ILS_Shrink extends ILS {
         }
 
         try {
-            let factory = EvaluatorFactory.getInstance(this);
+            let factory = EvaluatorFactory.getInstance();
             await EvaluatorFactory.evaluate(shunkCurrentSolution);
         } catch {
             return super.restartFromSolution(ind);

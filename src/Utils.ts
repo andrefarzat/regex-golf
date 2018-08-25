@@ -1,7 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import Func from "./nodes/Func";
-import Node from "./nodes/Node";
 import MersenneTwister = require("mersenne-twister");
 
 

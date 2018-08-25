@@ -56,8 +56,6 @@ export default class Evaluator {
     }
 
     public async evaluate(ind: Individual): Promise<number> {
-        if (ind.isEvaluated) return Promise.resolve(ind.fitness);
-
         ind.matchesOnLeft = 0;
         ind.matchesOnRight = 0;
         ind.ourFitness = 0;

@@ -202,7 +202,7 @@ async function main() {
     }();
 
     logger.logProgramEnd();
-    EvaluatorFactory.getInstance(this).close();
+    EvaluatorFactory.getInstance().close();
 }
 
 (async function() {

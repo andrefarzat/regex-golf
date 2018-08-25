@@ -4,7 +4,6 @@ import * as Moment from 'moment';
 
 import Individual from './models/Individual';
 import LocalSearch from './localsearch/LocalSearch';
-import Utils from './Utils';
 
 export default class Logger {
     private logLevel = 3;

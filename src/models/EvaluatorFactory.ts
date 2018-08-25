@@ -4,6 +4,7 @@ import Individual from "./Individual";
 
 
 export default class EvaluatorFactory {
+    public static _program?: LocalSearch;
     private evaluators: Evaluator[] = [];
     private evaluatorsStatus: {[key: number]: boolean} = {};
     private readonly MAX_EVALUATORS = 1000;
@@ -12,36 +13,40 @@ export default class EvaluatorFactory {
     public constructor(public program: LocalSearch) { }
 
     public static setProgram(program: LocalSearch) {
-        EvaluatorFactory.getInstance(program);
+        this._program = program;
     }
 
-    public static getInstance(program: LocalSearch) {
+    public static getInstance() {
+        if (!this._program) {
+            throw new Error('You must setup the program first');
+        }
+
         if (this.instance === undefined) {
-            this.instance = new EvaluatorFactory(program);
+            this.instance = new EvaluatorFactory(this._program);
         }
 
         return this.instance;
     }
 
     public static async evaluate(ind: Individual): Promise<number> {
-        if (!this.instance) throw new Error(`No EvaluatorFactory instance`);
+        let instance = EvaluatorFactory.getInstance();
 
         if (ind.isEvaluated) return ind.fitness;
-        ind.evaluationIndex = this.instance.program.getNextEvaluationIndex();
+        ind.evaluationIndex = instance.program.getNextEvaluationIndex();
 
         return ind.hasComplexEvaluation()
-            ? await this.evaluateViaSub(ind)
-            : await this.evaluateSimple(ind);
+            ? await instance.evaluateViaSub(ind)
+            : Promise.resolve(instance.evaluateSimple(ind));
     }
 
-    protected static evaluateSimple(ind: Individual): number {
+    protected async evaluateSimple(ind: Individual): Promise<number> {
         let result = {
             matchesOnLeft: 0,
             ourFitness: 0,
             matchesOnRight: 0,
         };
 
-        let program = this.instance.program;
+        let program = this.program;
         let regex = ind.toRegex();
 
         for (let name of program.left) {
@@ -66,16 +71,16 @@ export default class EvaluatorFactory {
         return ind.fitness;
     }
 
-    protected static async evaluateViaSub(ind: Individual) {
+    protected async evaluateViaSub(ind: Individual) {
         let evaluator: Evaluator;
 
         try {
-            evaluator = await this.instance.getFreeEvaluator();
+            evaluator = await this.getFreeEvaluator();
             await evaluator.evaluate(ind);
         } catch {
             // TODO: Log here
         } finally {
-            this.instance.setEvaluatorFree(evaluator);
+            this.setEvaluatorFree(evaluator);
         }
 
         return ind.fitness;

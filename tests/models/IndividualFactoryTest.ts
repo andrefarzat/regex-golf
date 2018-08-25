@@ -70,6 +70,15 @@ export default class IndividualFactoryTest {
         Expect(ind.tree.toString()).toEqual('a[a-f]z');
     }
 
+    @Test('Test creating with + and *')
+    public testCreatingWithRepetition() {
+        let ind = this.factory.createFromString('a+');
+        Expect(ind.tree.toString()).toEqual('a+');
+
+        ind = this.factory.createFromString('a*');
+        Expect(ind.tree.toString()).toEqual('a*');
+    }
+
     @Test('Test creating with negation')
     public testCreatingWithNegation() {
         let ind = this.factory.createFromString('a[^abcdef]z');

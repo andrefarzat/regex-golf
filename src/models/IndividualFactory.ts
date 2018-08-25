@@ -78,7 +78,18 @@ export default class IndividualFactory {
                 }
 
                 return node;
+            } else if (expression.quantifier && expression.quantifier.kind == '+') {
+                let node = new Func(FuncTypes.oneOrMore);
+                node.left = new Terminal((expression.expression as any).value);
+
+                return node;
+            } else if (expression.quantifier && expression.quantifier.kind == '*') {
+                let node = new Func(FuncTypes.zeroOrMore);
+                node.left = new Terminal((expression.expression as any).value);
+
+                return node;
             } else {
+                debugger;
                 throw new Error('Unkown expression.type == Repetition');
             }
         } else if (expression.type === 'Disjunction') {
