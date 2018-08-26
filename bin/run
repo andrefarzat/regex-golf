@@ -26,7 +26,7 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
 
 DEPTHS = [5]
 
-FOLDER_NAME = 'agora'
+FOLDER_NAME = 'neo'
 
 
 def execute(cmd):
@@ -58,7 +58,7 @@ for program in PROGRAMS:
                        "--depth", depth,
                        "--index", index,
                        "--seed", seed,
-                       "--log-level", 1,
+                       "--log-level", 2,
                        "--csv", csvFilePath]
 
                 thread = Thread(target=execute, args=(cmd,))

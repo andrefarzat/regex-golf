@@ -20,7 +20,7 @@ import EvaluatorFactory from './models/EvaluatorFactory';
 args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS", "Constructed_RRLS"')
     .option('instance', 'O nome da instância do problema')
     .option('depth', 'O tamanho do depth', 5)
-    .option('budget', 'Número máximo de avaliações', 100000 * 6)
+    .option('budget', 'Número máximo de avaliações', 100000 * 3)
     .option('log-level', 'Log level entre 1 e 5', 3)
     .option('index', 'O índice da execução', 1)
     .option('seed', 'O seed para Random')
@@ -111,6 +111,10 @@ async function main() {
             await neighborhood.evaluate(ind => {
                 logger.logSolution(ind);
 
+                if (ind.evaluationIndex % 1000 === 0) {
+                    console.log(`${ind.evaluationIndex} evaluated`);
+                }
+
                 // 6.4.1. Neighbor is better than current solution ?
                 //        Then -> Current = Neighbor
                 //             -> Seta que encontrou melhor
@@ -132,7 +136,7 @@ async function main() {
             currentSolution = await program.restartFromSolution(currentSolution);
             await program.evaluator.evaluate(currentSolution);
             logger.logEmptyLine();
-            logger.log(3, `[Jumped to] ${currentSolution.toString()}`);
+            logger.log(2, `[Jumped to] ${currentSolution.toString()}`);
         }
     } while (true);
 
@@ -199,7 +203,7 @@ async function main() {
         csvLine.push(totalTime); // Tempo_total
         csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
 
-        let filepath = path.join(__dirname, '..', '..', 'results', flags.csv);
+        let filepath = path.join(__dirname, '..', 'results', flags.csv);
         fs.appendFileSync(filepath, csvLine.join(',') + `\n`);
     }();
 
