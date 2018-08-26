@@ -2,10 +2,8 @@ import { Expect, Test, AsyncTest, Timeout, TestCase, TestFixture, FocusTest, Ign
 
 
 import Neighborhood from "../../src/models/Neighborhood";
-import LocalSearch from "../../src/localsearch/LocalSearch";
 import ILS_Shrink from "../../src/localsearch/ILS_shrink";
 import Individual from "../../src/models/Individual";
-import EvaluatorFactory from "../../src/models/EvaluatorFactory";
 
 
 @TestFixture()
