@@ -9,7 +9,7 @@ import ILS from "../../src/localsearch/ILS";
 export default class EvaluatorFactoryTest {
 
     @AsyncTest()
-    @Timeout(1000)
+    @Timeout(6000)
     public async testEvaluate() {
         let program = new ILS('family');
         program.init();
@@ -33,7 +33,7 @@ export default class EvaluatorFactoryTest {
     }
 
     @AsyncTest()
-    @Timeout(1000)
+    @Timeout(6000)
     public async testWarmupWeirdCase() {
         let program = new ILS('warmup');
         program.init();
