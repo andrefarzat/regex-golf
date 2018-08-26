@@ -3,4 +3,5 @@ node_js:
   - "10"
 
 script:
+  - echo sim
   - npm run test-ci
