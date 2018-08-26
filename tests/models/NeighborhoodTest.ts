@@ -25,6 +25,7 @@ export default class NeighborhoodTest {
 
     @Timeout(2000)
     @AsyncTest("Neighborhood evaluation")
+    @IgnoreTest("not for now")
     public async testEvaluation() {
         let program = new ILS_Shrink('family');
         program.init();

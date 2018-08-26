@@ -7,59 +7,54 @@ import ILS from "../../src/localsearch/ILS";
 
 @TestFixture("EvaluatorFactory Test")
 export default class EvaluatorFactoryTest {
-    protected program = new ILS('family');
-    protected available = true;
-
-    @SetupFixture
-    public setupFixture() {
-        this.program.init();
-    }
 
     @AsyncTest()
     public async testEvaluate() {
-        let ind = this.program.factory.createFromString('a');
+        let program = new ILS('family');
+        program.init();
 
-        let evaluator = new EvaluatorFactory(this.program.left, this.program.right);
+        let ind = program.factory.createFromString('a');
 
-        let fitness = await evaluator.evaluate(ind);
+        let fitness = await program.evaluator.evaluate(ind);
         Expect(fitness).toBe(1);
         Expect(ind.fitness).toBe(1);
         Expect(ind.matchesOnLeft).toBe(2);
         Expect(ind.matchesOnRight).toBe(1);
 
-        ind = this.program.factory.createFromString('a+');
-        fitness = await evaluator.evaluate(ind);
+        ind = program.factory.createFromString('a+');
+        fitness = await program.evaluator.evaluate(ind);
         Expect(fitness).toBe(1);
         Expect(ind.fitness).toBe(1);
         Expect(ind.matchesOnLeft).toBe(2);
         Expect(ind.matchesOnRight).toBe(1);
 
-        evaluator.close();
+        program.evaluator.close();
     }
 
     @AsyncTest()
+    // @IgnoreTest()
     public async testWarmupWeirdCase() {
         let program = new ILS('warmup');
-        let ind = this.program.factory.createFromString('n');
-        let ind2 = this.program.factory.createFromString('n+');
+        program.init();
+
+        let ind = program.factory.createFromString('n');
+        let ind2 = program.factory.createFromString('n+');
         Expect(ind.isEvaluated).not.toBeTruthy();
 
-        let evaluator = new EvaluatorFactory(this.program.left, this.program.right);
-
-        let fitness = await evaluator.evaluate(ind);
+        let fitness = await program.evaluator.evaluate(ind);
         Expect(ind.matchesOnLeft).toBe(3);
         Expect(ind.matchesOnRight).toBe(6);
         Expect(fitness).toBe(-3);
         Expect(ind.fitness).toBe(-3);
         Expect(ind.isEvaluated).toBeTruthy();
 
-        fitness = await evaluator.evaluate(ind2);
+        fitness = await program.evaluator.evaluate(ind2);
         Expect(ind.matchesOnLeft).toBe(3);
         Expect(ind.matchesOnRight).toBe(6);
         Expect(fitness).toBe(-3);
         Expect(ind.fitness).toBe(-3);
         Expect(ind.isEvaluated).toBeTruthy();
 
-        evaluator.close();
+        program.evaluator.close();
     }
 }

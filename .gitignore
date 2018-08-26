@@ -4,6 +4,8 @@ dist/
 .ipynb_checkpoints
 *.log
 
+.nyc_output
+coverage
 
 results/*
 !results/.gitkeep

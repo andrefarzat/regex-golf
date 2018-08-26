@@ -7,6 +7,8 @@
   "license": "MIT",
   "scripts": {
     "test": "ts-node tests/runner.ts | tap-dot",
+    "check-coverage": "nyc --reporter=lcov --reporter=html npm run test && nyc report",
+    "test-ci": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
     "localsearch": "ts-node src/index.ts",
     "copy-instances": "cp -r instances dist"
   },
@@ -27,5 +29,23 @@
     "tslint": "^5.7.0",
     "typescript": "^2.5.2",
     "webpack": "^3.6.0"
+  },
+  "devDependencies": {
+    "nyc": "^12.0.2",
+    "source-map-support": "^0.5.9"
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "dist"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
   }
 }
