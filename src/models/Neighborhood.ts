@@ -202,7 +202,7 @@ export default class Neighborhood {
         }
     }
 
-    protected * generateBySwapping(solution: Individual) {
+    public * generateBySwapping(solution: Individual) {
         let terminals = solution.getTerminals();
 
         // Replacing / Swap
@@ -211,12 +211,12 @@ export default class Neighborhood {
 
             for (let char of this.program.validLeftChars) {
                 let neo = this.factory.replaceNode(solution, terminal, new Terminal(char));
-                if (neo.isValid()) yield neo;
+                if (neo.isValid() && neo.toString() !== solution.toString()) yield neo;
             }
 
             for (let specialChar of this.specialChars) {
                 let neo = this.factory.replaceNode(solution, terminal, new Terminal(specialChar));
-                if (neo.isValid()) yield neo;
+                if (neo.isValid() && neo.toString() !== solution.toString()) yield neo;
             }
         }
     }
