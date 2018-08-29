@@ -141,6 +141,22 @@ export default class Func implements Node {
         return nodes;
     }
 
+    public getLeftTerminals(): Terminal[] {
+        if (this.left.is(NodeTypes.terminal)) {
+            return [this.left as Terminal];
+        }
+
+        return (this.left as Func).getTerminals();
+    }
+
+    public getRightTerminals(): Terminal[] {
+        if (this.right.is(NodeTypes.terminal)) {
+            return [this.right as Terminal];
+        }
+
+        return (this.right as Func).getTerminals();
+    }
+
     public getFuncs(): Func[] {
         let nodes: Func[] = [this];
         this.getNodes().forEach(node => {

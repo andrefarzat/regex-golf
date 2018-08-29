@@ -9,21 +9,9 @@ import Individual from "../../src/models/Individual";
 @TestFixture()
 export default class NeighborhoodTest {
 
-    @IgnoreTest()
-    @Test("Neighborhood generator")
-    public testGenerator() {
-        let program = new ILS_Shrink('family');
-        program.init();
-
-        let initialInd = program.factory.createFromString('a');
-        Expect(initialInd.toString()).toEqual('a');
-
-        let hood = new Neighborhood(initialInd, program);
-    }
-
     @Timeout(2000)
     @AsyncTest("Neighborhood evaluation")
-    @IgnoreTest("not for now")
+    @IgnoreTest('Lets finish the neighborhood test first')
     public async testEvaluation() {
         let program = new ILS_Shrink('family');
         program.init();
@@ -43,15 +31,14 @@ export default class NeighborhoodTest {
             lastInd = ind;
         });
 
+        program.evaluator.close();
         Expect(lastInd.evaluationIndex).toBe(476);
         Expect(count).toBe(477);
     }
 
     @Test("Neighborhood generateByRemovingNodes")
-    public async testRemoving() {
-        let program = new ILS_Shrink('warmup');
-        program.init();
-
+    public testRemoving() {
+        let program = (new ILS_Shrink('warmup')).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
@@ -67,20 +54,77 @@ export default class NeighborhoodTest {
             Expect(ind.toString()).toEqual(option);
         }
         Expect(generator.next().done).toBeTruthy();
+    }
 
+    @Test("Neighborhood generateByAddingStartOperator")
+    public testGenerateByAddingStartOperator() {
+        let program = (new ILS_Shrink('warmup')).init();
 
+        // First test: Must add only ONE start operator
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
 
-        // generateByRemovingNodes
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
 
+        let generator = hood.generateByAddingStartOperator(initialInd);
+        let options = ['^abc'];
 
-        // let initialInd = program.factory.createFromString('foo|o^');
-        // Expect(initialInd.toString()).toEqual('foo|o^');
+        for (let option of options) {
+            let ind = generator.next().value;
+            Expect(ind.toString()).toEqual(option);
+        }
+        Expect(generator.next().done).toBeTruthy();
 
-        // let hood = new Neighborhood(initialInd, program);
-        // hood.maxSimultaneousEvaluations = 1;
+        // Second test. Must add one start operator for each OR operator
+        initialInd = program.factory.createFromString('abc|efg');
 
-        // for (let ind of hood.getGenerator()) {
-        //     Expect(ind.toString()).toBe('oo|o^');
-        // }
+        hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        generator = hood.generateByAddingStartOperator(initialInd);
+        options = ['^abc|efg', 'abc|^efg'];
+
+        for (let option of options) {
+            let ind = generator.next().value;
+            Expect(ind.toString()).toEqual(option);
+        }
+        Expect(generator.next().done).toBeTruthy();
+    }
+
+    @Test("Neighborhood generateByAddingEndOperator")
+    public testgenerateByAddingEndOperator() {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        // First test: Must add only ONE start operator
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
+
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        let generator = hood.generateByAddingEndOperator(initialInd);
+        let options = ['abc$'];
+
+        for (let option of options) {
+            let ind = generator.next().value;
+            Expect(ind.toString()).toEqual(option);
+        }
+        Expect(generator.next().done).toBeTruthy();
+
+        // Second test. Must add one start operator for each OR operator
+        initialInd = program.factory.createFromString('abc|efg');
+
+        hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        generator = hood.generateByAddingEndOperator(initialInd);
+        options = ['abc$|efg', 'abc|efg$'];
+
+        for (let option of options) {
+            let ind = generator.next().value;
+            Expect(ind.toString()).toEqual(option);
+        }
+        Expect(generator.next().done).toBeTruthy();
     }
 }

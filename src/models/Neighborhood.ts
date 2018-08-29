@@ -108,25 +108,97 @@ export default class Neighborhood {
         }
     }
 
-    protected * generateByAddingStartOperator(solution: Individual) {
-        let terminals = solution.getTerminals();
+    public * generateByAddingStartOperator(solution: Individual) {
+        // Let's get all OR operators first
+        let orNodes = solution.getFuncs().filter(func => func.is(FuncTypes.or));
 
-        // Adding start operator
-        for (let terminal of terminals) {
-            let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
-            if (terminal.value == '') continue;
-            if (neo.isValid()) yield neo;
+        if (orNodes.length == 0) {
+            // No or nodes. Ok. Let's add a single start operator to the first terminal and that's it
+            for (let terminal of solution.getTerminals()) {
+                if (terminal.value == '') continue;
+
+                let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
+                if (neo.isValid()) {
+                    yield neo;
+                    break;
+                }
+            }
+        } else {
+            // Ok. Let's add a start operator to first terminal together with the OR
+            for (let node of orNodes) {
+                for (let terminal of node.getLeftTerminals()) {
+                    if (terminal.value == '') continue;
+
+                    let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
+                    if (neo.isValid()) {
+                        yield neo;
+                        break;
+                    }
+                }
+
+                for (let terminal of node.getRightTerminals()) {
+                    if (terminal.value == '') continue;
+
+                    let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
+                    if (neo.isValid()) {
+                        yield neo;
+                        break;
+                    }
+                }
+            }
         }
     }
 
-    protected * generateByAddingEndOperator(solution: Individual) {
-        let terminals = solution.getTerminals();
+    public * generateByAddingEndOperator(solution: Individual) {
+        // Let's get all OR operators first
+        let orNodes = solution.getFuncs().filter(func => func.is(FuncTypes.or));
 
-        // Adding end operator
-        for (let terminal of terminals) {
-            let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
-            if (terminal.value == '') continue;
-            if (neo.isValid()) yield neo;
+        if (orNodes.length == 0) {
+            // No or nodes. Ok. Let's add a single start operator to the last terminal and that's it
+            let terminals = solution.getTerminals();
+            do {
+                let terminal = terminals.pop();
+                if (!terminal) break;
+
+                if (terminal.value == '') continue;
+
+                let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
+                if (neo.isValid()) {
+                    yield neo;
+                    break;
+                }
+            } while (true);
+        } else {
+            // Ok. Let's add a start operator to last terminal together with the OR
+            for (let node of orNodes) {
+                let terminals = node.getLeftTerminals();
+                do {
+                    let terminal = terminals.pop();
+                    if (!terminal) break;
+
+                    if (terminal.value == '') continue;
+
+                    let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
+                    if (neo.isValid()) {
+                        yield neo;
+                        break;
+                    }
+                } while (true);
+
+                terminals = node.getRightTerminals();
+                do {
+                    let terminal = terminals.pop();
+                    if (!terminal) break;
+
+                    if (terminal.value == '') continue;
+
+                    let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
+                    if (neo.isValid()) {
+                        yield neo;
+                        break;
+                    }
+                } while (true);
+            }
         }
     }
 

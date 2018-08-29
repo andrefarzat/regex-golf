@@ -55,12 +55,13 @@ export default abstract class LocalSearch {
         return this.validRightChars.filter(char => this.validLeftChars.indexOf(char) === -1);
     }
 
-    public init(): void {
+    public init() {
         this.startTime = new Date();
         this.chars.left = this.extractUniqueChars(this.left);
         this.chars.right = this.extractUniqueChars(this.right);
         this.factory = new IndividualFactory(this.validLeftChars, this.validRightChars);
         this.evaluator = new EvaluatorFactory(this.left, this.right);
+        return this;
     }
 
     public extractUniqueChars(text: string[]): { [key: string]: number } {
