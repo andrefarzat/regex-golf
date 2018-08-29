@@ -47,21 +47,40 @@ export default class NeighborhoodTest {
         Expect(count).toBe(477);
     }
 
-    @Timeout(2000)
-    @AsyncTest("Neighborhood removing")
-    @IgnoreTest('Incomplete')
+    @Test("Neighborhood generateByRemovingNodes")
     public async testRemoving() {
         let program = new ILS_Shrink('warmup');
         program.init();
 
-        let initialInd = program.factory.createFromString('foo|o^');
-        Expect(initialInd.toString()).toEqual('foo|o^');
+
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
 
         let hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        for (let ind of hood.getGenerator()) {
-            Expect(ind.toString()).toBe('oo|o^');
+        let generator = hood.generateByRemovingNodes(initialInd);
+        const options = ['bc', 'a', 'ac', 'ab'];
+
+        for (let option of options) {
+            let ind = generator.next().value;
+            Expect(ind.toString()).toEqual(option);
         }
+        Expect(generator.next().done).toBeTruthy();
+
+
+
+        // generateByRemovingNodes
+
+
+        // let initialInd = program.factory.createFromString('foo|o^');
+        // Expect(initialInd.toString()).toEqual('foo|o^');
+
+        // let hood = new Neighborhood(initialInd, program);
+        // hood.maxSimultaneousEvaluations = 1;
+
+        // for (let ind of hood.getGenerator()) {
+        //     Expect(ind.toString()).toBe('oo|o^');
+        // }
     }
 }

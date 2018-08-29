@@ -96,7 +96,7 @@ export default class Neighborhood {
         }
     }
 
-    protected * generateByRemovingNodes(solution: Individual) {
+    public * generateByRemovingNodes(solution: Individual) {
         let nodes = solution.getNodes();
 
         // Removing a node

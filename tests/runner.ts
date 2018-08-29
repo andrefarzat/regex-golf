@@ -8,8 +8,6 @@ import { TestSet, TestRunner } from "alsatian";
 
     const testRunner = new TestRunner();
 
-    let f = fs.createWriteStream('log.txt');
-
     testRunner.outputStream
         .pipe(process.stdout);
 
