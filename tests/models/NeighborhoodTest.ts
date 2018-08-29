@@ -1,10 +1,9 @@
-import { Expect, Test, AsyncTest, Timeout, TestCase, TestFixture, FocusTest, IgnoreTest, Teardown } from "alsatian";
+import { Expect, Test, AsyncTest, Timeout, TestFixture, FocusTest, IgnoreTest } from "alsatian";
 
 
 import Neighborhood from "../../src/models/Neighborhood";
 import ILS_Shrink from "../../src/localsearch/ILS_shrink";
 import Individual from "../../src/models/Individual";
-import { FOCUS } from "alsatian/core/decorators/_metadata-keys";
 
 
 @TestFixture()
@@ -180,5 +179,94 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
-    // generateByAddingOrOperator
+    @Test("Neighborhood generateByAddingOrOperator")
+    public testGenerateByAddingOrOperator() {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
+
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        let generator = hood.generateByAddingOrOperator(initialInd);
+
+        let options: string[] = ['a|bc', 'ab|c'];
+
+        for (let ind of generator) {
+            let includes = options.includes(ind.toString());
+            Expect(includes).toBeTruthy();
+        }
+        Expect(generator.next().done).toBeTruthy();
+    }
+
+    @FocusTest
+    @Test("Neighborhood getAllRanges")
+    public testGetAllRanges() {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
+
+        let hood = new Neighborhood(initialInd, program);
+        let ranges = hood.getAllRanges();
+
+        const options = [
+            "[abc]", "[a-d]", "[a-e]", "[a-f]", "[a-g]", "[a-h]", "[a-i]", "[a-j]", "[a-l]", "[a-m]", "[a-n]", "[a-o]", "[a-p]", "[a-r]", "[a-s]", "[a-t]", "[a-u]", "[a-w]", "[a-y]",
+            "[cd]", "[cde]", "[c-f]", "[c-g]", "[c-h]", "[c-i]", "[c-j]", "[c-l]", "[c-m]", "[c-n]", "[c-o]", "[c-p]", "[c-r]", "[c-s]", "[c-t]", "[c-u]", "[c-w]", "[c-y]",
+            "[de]", "[def]", "[d-g]", "[d-h]", "[d-i]", "[d-j]", "[d-l]", "[d-m]", "[d-n]", "[d-o]", "[d-p]", "[d-r]", "[d-s]", "[d-t]", "[d-u]", "[d-w]", "[d-y]",
+            "[ef]", "[efg]", "[e-h]", "[e-i]", "[e-j]", "[e-l]", "[e-m]", "[e-n]", "[e-o]", "[e-p]", "[e-r]", "[e-s]", "[e-t]", "[e-u]", "[e-w]", "[e-y]",
+            "[fg]", "[fgh]", "[f-i]", "[f-j]", "[f-l]", "[f-m]", "[f-n]", "[f-o]", "[f-p]", "[f-r]", "[f-s]", "[f-t]", "[f-u]", "[f-w]", "[f-y]",
+            "[gh]", "[ghi]", "[g-j]", "[g-l]", "[g-m]", "[g-n]", "[g-o]", "[g-p]", "[g-r]", "[g-s]", "[g-t]", "[g-u]", "[g-w]", "[g-y]",
+            "[hi]", "[hij]", "[h-l]", "[h-m]", "[h-n]", "[h-o]", "[h-p]", "[h-r]", "[h-s]", "[h-t]", "[h-u]", "[h-w]", "[h-y]",
+            "[ij]", "[i-l]", "[i-m]", "[i-n]", "[i-o]", "[i-p]", "[i-r]", "[i-s]", "[i-t]", "[i-u]", "[i-w]", "[i-y]",
+            "[jkl]", "[j-m]", "[j-n]", "[j-o]", "[j-p]", "[j-r]", "[j-s]", "[j-t]", "[j-u]", "[j-w]", "[j-y]",
+            "[lm]", "[lmn]", "[l-o]", "[l-p]", "[l-r]", "[l-s]", "[l-t]", "[l-u]", "[l-w]", "[l-y]",
+            "[mn]", "[mno]", "[m-p]", "[m-r]", "[m-s]", "[m-t]", "[m-u]", "[m-w]", "[m-y]",
+            "[no]", "[nop]", "[n-r]", "[n-s]", "[n-t]", "[n-u]", "[n-w]", "[n-y]",
+            "[op]", "[o-r]", "[o-s]", "[o-t]", "[o-u]", "[o-w]", "[o-y]",
+            "[pqr]", "[p-s]", "[p-t]", "[p-u]", "[p-w]", "[p-y]",
+            "[rs]", "[rst]", "[r-u]", "[r-w]", "[r-y]",
+            "[st]", "[stu]", "[s-w]", "[s-y]",
+            "[tu]", "[t-w]", "[t-y]",
+            "[uvw]", "[u-y]",
+            "[wxy]",
+        ];
+
+        let i = 0;
+
+        for (let range of ranges) {
+            let includes = options.includes(range.toString());
+            if (!includes) {
+                Expect.fail(`${range.toString()} doesnt exist`);
+            }
+
+            i ++;
+        }
+
+        Expect(i).toEqual(options.length);
+
+    }
+
+    // @FocusTest
+    @Test("Neighborhood generateByAddingRangeOperator")
+    public testGenerateByAddingRangeOperator() {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
+
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        let generator = hood.generateByAddingRangeOperator(initialInd);
+        debugger;
+        let options: string[] = ['a|bc', 'ab|c'];
+
+        for (let ind of generator) {
+            let includes = options.includes(ind.toString());
+            Expect(includes).toBeTruthy();
+        }
+        Expect(generator.next().done).toBeTruthy();
+    }
 }

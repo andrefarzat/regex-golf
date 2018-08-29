@@ -238,7 +238,7 @@ export default class Neighborhood {
         }
     }
 
-    protected * generateByAddingOrOperator(solution: Individual) {
+    public * generateByAddingOrOperator(solution: Individual) {
         let funcs = solution.getFuncs();
         let terminals = solution.getTerminals();
 
@@ -249,53 +249,54 @@ export default class Neighborhood {
             if (neo.isValid()) yield neo;
         }
 
-        // Operator: Or
-        for (let char of this.program.validLeftChars) {
-            for (let terminal of terminals) {
-                if (terminal.value == '') continue;
+        // // Operator: Or
+        // for (let char of this.program.validLeftChars) {
+        //     for (let terminal of terminals) {
+        //         if (terminal.value == '') continue;
 
-                let func = new Func();
-                func.type = Func.Types.or;
-                for (let side of ['left', 'right']) {
-                    if (side == 'left') {
-                        func.left = terminal;
-                        func.right = new Terminal(char);
-                    } else {
-                        func.left = new Terminal(char);
-                        func.right = terminal;
-                    }
+        //         let func = new Func();
+        //         func.type = Func.Types.or;
+        //         for (let side of ['left', 'right']) {
+        //             if (side == 'left') {
+        //                 func.left = terminal;
+        //                 func.right = new Terminal(char);
+        //             } else {
+        //                 func.left = new Terminal(char);
+        //                 func.right = terminal;
+        //             }
 
-                    let neo = this.factory.replaceNode(solution, terminal, func);
-                    if (neo.isValid()) yield neo;
-                }
-            }
-        }
+        //             let neo = this.factory.replaceNode(solution, terminal, func);
+        //             if (neo.isValid()) yield neo;
+        //         }
+        //     }
+        // }
     }
 
-    protected * generateByAddingRangeOperator(solution: Individual) {
-        let nodes = solution.getNodes();
-
-        // Operator: Range
+    public getAllRanges(): RangeFunc[] {
         let ranges: RangeFunc[] = [];
-        for (let c1 of this.program.validLeftChars) {
-            for(let c2 of this.program.validLeftChars) {
-                if (c1 == c2) continue;
+        let chars = Object.assign([], this.program.validLeftChars).sort();
+
+        for (let c1 of chars) {
+            for (let c2 of chars) {
+                if (c1 >= c2) continue;
                 let func = new RangeFunc(new Terminal(''), new Terminal(''));
-                if (c1 < c2) {
-                    func.from = c1;
-                    func.to = c2;
-                } else {
-                    func.from = c2;
-                    func.to = c1;
-                }
+
+                func.from = c1;
+                func.to = c2;
+
                 ranges.push(func);
             }
         }
 
-        for (let node of nodes) {
+        return ranges;
+    }
+
+    public * generateByAddingRangeOperator(solution: Individual) {
+        // Operator: Range
+        for (let node of solution.getNodes()) {
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
 
-            for(let range of ranges) {
+            for(let range of this.getAllRanges()) {
                 let neo = this.factory.replaceNode(solution, node, range);
                 if (neo.isValid()) yield neo;
 
