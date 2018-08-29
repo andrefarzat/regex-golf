@@ -129,7 +129,6 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
-    @FocusTest
     @Test("Neighborhood generateBySwapping")
     public testGenerateBySwapping() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -153,4 +152,33 @@ export default class NeighborhoodTest {
         }
         Expect(generator.next().done).toBeTruthy();
     }
+
+    @Test("Neighborhood generateByRemovingNodes")
+    public testGenerateByConcatenating() {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
+
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        let generator = hood.generateByConcatenating(initialInd);
+
+        let options: string[] = program.validLeftChars.map(l => `a${l}bc`);
+        options = options.concat(program.validLeftChars.map(l => `ab${l}c`));
+        options = options.concat(program.validLeftChars.map(l => `abc${l}`));
+
+        options = options.concat(hood.specialChars.map(l => `a${l}bc`));
+        options = options.concat(hood.specialChars.map(l => `ab${l}c`));
+        options = options.concat(hood.specialChars.map(l => `abc${l}`));
+
+        for (let ind of generator) {
+            let includes = options.includes(ind.toString());
+            Expect(includes).toBeTruthy();
+        }
+        Expect(generator.next().done).toBeTruthy();
+    }
+
+    // generateByAddingOrOperator
 }

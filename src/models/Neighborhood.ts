@@ -221,21 +221,19 @@ export default class Neighborhood {
         }
     }
 
-    protected * generateByConcatenating(solution: Individual) {
-        let nodes = solution.getNodes();
-
+    public * generateByConcatenating(solution: Individual) {
         // Concatenating
-        for (let char of this.program.validLeftChars) {
-            for (let node of nodes) {
-                if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+        for (let node of solution.getNodes()) {
+            if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
 
+            for (let char of this.program.validLeftChars) {
                 let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
                 if (neo.isValid()) yield neo;
+            }
 
-                for (let specialChar of this.specialChars) {
-                    let neo = this.factory.concatenateToNode(solution, node, new Terminal(specialChar));
-                    if (neo.isValid()) yield neo;
-                }
+            for (let char of this.specialChars) {
+                let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
+                if (neo.isValid()) yield neo;
             }
         }
     }
