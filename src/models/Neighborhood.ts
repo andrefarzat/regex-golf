@@ -295,6 +295,7 @@ export default class Neighborhood {
         // Operator: Range
         for (let node of solution.getNodes()) {
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+            if (node === solution.tree) continue;
 
             for(let range of this.getAllRanges()) {
                 let neo = this.factory.replaceNode(solution, node, range);

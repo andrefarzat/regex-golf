@@ -200,7 +200,6 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
-    @FocusTest
     @Test("Neighborhood getAllRanges")
     public testGetAllRanges() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -248,7 +247,6 @@ export default class NeighborhoodTest {
 
     }
 
-    // @FocusTest
     @Test("Neighborhood generateByAddingRangeOperator")
     public testGenerateByAddingRangeOperator() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -259,13 +257,26 @@ export default class NeighborhoodTest {
         let hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
+        let ranges = hood.getAllRanges();
         let generator = hood.generateByAddingRangeOperator(initialInd);
-        debugger;
-        let options: string[] = ['a|bc', 'ab|c'];
 
+        let options: string[] = [];
+        options = options.concat(ranges.map(r => `${r.toString()}bc`));
+        options = options.concat(ranges.map(r => `a${r.toString()}bc`));
+        options = options.concat(ranges.map(r => `a${r.toString()}`));
+        options = options.concat(ranges.map(r => `a${r.toString()}c`));
+        options = options.concat(ranges.map(r => `ab${r.toString()}c`));
+        options = options.concat(ranges.map(r => `ab${r.toString()}`));
+        options = options.concat(ranges.map(r => `abc${r.toString()}`));
+
+        let i = 0;
         for (let ind of generator) {
             let includes = options.includes(ind.toString());
-            Expect(includes).toBeTruthy();
+            if (!includes) {
+                Expect.fail(`${ind.toString()} doesnt exist`);
+            }
+
+            i ++;
         }
         Expect(generator.next().done).toBeTruthy();
     }
