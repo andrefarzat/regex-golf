@@ -84,4 +84,14 @@ export default class IndividualFactoryTest {
         let ind = this.factory.createFromString('a[^abcdef]z');
         Expect(ind.tree.toString()).toEqual('a[^abcdef]z');
     }
+
+    @Test()
+    public testConcatenateTwoNegativeOperators() {
+        let ind = this.factory.createFromString('a[^b]');
+        let one = new Func(Func.Types.negation, new Terminal('a'), new Terminal(''));
+        let two = new Func(Func.Types.negation, new Terminal('z'), new Terminal(''));
+
+        let neo = this.factory.concatenateTwoNegativeOperators(ind, ind.tree.right as Func, two);
+        Expect(neo.toString()).toEqual('a[^bz]');
+    }
 }

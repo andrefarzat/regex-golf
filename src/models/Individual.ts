@@ -85,6 +85,7 @@ export default class Individual {
         if (str === '.*$') return false;
         if (str === '.+') { return false; }
         if (str === '.+$') { return false; }
+        if (/\[\^[^\]]*\[\^/.test(str)) { return false; }
 
         return true;
     }

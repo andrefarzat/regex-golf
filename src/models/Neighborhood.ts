@@ -307,18 +307,17 @@ export default class Neighborhood {
         }
     }
 
-    protected * generateByAddingNegationOperator(solution: Individual) {
-        let nodes = solution.getNodes();
-
+    public * generateByAddingNegationOperator(solution: Individual) {
         // Operator: Negation
-        for (let char of this.program.rightCharsNotInLeft) {
-            let func = new Func();
-            func.type = Func.Types.negation;
-            func.left = new Terminal('');
-            func.right = new Terminal(char);
+        for (let node of solution.getNodes()) {
+            if (node.toString() == '') continue;
+            if (node === solution.tree) continue;
 
-            for (let node of nodes) {
-                if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+            for (let char of this.program.rightCharsNotInLeft) {
+                let func = new Func();
+                func.type = Func.Types.negation;
+                func.left = new Terminal(char);
+                func.right = new Terminal('');
 
                 let neo = this.factory.replaceNode(solution, node, func);
                 if (neo.isValid()) yield neo;

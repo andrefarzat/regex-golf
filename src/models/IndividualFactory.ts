@@ -228,6 +228,10 @@ export default class IndividualFactory {
     }
 
     public concatenateToNode(ind: Individual, one: Node, two: Node): Individual {
+        if (one.is(FuncTypes.negation) && two.is(FuncTypes.negation)) {
+            return this.concatenateTwoNegativeOperators(ind, one as Func, two as Func);
+        }
+
         let neo = ind.clone();
         let neoOne = neo.getNodes()[ind.getNodes().indexOf(one)];
         let parent = neo.getParentOf(neoOne);
@@ -246,6 +250,27 @@ export default class IndividualFactory {
         }
 
         return neo;
+    }
+
+    public concatenateTwoNegativeOperators(ind: Individual, one: Func, two: Func): Individual {
+        let neo = ind.clone();
+        let neoOne = neo.getNodes()[ind.getNodes().indexOf(one)];
+        let parent = neo.getParentOf(neoOne);
+
+        let func = new Func(FuncTypes.negation);
+        func.left = new Func(FuncTypes.concatenation, (neoOne as Func).left, two.left);
+        func.right = new Terminal();
+
+        if (!parent) {
+            neo.tree = func;
+        } else if (parent.side == 'left') {
+            parent.func.left = func;
+        } else {
+            parent.func.right = func;
+        }
+
+        return neo;
+
     }
 
     public changeFuncType(ind: Individual, func: Func, type: FuncTypes): Individual {
@@ -489,8 +514,12 @@ export default class IndividualFactory {
         return neo;
     }
 
-    public isNodeWrappedByGroup(node: Node, ind: Individual): boolean {
+    public isNodeWrappedBy(ind: Individual, node: Node, type: FuncTypes): boolean {
         let parents = ind.getParentsOf(node);
-        return parents.some(parent => parent.is(FuncTypes.group));
+        return parents.some(parent => parent.is(type));
+    }
+
+    public isNodeWrappedByGroup(node: Node, ind: Individual): boolean {
+        return this.isNodeWrappedBy(ind, node, FuncTypes.group);
     }
 }

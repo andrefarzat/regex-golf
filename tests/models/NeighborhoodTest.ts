@@ -280,4 +280,42 @@ export default class NeighborhoodTest {
         }
         Expect(generator.next().done).toBeTruthy();
     }
+
+    @FocusTest
+    @Test("Neighborhood generateByAddingNegationOperator")
+    public testGenerateByAddingNegationOperator() {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        let initialInd = program.factory.createFromString('a[^b]c');
+        Expect(initialInd.toString()).toEqual('a[^b]c');
+
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        let ranges = hood.getAllRanges();
+        let generator = hood.generateByAddingNegationOperator(initialInd);
+
+        let chars = ["k", "b", "z", "A", "S", "O", "M", "I", "x"];
+
+        let options: string[] = [];
+        options = options.concat(chars.map(c => `[^${c}][^b]c`));
+        options = options.concat(chars.map(c => `a[^${c}][^b]c`));
+        options = options.concat(chars.map(c => `a[^${c}]`));
+        options = options.concat(chars.map(c => `a[^b${c}]`));
+        options = options.concat(chars.map(c => `a[^b][^${c}]`));
+        options = options.concat(chars.map(c => `a[^b]c[^${c}]`));
+
+        let i = 0;
+        for (let ind of generator) {
+            let includes = options.includes(ind.toString());
+            if (!includes) {
+                Expect.fail(`expect ${ind.toString()} to equal ${options[i]}`);
+            }
+
+            i ++;
+        }
+
+        Expect(generator.next().done).toBeTruthy();
+        Expect(i).toEqual(options.length);
+    }
 }
