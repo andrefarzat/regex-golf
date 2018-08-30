@@ -4,6 +4,7 @@ import { Expect, Test, AsyncTest, Timeout, TestFixture, FocusTest, IgnoreTest } 
 import Neighborhood from "../../src/models/Neighborhood";
 import ILS_Shrink from "../../src/localsearch/ILS_shrink";
 import Individual from "../../src/models/Individual";
+import { FuncTypes } from "../../src/nodes/Func";
 
 
 @TestFixture()
@@ -281,7 +282,6 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
-    @FocusTest
     @Test("Neighborhood generateByAddingNegationOperator")
     public testGenerateByAddingNegationOperator() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -304,6 +304,38 @@ export default class NeighborhoodTest {
         options = options.concat(chars.map(c => `a[^b${c}]`));
         options = options.concat(chars.map(c => `a[^b][^${c}]`));
         options = options.concat(chars.map(c => `a[^b]c[^${c}]`));
+
+        let i = 0;
+        for (let ind of generator) {
+            let includes = options.includes(ind.toString());
+            if (!includes) {
+                Expect.fail(`expect ${ind.toString()} to equal ${options[i]}`);
+            }
+
+            i ++;
+        }
+
+        Expect(generator.next().done).toBeTruthy();
+        Expect(i).toEqual(options.length);
+    }
+
+    @FocusTest
+    @Test("Neighborhood generateByAddingGivenOperator")
+    public testGenerateByAddingGivenOperator() {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        let initialInd = program.factory.createFromString('a[^b]c');
+        Expect(initialInd.toString()).toEqual('a[^b]c');
+
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        let ranges = hood.getAllRanges();
+        let generator = hood.generateByAddingGivenOperator(initialInd, FuncTypes.anyChar);
+
+        let options: string[] = [
+            ".[^b]c", "a.[^b]c", "a.", "a[^b]c.", "a[^.]c", "a[^b.]c", "a[^b].c", "a.c", "a[^b]c.", "a[^b]."
+        ];
 
         let i = 0;
         for (let ind of generator) {

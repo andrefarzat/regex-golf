@@ -71,9 +71,9 @@ export default class Neighborhood {
             yield ind;
         }
 
-        for (let ind of this.generateByConcatenatingFromRightChars(solution)) {
-            yield ind;
-        }
+        // for (let ind of this.generateByConcatenatingFromRightChars(solution)) {
+        //     yield ind;
+        // }
 
         for (let ind of this.generateByAddingGivenOperator(solution, FuncTypes.zeroOrMore)) {
             yield ind;
@@ -341,7 +341,7 @@ export default class Neighborhood {
         }
     }
 
-    protected * generateByAddingGivenOperator(solution: Individual, funcType: FuncTypes) {
+    public * generateByAddingGivenOperator(solution: Individual, funcType: FuncTypes) {
         let nodes = solution.getNodes();
 
         // Operators: zeroOrMore, oneOrMore, anyChar and optional
@@ -349,6 +349,7 @@ export default class Neighborhood {
 
         for (let node of nodes) {
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+            if (node === solution.tree) continue;
 
             let neo = this.factory.replaceNode(solution, node, func);
             if (neo.isValid()) yield neo;
