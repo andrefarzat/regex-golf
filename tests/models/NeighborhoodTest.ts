@@ -319,7 +319,6 @@ export default class NeighborhoodTest {
         Expect(i).toEqual(options.length);
     }
 
-    @FocusTest
     @Test("Neighborhood generateByAddingGivenOperator")
     public testGenerateByAddingGivenOperator() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -349,5 +348,34 @@ export default class NeighborhoodTest {
 
         Expect(generator.next().done).toBeTruthy();
         Expect(i).toEqual(options.length);
+    }
+
+    @Test("Neighborhood generateByAddingBackrefOperator")
+    public testGenerateByAddingBackrefOperator() {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
+
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        let ranges = hood.getAllRanges();
+        let generator = hood.generateByAddingBackrefOperator(initialInd);
+
+        let options: string[] = [
+            "(a)bc\\1", "(a)\\1bc", "(a)b\\1c", "a(bc)\\1",
+            "a\\1(bc)", "a(b)c\\1", "a\\1(b)c", "a(b)\\1c",
+            "ab(c)\\1", "a\\1b(c)", "ab\\1(c)"
+        ];
+
+        for (let ind of generator) {
+            let includes = options.includes(ind.toString());
+            if (!includes) {
+                Expect.fail(`${ind.toString()} fails`);
+            }
+        }
+
+        Expect(generator.next().done).toBeTruthy();
     }
 }

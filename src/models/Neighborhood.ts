@@ -359,12 +359,11 @@ export default class Neighborhood {
         }
     }
 
-    protected * generateByAddingBackrefOperator(solution: Individual) {
-        let nodes = solution.getNodes();
-
+    public * generateByAddingBackrefOperator(solution: Individual) {
         // Operator: Backref
-        for (let node of nodes) {
+        for (let node of solution.getNodes()) {
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+            if (node === solution.tree) continue;
 
             let nodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(node, solution);
             if (nodeIsWrappedByGroup) continue;
