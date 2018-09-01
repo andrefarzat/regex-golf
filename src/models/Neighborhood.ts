@@ -3,8 +3,6 @@ import LocalSearch from "../localsearch/LocalSearch";
 import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import RangeFunc from "../nodes/RangeFunc";
-import Evaluator from './Evaluator';
-import EvaluatorFactory from "./EvaluatorFactory";
 import { NodeTypes } from "../nodes/Node";
 import Utils from "../Utils";
 
@@ -380,7 +378,11 @@ export default class Neighborhood {
 
                     let neo = this.factory.addBackref(current, localNode, i);
 
-                    if (alreadyGenerated.indexOf(neo.toString()) >= 0) {
+                    if (alreadyGenerated.includes(neo.toString())) {
+                        continue;
+                    }
+
+                    if (!this.isValidBackref(neo.toString(), i)) {
                         continue;
                     }
 

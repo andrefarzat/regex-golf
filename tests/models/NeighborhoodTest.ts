@@ -349,7 +349,7 @@ export default class NeighborhoodTest {
         Expect(i).toEqual(options.length);
     }
 
-    // @FocusTest
+    @FocusTest
     @Test("Neighborhood generateByAddingBackrefOperator")
     public testGenerateByAddingBackrefOperator() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -371,29 +371,30 @@ export default class NeighborhoodTest {
 
             "ab(c)\\1",
 
-            "(ab)\\1c",
-            "(ab)c\\1",
+            // "(ab)\\1c",
+            // "(ab)c\\1",
 
             "a(bc)\\1",
 
             "(abc)\\1",
         ];
 
-        let i = 0;
         for (let ind of generator) {
-            let includes = options.includes(ind.toString());
-            if (!includes) {
+            let index = options.indexOf(ind.toString());
+            if (index === -1) {
                 Expect.fail(`${ind.toString()} fails`);
+            } else {
+                options.splice(index, 1);
             }
-
-            i ++;
         }
 
         Expect(generator.next().done).toBeTruthy();
-        Expect(i).toEqual(options.length);
+
+        if (options.length !== 0) {
+            Expect.fail(`Remaining: ${options.join(' ; ')}`);
+        }
     }
 
-    @FocusTest
     @TestCase("abc", 1, false)
     @TestCase(`(a)\\1bc`, 1, true)
     @TestCase(`\\1(a)bc`, 1, false)
