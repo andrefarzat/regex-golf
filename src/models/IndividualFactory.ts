@@ -8,6 +8,8 @@ import Utils from '../Utils';
 import RepetitionFunc from "../nodes/RepetitionFunc";
 import RangeFunc from "../nodes/RangeFunc";
 import BackrefFunc from "../nodes/BackrefFunc";
+import LookaheadFunc from "../nodes/LookaheadFunc";
+import LookbehindFunc from "../nodes/LookbehindFunc";
 
 
 export default class IndividualFactory {
@@ -62,10 +64,20 @@ export default class IndividualFactory {
     public parseExpression(expression: regexp.Node.Expression): Func | Terminal {
         if (expression.type == 'Char') {
             return this.parseChar(expression);
-        } else if (expression.type == 'Assertion' && expression.kind == '^') {
-            return new Func(Func.Types.lineBegin);
-        } else if (expression.type == 'Assertion' && expression.kind == '$') {
-            return new Func(Func.Types.lineEnd);
+        } else if (expression.type == 'Assertion') {
+            if (expression.kind == '^') return new Func(Func.Types.lineBegin);
+            if (expression.kind == '$') return new Func(Func.Types.lineEnd);
+
+            if (expression.kind == 'Lookahead') {
+                let content = this.parseExpression(expression.assertion).toString();
+                return new LookaheadFunc(content, expression.negative);
+            }
+            if (expression.kind == 'Lookbehind') {
+                let content = this.parseExpression(expression.assertion).toString();
+                return new LookbehindFunc(content, expression.negative);
+            }
+
+            throw new Error(`Unknown Assertion ${expression.kind}`);
         } else if (expression.type == 'Repetition') {
             if (expression.quantifier && expression.quantifier.kind == 'Range') {
                 let node = new RepetitionFunc();
@@ -134,6 +146,7 @@ export default class IndividualFactory {
             node.left = this.createFromString(nodes).tree;
             return node;
         } else {
+            debugger;
             return new Terminal((expression as any).value);
         }
     }

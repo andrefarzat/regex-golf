@@ -19,6 +19,8 @@ export enum FuncTypes {
     optional = '•?',
     backref = "\\#•",
     wordBoundary = "\\b•",
+    lookahead = "(?•)",
+    lookbehind = "(?<•)",
 }
 
 

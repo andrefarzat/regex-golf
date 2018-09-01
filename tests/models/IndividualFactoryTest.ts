@@ -5,6 +5,8 @@ import { NodeTypes } from "../../src/nodes/Node";
 import Func, { FuncTypes } from "../../src/nodes/Func";
 import Terminal from "../../src/nodes/Terminal";
 import RepetitionFunc from "../../src/nodes/RepetitionFunc";
+import LookaheadFunc from "../../src/nodes/LookaheadFunc";
+import LookbehindFunc from "../../src/nodes/LookbehindFunc";
 
 
 @TestFixture("IndividualFactory Test")
@@ -93,5 +95,70 @@ export default class IndividualFactoryTest {
 
         let neo = this.factory.concatenateTwoNegativeOperators(ind, ind.tree.right as Func, two);
         Expect(neo.toString()).toEqual('a[^bz]');
+    }
+
+    @Test()
+    public testLookahead() {
+        let ind = this.factory.createFromString('ab(?=cd)');
+        Expect(ind.tree.toString()).toEqual('ab(?=cd)');
+
+        Expect(ind.tree.asFunc().is(FuncTypes.concatenation)).toBeTruthy();
+        Expect(ind.tree.asFunc().left.toString()).toBe('a');
+
+        let right = ind.tree.asFunc().right.asFunc();
+        Expect(right.is(FuncTypes.concatenation)).toBeTruthy();
+        Expect(right.left.toString()).toBe('b');
+        Expect(right.right.is(FuncTypes.lookahead)).toBeTruthy();
+        Expect(right.right.toString()).toBe('(?=cd)');
+
+        // Negative
+        ind = this.factory.createFromString('ab(?!cd)');
+        Expect(ind.tree.toString()).toEqual('ab(?!cd)');
+
+        Expect(ind.tree.asFunc().is(FuncTypes.concatenation)).toBeTruthy();
+        Expect(ind.tree.asFunc().left.toString()).toBe('a');
+
+        right = ind.tree.asFunc().right.asFunc();
+        Expect(right.is(FuncTypes.concatenation)).toBeTruthy();
+        Expect(right.left.toString()).toBe('b');
+
+        let lookahead = right.right as LookaheadFunc;
+        Expect(lookahead.is(FuncTypes.lookahead)).toBeTruthy();
+        Expect(lookahead.content).toBe('cd');
+        Expect(lookahead.negative).toBeTruthy();
+        Expect(lookahead.toString()).toBe('(?!cd)');
+    }
+
+    @Test()
+    public testLookbehind() {
+        let ind = this.factory.createFromString('ab(?<=cd)');
+        Expect(ind.tree.toString()).toEqual('ab(?<=cd)');
+
+        Expect(ind.tree.asFunc().is(FuncTypes.concatenation)).toBeTruthy();
+        Expect(ind.tree.asFunc().left.toString()).toBe('a');
+
+        let right = ind.tree.asFunc().right.asFunc();
+        Expect(right.is(FuncTypes.concatenation)).toBeTruthy();
+        Expect(right.left.toString()).toBe('b');
+        Expect(right.right.is(FuncTypes.lookbehind)).toBeTruthy();
+        Expect(right.right.toString()).toBe('(?<=cd)');
+
+        // Negative
+        ind = this.factory.createFromString('ab(?<!cd)');
+        Expect(ind.tree.toString()).toEqual('ab(?<!cd)');
+
+        Expect(ind.tree.asFunc().is(FuncTypes.concatenation)).toBeTruthy();
+        Expect(ind.tree.asFunc().left.toString()).toBe('a');
+
+        right = ind.tree.asFunc().right.asFunc();
+        Expect(right.is(FuncTypes.concatenation)).toBeTruthy();
+        Expect(right.left.toString()).toBe('b');
+
+        let lookbehind = right.right as LookbehindFunc;
+        Expect(lookbehind.is(FuncTypes.lookbehind)).toBeTruthy();
+        Expect(lookbehind.content).toBe('cd');
+        Expect(lookbehind.negative).toBeTruthy();
+        Expect(lookbehind.toString()).toBe('(?<!cd)');
+
     }
 }
