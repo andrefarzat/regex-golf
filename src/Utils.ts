@@ -80,4 +80,10 @@ export default class Utils {
             setTimeout(resolve, seconds * 1000);
         });
     }
+
+    static times<T>(n: number, fn: (i: number) => T): T[] {
+        let accum: T[] = Array(Math.max(0, n));
+        for (var i = 0; i < n; i ++) accum[i] = fn(i);
+        return accum;
+    }
 }

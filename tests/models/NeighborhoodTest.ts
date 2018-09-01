@@ -1,4 +1,4 @@
-import { Expect, Test, AsyncTest, Timeout, TestFixture } from "alsatian";
+import { Expect, Test, TestCase, AsyncTest, Timeout, TestFixture, FocusTest } from "alsatian";
 
 
 import Neighborhood from "../../src/models/Neighborhood";
@@ -349,6 +349,7 @@ export default class NeighborhoodTest {
         Expect(i).toEqual(options.length);
     }
 
+    // @FocusTest
     @Test("Neighborhood generateByAddingBackrefOperator")
     public testGenerateByAddingBackrefOperator() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -359,22 +360,56 @@ export default class NeighborhoodTest {
         let hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let ranges = hood.getAllRanges();
         let generator = hood.generateByAddingBackrefOperator(initialInd);
-
         let options: string[] = [
-            "(a)bc\\1", "(a)\\1bc", "(a)b\\1c", "a(bc)\\1",
-            "a\\1(bc)", "a(b)c\\1", "a\\1(b)c", "a(b)\\1c",
-            "ab(c)\\1", "a\\1b(c)", "ab\\1(c)"
+            "(a)\\1bc",
+            "(a)b\\1c",
+            "(a)bc\\1",
+
+            "a(b)\\1c",
+            "a(b)c\\1",
+
+            "ab(c)\\1",
+
+            "(ab)\\1c",
+            "(ab)c\\1",
+
+            "a(bc)\\1",
+
+            "(abc)\\1",
         ];
 
+        let i = 0;
         for (let ind of generator) {
             let includes = options.includes(ind.toString());
             if (!includes) {
                 Expect.fail(`${ind.toString()} fails`);
             }
+
+            i ++;
         }
 
         Expect(generator.next().done).toBeTruthy();
+        Expect(i).toEqual(options.length);
+    }
+
+    @FocusTest
+    @TestCase("abc", 1, false)
+    @TestCase(`(a)\\1bc`, 1, true)
+    @TestCase(`\\1(a)bc`, 1, false)
+    @TestCase(`(ab)c\\1`, 1, true)
+    @TestCase(`ab\\1(c)`, 1, false)
+    @TestCase(`(a)(b)\\1c\\2`, 2, true)
+    @TestCase(`(a)\\2(b)\\1c`, 2, false)
+    public testIsValidBackref(regex: string, i: number, expectedResult: boolean) {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
+
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        Expect(hood.isValidBackref(regex, i)).toBe(expectedResult);
     }
 }

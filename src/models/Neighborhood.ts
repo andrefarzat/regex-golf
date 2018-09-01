@@ -360,10 +360,11 @@ export default class Neighborhood {
     }
 
     public * generateByAddingBackrefOperator(solution: Individual) {
+        let alreadyGenerated: string[] = [];
+
         // Operator: Backref
         for (let node of solution.getNodes()) {
-            if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
-            if (node === solution.tree) continue;
+            if (node.toString() == '') continue;
 
             let nodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(node, solution);
             if (nodeIsWrappedByGroup) continue;
@@ -378,9 +379,21 @@ export default class Neighborhood {
                     if (localNodeIsWrappedByGroup) continue;
 
                     let neo = this.factory.addBackref(current, localNode, i);
+
+                    if (alreadyGenerated.indexOf(neo.toString()) >= 0) {
+                        continue;
+                    }
+
+                    alreadyGenerated.push(neo.toString());
                     if (neo.isValid()) yield neo;
                 }
             }
         }
+    }
+
+    public isValidBackref(str: string, i: number): boolean {
+        let groups = Utils.times(i, () => `\\(.*\\)`).join('.*');
+        let regex = new RegExp(`^.*${groups}.*\\\\${i}`, "g");
+        return regex.test(str);
     }
 }
