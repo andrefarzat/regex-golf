@@ -10,7 +10,7 @@ import { FuncTypes } from "../../src/nodes/Func";
 @TestFixture()
 export default class NeighborhoodTest {
 
-    @Timeout(2000)
+    @Timeout(3000)
     @AsyncTest("Neighborhood evaluation")
     public async testEvaluation() {
         let program = new ILS_Shrink('family');
@@ -32,8 +32,8 @@ export default class NeighborhoodTest {
         });
 
         program.evaluator.close();
-        Expect(lastInd.evaluationIndex).toBe(131);
-        Expect(count).toBe(132);
+        Expect(lastInd.evaluationIndex).toBe(129);
+        Expect(count).toBe(130);
     }
 
     @Test("Neighborhood generateByRemovingNodes")
