@@ -1,4 +1,4 @@
-import { Expect, Test, AsyncTest, Timeout, TestFixture, FocusTest, IgnoreTest } from "alsatian";
+import { Expect, Test, AsyncTest, Timeout, TestFixture } from "alsatian";
 
 
 import Neighborhood from "../../src/models/Neighborhood";
@@ -12,7 +12,6 @@ export default class NeighborhoodTest {
 
     @Timeout(2000)
     @AsyncTest("Neighborhood evaluation")
-    @IgnoreTest('Lets finish the neighborhood test first')
     public async testEvaluation() {
         let program = new ILS_Shrink('family');
         program.init();
@@ -33,8 +32,8 @@ export default class NeighborhoodTest {
         });
 
         program.evaluator.close();
-        Expect(lastInd.evaluationIndex).toBe(476);
-        Expect(count).toBe(477);
+        Expect(lastInd.evaluationIndex).toBe(131);
+        Expect(count).toBe(132);
     }
 
     @Test("Neighborhood generateByRemovingNodes")

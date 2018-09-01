@@ -1,4 +1,4 @@
-import { Expect, Test, TestCase, TestFixture, IgnoreTest, FocusTest } from "alsatian";
+import { Expect, Test, TestCase, TestFixture } from "alsatian";
 
 import Func, { FuncTypes } from "../../src/nodes/Func";
 import IndividualFactory from "../../src/models/IndividualFactory";

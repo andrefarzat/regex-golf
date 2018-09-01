@@ -1,4 +1,4 @@
-import { Expect, Test, TestCase, TestFixture, IgnoreTest } from "alsatian";
+import { Expect, Test, TestCase, TestFixture  } from "alsatian";
 
 import Terminal from "../../src/nodes/Terminal";
 
