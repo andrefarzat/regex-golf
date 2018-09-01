@@ -1,4 +1,4 @@
-import { Expect, Test, TestCase, AsyncTest, Timeout, TestFixture, FocusTest } from "alsatian";
+import { Expect, Test, TestCase, AsyncTest, Timeout, TestFixture } from "alsatian";
 
 
 import Neighborhood from "../../src/models/Neighborhood";
@@ -349,7 +349,6 @@ export default class NeighborhoodTest {
         Expect(i).toEqual(options.length);
     }
 
-    @FocusTest
     @Test("Neighborhood generateByAddingBackrefOperator")
     public testGenerateByAddingBackrefOperator() {
         let program = (new ILS_Shrink('warmup')).init();
