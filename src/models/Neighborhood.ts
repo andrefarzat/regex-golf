@@ -92,6 +92,10 @@ export default class Neighborhood {
         for (let ind of this.generateByAddingBackrefOperator(solution)) {
             yield ind;
         }
+
+        for (let ind of this.generateBySingleNode(solution)) {
+            yield ind;
+        }
     }
 
     public * generateByRemovingNodes(solution: Individual) {
@@ -398,4 +402,20 @@ export default class Neighborhood {
         let regex = new RegExp(`^.*${groups}.*\\\\${i}`, "g");
         return regex.test(str);
     }
+
+    public * generateBySingleNode(solution: Individual) {
+        console.log('aqui?')
+        for (let node of solution.getNodes()) {
+            console.log('neo', node.toString());
+            if (solution.tree === node) continue;
+            if (node.toString() === '') continue;
+
+            let neo = this.factory.createFromString(node.toString());
+            if (neo.isValid()) yield neo;
+        }
+    }
+
+    // public * generateByAddingLookahead(solution: Individual) {
+
+    // }
 }

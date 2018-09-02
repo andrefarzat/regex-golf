@@ -9,8 +9,6 @@ PROGRAMS = ['ILS_Shrink', 'Constructed_RRLS']
 INSTANCES = """warmup, anchors, ranges, backrefs, abba, aman-aplan, prime, four, order,
                triples, glob, balance, powers, long-count, alphabetical""".split(',')
 
-INSTANCES = ['abba']
-
 i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 
 INSTANCES_TO_EXECUTE = [

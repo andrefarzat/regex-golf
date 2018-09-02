@@ -1,4 +1,4 @@
-import { Expect, Test, TestCase, AsyncTest, Timeout, TestFixture } from "alsatian";
+import { Expect, Test, TestCase, AsyncTest, Timeout, TestFixture, FocusTest, IgnoreTest } from "alsatian";
 
 
 import Neighborhood from "../../src/models/Neighborhood";
@@ -10,6 +10,7 @@ import { FuncTypes } from "../../src/nodes/Func";
 @TestFixture()
 export default class NeighborhoodTest {
 
+    @IgnoreTest()
     @Timeout(3000)
     @AsyncTest("Neighborhood evaluation")
     public async testEvaluation() {
@@ -49,11 +50,50 @@ export default class NeighborhoodTest {
         let generator = hood.generateByRemovingNodes(initialInd);
         const options = ['bc', 'a', 'ac', 'ab'];
 
-        for (let option of options) {
-            let ind = generator.next().value;
-            Expect(ind.toString()).toEqual(option);
+        for (let ind of generator) {
+            let index = options.indexOf(ind.toString());
+            if (index === -1) {
+                Expect.fail(`${ind.toString()} fails`);
+            } else {
+                options.splice(index, 1);
+            }
         }
+
         Expect(generator.next().done).toBeTruthy();
+
+        if (options.length !== 0) {
+            Expect.fail(`Remaining: ${options.join(' ; ')}`);
+        }
+    }
+
+    @Test("Neighborhood generateBySingleNode")
+    public testGenerateBySingleNode() {
+        let program = (new ILS_Shrink('warmup')).init();
+
+        let initialInd = program.factory.createFromString('a[b-e][^z]x{5}');
+        Expect(initialInd.toString()).toEqual('a[b-e][^z]x{5}');
+
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
+
+        let generator = hood.generateBySingleNode(initialInd);
+        let options = ['a', 'z', 'x', '[^z]x{5}', 'z', 'x{5}', '[b-e][^z]x{5}'];
+
+        for (let ind of generator) {
+            let index = options.indexOf(ind.toString());
+            if (index === -1) {
+                Expect.fail(`${ind.toString()} fails`);
+            } else {
+                options.splice(index, 1);
+            }
+        }
+
+        Expect(generator.next().done).toBeTruthy();
+
+        if (options.length !== 0) {
+            Expect.fail(`Remaining: ${options.join(' ; ')}`);
+        }
+
     }
 
     @Test("Neighborhood generateByAddingStartOperator")
@@ -349,6 +389,7 @@ export default class NeighborhoodTest {
         Expect(i).toEqual(options.length);
     }
 
+    // @FocusTest
     @Test("Neighborhood generateByAddingBackrefOperator")
     public testGenerateByAddingBackrefOperator() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -412,4 +453,34 @@ export default class NeighborhoodTest {
 
         Expect(hood.isValidBackref(regex, i)).toBe(expectedResult);
     }
+
+
+    // @Test()
+    // public testGenerateLookahead() {
+    //     let program = (new ILS_Shrink('warmup')).init();
+
+    //     let initialInd = program.factory.createFromString('abc');
+    //     Expect(initialInd.toString()).toEqual('abc');
+
+    //     let hood = new Neighborhood(initialInd, program);
+    //     hood.maxSimultaneousEvaluations = 1;
+
+    //     let generator = hood.generateByAddingLookahead(initialInd);
+    //     let options: string[] = [];
+
+    //     for (let ind of generator) {
+    //         let index = options.indexOf(ind.toString());
+    //         if (index === -1) {
+    //             Expect.fail(`${ind.toString()} fails`);
+    //         } else {
+    //             options.splice(index, 1);
+    //         }
+    //     }
+
+    //     Expect(generator.next().done).toBeTruthy();
+
+    //     if (options.length !== 0) {
+    //         Expect.fail(`Remaining: ${options.join(' ; ')}`);
+    //     }
+    // }
 }
