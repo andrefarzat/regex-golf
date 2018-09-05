@@ -93,7 +93,7 @@ export default class Neighborhood {
             yield ind;
         }
 
-        for (let ind of this.generateBySingleNode(solution)) {
+        for (let ind of this.generateByExtractingSingleNode(solution)) {
             yield ind;
         }
     }
@@ -403,10 +403,8 @@ export default class Neighborhood {
         return regex.test(str);
     }
 
-    public * generateBySingleNode(solution: Individual) {
-        console.log('aqui?')
+    public * generateByExtractingSingleNode(solution: Individual) {
         for (let node of solution.getNodes()) {
-            console.log('neo', node.toString());
             if (solution.tree === node) continue;
             if (node.toString() === '') continue;
 

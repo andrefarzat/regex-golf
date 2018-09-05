@@ -76,7 +76,7 @@ export default class NeighborhoodTest {
         let hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateBySingleNode(initialInd);
+        let generator = hood.generateByExtractingSingleNode(initialInd);
         let options = ['a', 'z', 'x', '[^z]x{5}', 'z', 'x{5}', '[b-e][^z]x{5}'];
 
         for (let ind of generator) {
