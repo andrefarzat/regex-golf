@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+import os
+from subprocess import call
+
+
+# Parameters
+INSTANCE = 'warmup'
+SOLUTION = 'abc'
+LOG_LEVEL = 5
+
+
+def execute(cmd):
+    cmd = list(map(str, cmd))
+    call(cmd, shell=os.name == 'nt')
+
+
+def main():
+    cmd = ['npm', 'run', 'neighborhood', '--',
+        "--instance", INSTANCE,
+        "--solution", SOLUTION,
+        "--log-level", LOG_LEVEL]
+
+    execute(cmd)
+
+
+if __name__ == '__main__':
+    main()

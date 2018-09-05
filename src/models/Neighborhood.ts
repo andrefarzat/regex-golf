@@ -7,13 +7,16 @@ import { NodeTypes } from "../nodes/Node";
 import Utils from "../Utils";
 import LookaheadFunc from "../nodes/LookaheadFunc";
 import LookbehindFunc from "../nodes/LookbehindFunc";
+import Logger from "../Logger";
 
 
 export default class Neighborhood {
-    public constructor(public solution: Individual, public program: LocalSearch) {}
+    protected hood?: IterableIterator<Individual>;
     public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
     public maxSimultaneousEvaluations = 2;
-    protected hood?: IterableIterator<Individual>;
+    public logger = Logger.create(3, this.program);
+
+    public constructor(public solution: Individual, public program: LocalSearch) {}
 
     public get factory() {
         return this.program.factory;
@@ -39,66 +42,98 @@ export default class Neighborhood {
     public * getGenerator() {
         let { solution } = this;
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByRemovingNodes:');
         for (let ind of this.generateByRemovingNodes(solution)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByAddingStartOperator:');
         for (let ind of this.generateByAddingStartOperator(solution)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByAddingEndOperator:');
         for (let ind of this.generateByAddingEndOperator(solution)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateBySwapping:');
         for (let ind of this.generateBySwapping(solution)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByConcatenating:');
         for (let ind of this.generateByConcatenating(solution)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByAddingOrOperator:');
         for (let ind of this.generateByAddingOrOperator(solution)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByAddingRangeOperator:');
         for (let ind of this.generateByAddingRangeOperator(solution)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByAddingNegationOperator:');
         for (let ind of this.generateByAddingNegationOperator(solution)) {
             yield ind;
         }
 
+        // this.logger.logEmptyLine();
+        // this.logger.log(5, 'Neighborhood.generateByConcatenatingFromRightChars:');
         // for (let ind of this.generateByConcatenatingFromRightChars(solution)) {
         //     yield ind;
         // }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, `Neighborhood.generateByAddingGivenOperator ${FuncTypes.zeroOrMore}:`);
         for (let ind of this.generateByAddingGivenOperator(solution, FuncTypes.zeroOrMore)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, `Neighborhood.generateByAddingGivenOperator ${FuncTypes.oneOrMore}:`);
         for (let ind of this.generateByAddingGivenOperator(solution, FuncTypes.oneOrMore)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, `Neighborhood.generateByAddingGivenOperator ${FuncTypes.anyChar}:`);
         for (let ind of this.generateByAddingGivenOperator(solution, FuncTypes.anyChar)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, `Neighborhood.generateByAddingGivenOperator ${FuncTypes.optional}:`);
         for (let ind of this.generateByAddingGivenOperator(solution, FuncTypes.optional)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByAddingBackrefOperator:');
         for (let ind of this.generateByAddingBackrefOperator(solution)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByAddingLookbehind:');
         for (let ind of this.generateByAddingLookbehind(solution)) {
             yield ind;
         }
 
+        this.logger.logEmptyLine();
+        this.logger.log(5, 'Neighborhood.generateByExtractingSingleNode:');
         for (let ind of this.generateByExtractingSingleNode(solution)) {
             yield ind;
         }
