@@ -87,6 +87,15 @@ export default class IndividualFactoryTest {
         Expect(ind.tree.toString()).toEqual('a[^abcdef]z');
     }
 
+    @Test('Test creating with backref')
+    public testCreateWithBackref() {
+        let ind = this.factory.createFromString('a(b)\\1c');
+        Expect(ind.tree.toString()).toEqual('a(b)\\1c');
+
+        ind = this.factory.createFromString('a(b)(c)\\1\\2');
+        Expect(ind.tree.toString()).toEqual('a(b)(c)\\1\\2');
+    }
+
     @Test()
     public testConcatenateTwoNegativeOperators() {
         let ind = this.factory.createFromString('a[^b]');

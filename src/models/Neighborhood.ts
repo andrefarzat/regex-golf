@@ -418,6 +418,8 @@ export default class Neighborhood {
             // We loop for each group in the current solution to add a backref to each
             for (let i = 1; i <= length; i++) {
                 for (let localNode of current.getNodes()) {
+                    if (localNode.toString() === '') continue;
+
                     let localNodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(localNode, current);
                     if (localNodeIsWrappedByGroup) continue;
 

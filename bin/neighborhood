@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-import os
+import os, sys
 from subprocess import call
 
 
 # Parameters
-INSTANCE = 'warmup'
-SOLUTION = 'abc'
+INSTANCE = sys.argv[1] or 'warmup'
+SOLUTION = sys.argv[2] or 'abc'
 LOG_LEVEL = 5
 
 

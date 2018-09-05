@@ -145,8 +145,16 @@ export default class IndividualFactory {
             let node = new Func(expression.negative ? Func.Types.negation : Func.Types.list);
             node.left = this.createFromString(nodes).tree;
             return node;
+        } else if (expression.type === 'Group') {
+            let nodes = this.parseExpression(expression.expression);
+            let func = new Func();
+            func.left = new Func(FuncTypes.group, nodes);
+            return func;
+        } else if (expression.type === "Backreference") {
+            let func = new BackrefFunc();
+            func.number = expression.number;
+            return func;
         } else {
-            debugger;
             return new Terminal((expression as any).value);
         }
     }
