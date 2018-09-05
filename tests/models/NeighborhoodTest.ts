@@ -417,6 +417,12 @@ export default class NeighborhoodTest {
             "a(bc)\\1",
 
             "(abc)\\1",
+
+            // Second level
+            // "(a)\\1(b)\\2c",
+            // "(a)(b)\\1\\2c",
+            // "(a)(b)\\1c\\2",
+            // "(a)(b)c\\1\\2",
         ];
 
         for (let ind of generator) {
