@@ -1,7 +1,7 @@
 import Func, { FuncTypes } from "./Func";
 import Terminal from "./Terminal";
 
-type NegativePositive = 'positive' | 'negative';
+export type NegativePositive = 'positive' | 'negative';
 
 export default class LookaheadFunc extends Func {
     public type: FuncTypes = FuncTypes.lookahead;

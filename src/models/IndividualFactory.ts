@@ -70,11 +70,11 @@ export default class IndividualFactory {
 
             if (expression.kind == 'Lookahead') {
                 let content = this.parseExpression(expression.assertion).toString();
-                return new LookaheadFunc(content, expression.negative);
+                return new LookaheadFunc(content, expression.negative ? 'negative' : 'positive');
             }
             if (expression.kind == 'Lookbehind') {
                 let content = this.parseExpression(expression.assertion).toString();
-                return new LookbehindFunc(content, expression.negative);
+                return new LookbehindFunc(content, expression.negative ? 'negative' : 'positive');
             }
 
             throw new Error(`Unknown Assertion ${expression.kind}`);

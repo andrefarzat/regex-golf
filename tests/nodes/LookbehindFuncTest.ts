@@ -12,7 +12,7 @@ export default class LookbehindFuncTest {
         let func = new LookbehindFunc('ac');
         Expect(func.toString()).toBe('(?<=ac)');
 
-        func = new LookbehindFunc('ac', true);
+        func = new LookbehindFunc('ac', 'negative');
         Expect(func.toString()).toBe('(?<!ac)');
 
         let neo = func.clone();

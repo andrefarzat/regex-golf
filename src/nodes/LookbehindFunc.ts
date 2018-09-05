@@ -1,16 +1,19 @@
+import { NegativePositive } from './LookaheadFunc';
 import Func, { FuncTypes } from "./Func";
 import Terminal from "./Terminal";
 
 
 export default class LookbehindFunc extends Func {
     public type: FuncTypes = FuncTypes.lookbehind;
+    public negative!: boolean;
 
-    public constructor(public content: string, public negative: boolean = false) {
+    public constructor(public content: string, public negativePostive: NegativePositive = 'positive') {
         super(FuncTypes.lookbehind, new Terminal(), new Terminal());
+        this.negative = negativePostive === 'negative';
     }
 
     public clone(): LookbehindFunc {
-        let func = new LookbehindFunc(this.content, this.negative);
+        let func = new LookbehindFunc(this.content, this.negative ? 'negative' : 'positive');
         func.left = this.left.clone();
         func.right = this.right.clone();
         func.type = this.type;

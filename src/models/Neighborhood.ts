@@ -6,6 +6,7 @@ import RangeFunc from "../nodes/RangeFunc";
 import { NodeTypes } from "../nodes/Node";
 import Utils from "../Utils";
 import LookaheadFunc from "../nodes/LookaheadFunc";
+import LookbehindFunc from "../nodes/LookbehindFunc";
 
 
 export default class Neighborhood {
@@ -91,6 +92,10 @@ export default class Neighborhood {
         }
 
         for (let ind of this.generateByAddingBackrefOperator(solution)) {
+            yield ind;
+        }
+
+        for (let ind of this.generateByAddingLookbehind(solution)) {
             yield ind;
         }
 
@@ -426,6 +431,24 @@ export default class Neighborhood {
 
             for (let char of this.program.rightCharsNotInLeft) {
                 let lookahead = new LookaheadFunc(char, 'negative');
+                let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
+                if (neo.isValid()) yield neo;
+            }
+        }
+    }
+
+    public * generateByAddingLookbehind(solution: Individual) {
+        for (let terminal of solution.getTerminals()) {
+            if (terminal.toString() === '') continue;
+
+            for (let char of this.program.leftCharsNotInRight) {
+                let lookahead = new LookbehindFunc(char, 'positive');
+                let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
+                if (neo.isValid()) yield neo;
+            }
+
+            for (let char of this.program.rightCharsNotInLeft) {
+                let lookahead = new LookbehindFunc(char, 'negative');
                 let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
                 if (neo.isValid()) yield neo;
             }
