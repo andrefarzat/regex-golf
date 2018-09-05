@@ -454,33 +454,38 @@ export default class NeighborhoodTest {
         Expect(hood.isValidBackref(regex, i)).toBe(expectedResult);
     }
 
+    @FocusTest
+    @Test()
+    public testGenerateLookahead() {
+        let program = (new ILS_Shrink('warmup')).init();
 
-    // @Test()
-    // public testGenerateLookahead() {
-    //     let program = (new ILS_Shrink('warmup')).init();
+        let initialInd = program.factory.createFromString('abc');
+        Expect(initialInd.toString()).toEqual('abc');
 
-    //     let initialInd = program.factory.createFromString('abc');
-    //     Expect(initialInd.toString()).toEqual('abc');
+        let hood = new Neighborhood(initialInd, program);
+        hood.maxSimultaneousEvaluations = 1;
 
-    //     let hood = new Neighborhood(initialInd, program);
-    //     hood.maxSimultaneousEvaluations = 1;
+        let generator = hood.generateByAddingLookahead(initialInd);
+        let options: string[] = program.leftCharsNotInRight.map(c => `a(?=${c})bc`);
+        options = options.concat(program.leftCharsNotInRight.map(c => `ab(?=${c})c`));
+        options = options.concat(program.leftCharsNotInRight.map(c => `abc(?=${c})`));
+        options = options.concat(program.rightCharsNotInLeft.map(c => `a(?!${c})bc`));
+        options = options.concat(program.rightCharsNotInLeft.map(c => `ab(?!${c})c`));
+        options = options.concat(program.rightCharsNotInLeft.map(c => `abc(?!${c})`));
 
-    //     let generator = hood.generateByAddingLookahead(initialInd);
-    //     let options: string[] = [];
+        for (let ind of generator) {
+            let index = options.indexOf(ind.toString());
+            if (index === -1) {
+                Expect.fail(`${ind.toString()} fails`);
+            } else {
+                options.splice(index, 1);
+            }
+        }
 
-    //     for (let ind of generator) {
-    //         let index = options.indexOf(ind.toString());
-    //         if (index === -1) {
-    //             Expect.fail(`${ind.toString()} fails`);
-    //         } else {
-    //             options.splice(index, 1);
-    //         }
-    //     }
+        Expect(generator.next().done).toBeTruthy();
 
-    //     Expect(generator.next().done).toBeTruthy();
-
-    //     if (options.length !== 0) {
-    //         Expect.fail(`Remaining: ${options.join(' ; ')}`);
-    //     }
-    // }
+        if (options.length !== 0) {
+            Expect.fail(`Remaining: ${options.join(' ; ')}`);
+        }
+    }
 }

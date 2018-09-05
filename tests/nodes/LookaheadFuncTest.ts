@@ -13,7 +13,7 @@ export default class LockaheadFuncTest {
         let func = new LookaheadFunc('ac');
         Expect(func.toString()).toBe('(?=ac)');
 
-        func = new LookaheadFunc('ac', true);
+        func = new LookaheadFunc('ac', 'negative');
         Expect(func.toString()).toBe('(?!ac)');
 
         let neo = func.clone();

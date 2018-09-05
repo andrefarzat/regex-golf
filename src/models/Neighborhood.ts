@@ -5,6 +5,7 @@ import Terminal from "../nodes/Terminal";
 import RangeFunc from "../nodes/RangeFunc";
 import { NodeTypes } from "../nodes/Node";
 import Utils from "../Utils";
+import LookaheadFunc from "../nodes/LookaheadFunc";
 
 
 export default class Neighborhood {
@@ -413,7 +414,21 @@ export default class Neighborhood {
         }
     }
 
-    // public * generateByAddingLookahead(solution: Individual) {
+    public * generateByAddingLookahead(solution: Individual) {
+        for (let terminal of solution.getTerminals()) {
+            if (terminal.toString() === '') continue;
 
-    // }
+            for (let char of this.program.leftCharsNotInRight) {
+                let lookahead = new LookaheadFunc(char, 'positive');
+                let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
+                if (neo.isValid()) yield neo;
+            }
+
+            for (let char of this.program.rightCharsNotInLeft) {
+                let lookahead = new LookaheadFunc(char, 'negative');
+                let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
+                if (neo.isValid()) yield neo;
+            }
+        }
+    }
 }
