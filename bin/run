@@ -58,7 +58,7 @@ for program in PROGRAMS:
                        "--depth", depth,
                        "--index", index,
                        "--seed", seed,
-                       "--log-level", 2,
+                       "--log-level", 1,
                        "--csv", csvFilePath]
 
                 thread = Thread(target=execute, args=(cmd,))
