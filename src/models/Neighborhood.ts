@@ -120,17 +120,17 @@ export default class Neighborhood {
             yield ind;
         }
 
-        this.logger.logEmptyLine();
-        this.logger.log(5, 'Neighborhood.generateByAddingBackrefOperator:');
-        for (let ind of this.generateByAddingBackrefOperator(solution)) {
-            yield ind;
-        }
+        // this.logger.logEmptyLine();
+        // this.logger.log(5, 'Neighborhood.generateByAddingBackrefOperator:');
+        // for (let ind of this.generateByAddingBackrefOperator(solution)) {
+        //     yield ind;
+        // }
 
-        this.logger.logEmptyLine();
-        this.logger.log(5, 'Neighborhood.generateByAddingLookbehind:');
-        for (let ind of this.generateByAddingLookbehind(solution)) {
-            yield ind;
-        }
+        // this.logger.logEmptyLine();
+        // this.logger.log(5, 'Neighborhood.generateByAddingLookbehind:');
+        // for (let ind of this.generateByAddingLookbehind(solution)) {
+        //     yield ind;
+        // }
 
         this.logger.logEmptyLine();
         this.logger.log(5, 'Neighborhood.generateByExtractingSingleNode:');

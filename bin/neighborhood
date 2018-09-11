@@ -4,8 +4,8 @@ from subprocess import call
 
 
 # Parameters
-INSTANCE = sys.argv[1] or 'warmup'
-SOLUTION = sys.argv[2] or 'abc'
+INSTANCE = 'warmup'
+SOLUTION = 'abc'
 LOG_LEVEL = 5
 
 

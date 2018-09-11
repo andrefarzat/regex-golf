@@ -10,12 +10,10 @@ import { FuncTypes } from "../../src/nodes/Func";
 @TestFixture()
 export default class NeighborhoodTest {
 
-    @IgnoreTest()
-    @Timeout(3000)
+    @Timeout(4000)
     @AsyncTest("Neighborhood evaluation")
     public async testEvaluation() {
-        let program = new ILS_Shrink('family');
-        program.init();
+        let program = (new ILS_Shrink('warmup')).init();
 
         let initialInd = program.factory.createFromString('a');
         Expect(initialInd.toString()).toEqual('a');
@@ -23,18 +21,24 @@ export default class NeighborhoodTest {
         let hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1000;
 
-        let count = 0;
-        let lastInd: Individual;
 
+        let qtd = 0;
+
+        for(let ind of hood.getGenerator()) {
+            qtd += 1;
+            Expect(ind.isValid()).toBeTruthy();
+            Expect(ind.isEvaluated).not.toBeTruthy();
+        }
+
+
+        let count = 0;
         await hood.evaluate(ind => {
-            count++;
+            count += 1;
             Expect(ind.evaluationIndex).toBeDefined();
-            lastInd = ind;
         });
 
         program.evaluator.close();
-        Expect(lastInd.evaluationIndex).toBe(129);
-        Expect(count).toBe(130);
+        Expect(count).toBe(qtd);
     }
 
     @Test("Neighborhood generateByRemovingNodes")
