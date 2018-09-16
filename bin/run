@@ -35,7 +35,7 @@ def execute(cmd):
 
 
 for program in PROGRAMS:
-    for instance in INSTANCES:
+    for instance in INSTANCES_TO_EXECUTE[i]:
         instance = instance.strip()
         for depth in DEPTHS:
             for index, seed in enumerate(SEEDS):
@@ -58,7 +58,7 @@ for program in PROGRAMS:
                        "--depth", depth,
                        "--index", index,
                        "--seed", seed,
-                       "--log-level", 1,
+                       "--log-level", 2,
                        "--csv", csvFilePath]
 
                 thread = Thread(target=execute, args=(cmd,))

@@ -451,8 +451,12 @@ export default class Neighborhood {
             if (solution.tree === node) continue;
             if (node.toString() === '') continue;
 
-            let neo = this.factory.createFromString(node.toString());
-            if (neo.isValid()) yield neo;
+            try {
+                let neo = this.factory.createFromString(node.toString());
+                if (neo.isValid()) yield neo;
+            } catch {
+                // todo: log the invalid
+            }
         }
     }
 
