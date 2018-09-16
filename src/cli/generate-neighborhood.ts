@@ -27,7 +27,6 @@ if (!flags.instance || !flags.solution) {
 let program = (new ILS_S(flags.instance)).init();
 let initialInd = program.factory.createFromString(flags.solution);
 let hood = new Neighborhood(initialInd, program);
-hood.logger.setLogLevel(flags.logLevel);
 
 
 console.log('');

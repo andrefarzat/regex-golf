@@ -46,6 +46,10 @@ for program in PROGRAMS:
                 if not os.path.isdir(absResultsDir):
                     os.mkdir(absResultsDir)
 
+                absCurrentDir = "%s/results/current" % (os.getcwd())
+                if not os.path.isdir(absCurrentDir):
+                    os.mkdir(absCurrentDir)
+
                 absCsvFilePath = "%s/%s.csv" % (absResultsDir, program)
                 csvFilePath = "%s/%s.csv" % (resultsDir, program)
 

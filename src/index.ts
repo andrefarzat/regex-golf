@@ -47,6 +47,7 @@ if (!flags.name) {
 
 Utils.setIndex(flags.index);
 if (flags.seed) Utils.setSeed(flags.seed);
+Logger.init({logLevel: flags.logLevel, instanceName: flags.instance});
 
 function getProgram(): LocalSearch {
     switch (flags.name) {
@@ -75,12 +76,10 @@ async function main() {
     program.maxTimeout = moment().add(flags.timeout, 'milliseconds');
     program.init();
 
-    let logger = Logger.create(flags.logLevel, program);
-
     // 5. Gera indivíduo inicial
     let currentSolution = program.generateInitialIndividual();
     await program.evaluator.evaluate(currentSolution);
-    logger.logInitialSolution(currentSolution);
+    Logger.info(`[Initial solution]`, currentSolution.toLog());
 
     // 6. Loop
     do {
@@ -105,27 +104,28 @@ async function main() {
 
         // 6.4 Evaluate Neighborhood
         let neighborhood = new Neighborhood(currentSolution, program);
+        Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
 
         try {
 
             await neighborhood.evaluate(ind => {
-                logger.logSolution(ind);
+                Logger.debug(`[Solution]`, ind.toLog());
 
                 if (ind.evaluationIndex % 1000 === 0) {
-                    console.log(`${ind.evaluationIndex} evaluated`);
+                    Logger.debug(`${ind.evaluationIndex} evaluated`);
                 }
 
                 // 6.4.1. Neighbor is better than current solution ?
                 //        Then -> Current = Neighbor
                 //             -> Seta que encontrou melhor
                 if (ind.isBetterThan(currentSolution)) {
-                    logger.log(2, `[Found better] [from: ${currentSolution.toString()} fitness: ${currentSolution.fitness}] [to: ${ind.toString()} fitness: ${ind.fitness}]`);
+                    Logger.info(`[Found better]`, ind.toLog());
                     currentSolution = ind;
                     hasFoundBetter = true;
                 }
             });
         } catch (e) {
-            console.log('Neighborhood error: ' + e.message);
+            Logger.error(`[Neighborhood error]`, e.message);
         }
 
         // 6.5. Não encontrou melhor?
@@ -135,8 +135,7 @@ async function main() {
             program.addLocalSolution(currentSolution);
             currentSolution = await program.restartFromSolution(currentSolution);
             await program.evaluator.evaluate(currentSolution);
-            logger.logEmptyLine();
-            logger.log(2, `[Jumped to] ${currentSolution.toString()}`);
+            Logger.info(`[Jumped to]`, currentSolution.toLog());
         }
     } while (true);
 
@@ -153,22 +152,17 @@ async function main() {
         return 0;
     };
 
-    logger.logEmptyLine();
-    logger.log(2, `Was found ${program.localSolutions.length} local solution(s)`);
+    Logger.info(`Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.sort(sorter);
     program.localSolutions.forEach(ind => {
-        logger.logBestLocalSolution(ind);
-        logger.log(3, `[Local Solution]: ${ind.toString()} [Fitness ${ind.fitness} of ${program.getMaxFitness()}] [Length ${ind.toString().length}]`);
+        Logger.info(`[Local Solution]`, ind.toLog());
     });
 
-    logger.logEmptyLine();
-    logger.log(2, `Was found ${program.solutions.length} solution(s)`);
+    Logger.info(`Was found ${program.solutions.length} solution(s)`);
 
     program.solutions.sort(sorter);
-    program.solutions.forEach((ind, i) => {
-        logger.logBestSolution(ind);
-        let txt = `[Solution]: ${ind.toString()} [Fitness ${ind.fitness} of ${program.getMaxFitness()}] [Length ${ind.toString().length}]`;
-        logger.log(1, (i == 0) ? colors.green(txt) : txt);
+    program.solutions.forEach(ind => {
+        Logger.info(`[Solution]`, ind.toLog());
     });
 
     if (!flags.csv) process.exit();
@@ -207,7 +201,7 @@ async function main() {
         fs.appendFileSync(filepath, csvLine.join(',') + `\n`);
     }();
 
-    logger.logProgramEnd();
+    Logger.info(`[Program finished] total time: ${program.endTime.getTime() - program.startTime.getTime()}`);
 }
 
 (async function() {

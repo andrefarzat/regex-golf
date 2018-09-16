@@ -2,6 +2,7 @@ import * as cp from 'child_process';
 import * as moment from 'moment';
 import Individual from '../models/Individual';
 import { resolve } from 'dns';
+import Logger from '../Logger';
 
 interface EvaluationResult {
     index: number;
@@ -69,7 +70,7 @@ export default class Evaluator {
 
             let worker = await this.getWorker();
             worker.send({ regex: ind.toString(), index: ind.evaluationIndex, left: this.left, right: this.right }, err => {
-                if (err) return console.log("Super error", err);
+                if (err) return Logger.error("Super error", err.message);
 
                 ind.evaluationStartTime = new Date();
 
@@ -78,16 +79,14 @@ export default class Evaluator {
                     let diff = now.diff(ind.evaluationStartTime, 'milliseconds');
 
                     if (ind.evaluationEndTime) {
-                        // console.log(`resolved: ${ind.toString()}`);
                         resolve(ind.fitness);
                     } else if (diff > 3000) {
-                        console.log('timedout: ', diff, ind.toString());
+                        Logger.warn('timedout: ', diff.toString(), ind.toString());
                         ind.hasTimedOut = true;
                         ind.evaluationEndTime = now.toDate();
                         setImmediate(() => this.cleanWorker());
                         reject(new Error(`Evaluation of ${ind.toString()} has timed out!`));
                     } else {
-                        // console.log(`tick: ${ind.toString()}`);
                         setTimeout(fn, 0);
                     }
                 };

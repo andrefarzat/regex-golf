@@ -1,105 +1,76 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as Moment from 'moment';
+import * as winston from 'winston';
 
 import Individual from './models/Individual';
 import LocalSearch from './localsearch/LocalSearch';
 
+export enum LogLevel {
+    error = 0,
+    warn = 1,
+    info = 2,
+    verbose = 3,
+    debug = 4,
+    silly = 5,
+}
+
 export default class Logger {
-    private logLevel = 3;
-    private program!: LocalSearch;
-    private shouldLogEmptyLine = false;
-    private reportRootDir!: string;
+    protected static logLevel = LogLevel.warn;
+    protected static instanceName: string;
+    protected static _wiston: winston.Logger;
 
-    private csv!: {
-        invalids: fs.WriteStream,
-        solutions: fs.WriteStream,
-        bestLocals: fs.WriteStream,
-        bests: fs.WriteStream,
-        timedouts: fs.WriteStream,
-    };
+    protected static get wiston() {
+        if (!this._wiston) {
+            let reportRootDir = path.join(__dirname, '..', 'results', 'current');
 
-    public static create(logLevel: number, program: LocalSearch): Logger {
-        let logger = new Logger();
-        logger.program = program;
-        logger.setLogLevel(logLevel);
+            let errorLog = path.join(reportRootDir, 'error.log');
+            let combined = path.join(reportRootDir, `${this.instanceName}.log`);
 
-        let currentResultDir = path.join(__dirname, '..', 'results', 'current');
-        if (!fs.existsSync(currentResultDir)) {
-            fs.mkdirSync(currentResultDir);
+            this._wiston = winston.createLogger({
+                level: LogLevel[this.logLevel],
+                format: winston.format.json(),
+                transports: [
+                    // new winston.transports.Console(),
+                    new winston.transports.File({ filename: errorLog, level: 'error' }),
+                    new winston.transports.File({ filename: combined}),
+                ]
+            });
         }
 
-        logger.reportRootDir = path.join(currentResultDir, program.instanceName);
-        if (!fs.existsSync(logger.reportRootDir)) {
-            fs.mkdirSync(logger.reportRootDir);
-        }
-
-        logger.csv = {
-            invalids: fs.createWriteStream(path.join(logger.reportRootDir, 'invalids.csv'), {flags: 'a'}),
-            solutions: fs.createWriteStream(path.join(logger.reportRootDir, 'solutions.csv'), {flags: 'a'}),
-            bestLocals: fs.createWriteStream(path.join(logger.reportRootDir, 'bestLocals.csv'), {flags: 'a'}),
-            bests: fs.createWriteStream(path.join(logger.reportRootDir, 'bests.csv'), {flags: 'a'}),
-            timedouts: fs.createWriteStream(path.join(logger.reportRootDir, 'timedouts.csv'), {flags: 'a'}),
-        };
-
-        logger.log(1, `[Program started] ${program.constructor.name} instance: ${program.instanceName} depth: ${program.depth} i: ${program.index} seed: ${program.seed}`);
-
-        return logger;
+        return this._wiston;
     }
 
-    public logProgramEnd() {
-        this.csv.invalids.end();
-        this.csv.solutions.end();
-        this.csv.bestLocals.end();
-        this.csv.bests.end();
-
-        this.log(1, `[Program finished] total time: ${this.program.endTime.getTime() - this.program.startTime.getTime()}`);
+    public static init(config: {logLevel: LogLevel, instanceName: string}) {
+        this.logLevel = config.logLevel;
+        this.instanceName = config.instanceName;
     }
 
-    public setLogLevel(level: number): void {
-        this.logLevel = level;
+    public static log(logLevel: LogLevel, message: string) {
+        this.wiston.log(LogLevel[logLevel].toString(), message);
     }
 
-    public log(level: number, message: string) {
-        if (level <= this.logLevel) {
-            if (this.shouldLogEmptyLine) console.log('');
-            console.log(message);
-        }
-
-        this.shouldLogEmptyLine = false
+    public static error(...message: string[]) {
+        this.log(LogLevel.error, message.join(' '));
     }
 
-    private formatDateToDisplay(date: Date | Moment.Moment): string {
-        return Moment(date).format('HH:mm:ss');
+    public static warn(...message: string[]) {
+        this.log(LogLevel.error, message.join(' '));
     }
 
-    public logInitialSolution(ind: Individual) {
-        this.log(3, `[Initial ind] ${ind.toString()} [Fitness: ${ind.fitness}]`);
-        this.csv.solutions.write(ind.toCSV() + '\n');
+    public static info(...message: string[]) {
+        this.log(LogLevel.info, message.join(' '));
     }
 
-    public logSolution(ind: Individual) {
-        // this.csv.solutions.write(ind.toCSV() + '\n');
+    public static verbose(...message: string[]) {
+        this.log(LogLevel.verbose, message.join(' '));
     }
 
-    public logBestSolution(ind: Individual) {
-        this.csv.bests.write(ind.toCSV(true) + '\n');
-        this.log(2, `[Found best][Ind] ${ind.toString()} [Fitness: ${ind.fitness}]`)
+    public static debug(...message: string[]) {
+        this.log(LogLevel.debug, message.join(' '));
     }
 
-    public logInvalidSolution(ind: Individual) {
-        this.csv.invalids.write(ind.toCSV(true) + '\n');
-    }
-
-    public logBestLocalSolution(ind: Individual) {
-        this.csv.bestLocals.write(ind.toCSV(true) + '\n');
-    }
-
-    public logTimedoutSolution(ind: Individual) {
-        this.csv.timedouts.write(ind.toCSV(true) + '\n');
-    }
-
-    public logEmptyLine() {
-        this.shouldLogEmptyLine = true;
+    public static silly(...message: string[]) {
+        this.log(LogLevel.silly, message.join(' '));
     }
 }

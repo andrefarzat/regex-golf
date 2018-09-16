@@ -1,6 +1,6 @@
 import Evaluator from "./Evaluator";
-import LocalSearch from "../localsearch/LocalSearch";
 import Individual from "./Individual";
+import Logger from "../Logger";
 
 
 export default class EvaluatorFactory {
@@ -62,9 +62,7 @@ export default class EvaluatorFactory {
             evaluator = await this.getFreeEvaluator();
             await evaluator.evaluate(ind);
         } catch(e) {
-            // TODO: Log here
-            debugger;
-            console.log('Evaluator error', e);
+            Logger.error('[Evaluator error]', e);
             process.exit();
         } finally {
             this.setEvaluatorFree(evaluator);

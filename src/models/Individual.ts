@@ -4,7 +4,6 @@ import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import Node from "../nodes/Node";
 import NodeShrinker from '../NodeShrinker';
-import Logger from '../Logger';
 import Utils from "../Utils";
 
 
@@ -55,6 +54,23 @@ export default class Individual {
     public toString(): string {
         if (this._string === undefined) this._string = this.tree.toString();
         return this._string;
+    }
+
+    public toLog(): string {
+        return this.toString();
+        // let json = this.toJSON();
+        // return JSON.stringify(json);
+    }
+
+    public toJSON() {
+        return {
+            regex: this.toString(),
+            evaluationIndex: this.evaluationIndex,
+            fitness: this.fitness,
+            matchesOnLeft: this.matchesOnLeft,
+            matchesOnRight: this.matchesOnRight,
+            evaluationTime: this.evaluationTime,
+        };
     }
 
     public toDot(): string {
@@ -153,18 +169,15 @@ export default class Individual {
         }
 
         if (this.fitness > ind.fitness) {
-            // Logger.log(3, `[Found better ${this.toString()}] from fitness ${ind.fitness} to ${this.fitness}`);
             return true;
         }
 
         if (this.fitness == ind.fitness) {
             if (this.toString().length < ind.toString().length) {
-                // Logger.log(3, `[Found shorter ${this.toString()}] from length ${ind.toString().length} to ${this.toString().length}`);
                 return true;
             }
 
             if (this.matchesOnLeft > ind.matchesOnLeft) {
-                // Logger.log(3, `[Found better left fitness ${this.toString()}] from ${ind.leftFitness} to ${this.leftFitness}`);
                 return true;
             }
         }
