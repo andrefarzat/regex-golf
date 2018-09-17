@@ -6,16 +6,11 @@ import sys
 
 PROGRAMS = ['ILS_Shrink', 'Constructed_RRLS']
 
-INSTANCES = """warmup, anchors, ranges, backrefs, abba, aman-aplan, prime, four, order,
-               triples, glob, balance, powers, long-count, alphabetical""".split(',')
-
 i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 
 INSTANCES_TO_EXECUTE = [
-    INSTANCES[:4],
-    INSTANCES[4:8],
-    INSTANCES[8:12],
-    INSTANCES[12:],
+    "warmup anchors ranges backrefs powers long-count alphabetical".split(' '),
+    "abba aman-aplan prime four order triples glob balance".split(' '),
 ]
 
 SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
