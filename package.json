@@ -1,7 +1,7 @@
 {
   "name": "heuristica",
   "version": "1.0.0",
-  "description": "Aula da adriana",
+  "description": "Unirio",
   "main": "index.js",
   "author": "Andre Farzat",
   "license": "MIT",
@@ -11,7 +11,8 @@
     "test-ci": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
     "localsearch": "ts-node src/index.ts",
     "copy-instances": "cp -r instances dist",
-    "neighborhood": "ts-node src/cli/generate-neighborhood.ts"
+    "neighborhood": "ts-node src/cli/generate-neighborhood.ts",
+    "read-log": "ts-node src/cli/read-log.ts"
   },
   "dependencies": {
     "@types/args": "^3.0.0",
