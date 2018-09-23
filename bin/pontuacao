@@ -3,6 +3,7 @@
 import re
 from pathlib import Path
 from typing import List
+from functools import reduce
 
 
 OURS = {
@@ -78,23 +79,7 @@ BARTOLI_GP = {
     "alphabetical": r"tena|[^et][^etren](?=((?:(?:ren|eren.(?=((?:(?:ren|[^ren]))+))\2|eren.(?=((?:(?:ren| [^ren]))+))\3))+))\1|eas",
 }
 
-MAX_FITNESS = {
-    "warmup": [21],
-    "anchors": [21],
-    "ranges": [21],
-    "backrefs": [21],
-    "abba": [22],
-    "aman-aplan": [19],
-    "prime": [20],
-    "four": [21],
-    "order": [21],
-    "triples": [21],
-    "glob": [21],
-    "balance": [32],
-    "powers": [11],
-    "long-count": [1],
-    "alphabetical": [17],
-}
+MAX_FITNESS = {}
 
 
 
@@ -102,46 +87,27 @@ def get_content_from_file(instance, filename) -> List[str]:
     return [i for i in Path('./instances/%s/%s.txt' % (instance, filename)).read_text().split('\n') if i != '']
 
 
-def compute_with_bartoli_fitness(instance, regex_str) -> int:
+def compute(instance, regex_str):
     left_content = get_content_from_file(instance, 'left')
     right_content = get_content_from_file(instance, 'right')
+
+    if instance not in MAX_FITNESS:
+        left_max_fitness = reduce(lambda x, y: x + y, [len(name) for name in left_content])
+        right_max_fitness = reduce(lambda x, y: x + y, [len(name) for name in right_content])
+        MAX_FITNESS[instance] = left_max_fitness + right_max_fitness
 
     regex = re.compile(regex_str)
 
     i = 0
     for name in left_content:
         if regex.search(name) is not None:
-            i += 1
-
-    for name in right_content:
-        if regex.search(name) is not None:
-            i -= 1
-
-    return i
-
-def compute_with_our_fitness(instance, regex_str) -> int:
-    left_content = get_content_from_file(instance, 'left')
-    right_content = get_content_from_file(instance, 'right')
-
-    regex = re.compile(regex_str)
-
-    i = 0
-    for name in left_content:
-        if regex.search(name) is not None:
-            i += 1
+            i += len(name)
 
     for name in right_content:
         if regex.search(name) is None:
-            i += 1
+            i += len(name)
 
-    return i
-
-
-def compute(instance, regex_str):
-    bartoli = compute_with_bartoli_fitness(instance, regex_str)
-    ours = compute_with_bartoli_fitness(instance, regex_str)
-    # print('"%s": [%d, %d],' % (instance, bartoli, ours))
-    print('"%s": [%d, %d],' % (instance, bartoli, len(regex_str)))
+    print('"%s": [%d, %d],' % (instance, i, len(regex_str)))
 
 
 def main():
@@ -163,6 +129,11 @@ def main():
     print('OURS: ')
     for instance, regex_str in OURS.items():
         compute(instance, regex_str)
+
+    print('')
+    print("MAX FITNESS:")
+    for instance, fitness in MAX_FITNESS.items():
+        print('"%s": %d,' % (instance, fitness))
 
 if __name__ == '__main__':
     main()
