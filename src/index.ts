@@ -104,7 +104,7 @@ async function main() {
 
         // 6.4 Evaluate Neighborhood
         let neighborhood = new Neighborhood(currentSolution, program);
-        Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
+        // Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
 
         try {
 
@@ -179,7 +179,6 @@ async function main() {
             csvLine.push(bestSolution.toString()); // Melhor_solucao
             csvLine.push(bestSolution.shrink().toString()); // Melhor_solucao_shrunk
             csvLine.push(bestSolution.fitness); // Melhor_fitness
-            csvLine.push(bestSolution.ourFitness); // Nossa_fitness
             csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
             csvLine.push(bestSolution.evaluationTime); // Tempo_avaliacao
             csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds'))); // Tempo_para_encontrar_melhor_solucao
@@ -187,7 +186,6 @@ async function main() {
             csvLine.push('N/A'); // Melhor_solucao
             csvLine.push('N/A'); // Melhor_solucao_shrunk
             csvLine.push('N/A'); // Melhor_fitness
-            csvLine.push('N/A'); // Nossa_fitness
             csvLine.push('N/A'); // Numero_de_comparacoes
             csvLine.push('N/A'); // Tempo_avaliacao
             csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao

@@ -4,8 +4,8 @@ from subprocess import call
 
 
 # Parameters
-INSTANCE = 'warmup'
-SOLUTION = 'abc'
+INSTANCE = 'abba'
+SOLUTION = '[u-z][f-t]'
 LOG_LEVEL = 5
 
 

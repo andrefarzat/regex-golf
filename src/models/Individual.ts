@@ -13,7 +13,8 @@ export default class Individual {
     public tree: Func;
     public matchesOnLeft: number = 0;
     public matchesOnRight: number = 0;
-    public ourFitness: number = 0;
+    public leftPoints: number = 0;
+    public rightPoints: number = 0;
     public evaluationStartTime?: Date;
     public evaluationEndTime?: Date;
 
@@ -29,7 +30,7 @@ export default class Individual {
     }
 
     public get fitness(): number {
-        return this.matchesOnLeft - this.matchesOnRight;
+        return this.leftPoints + this.rightPoints;
     }
 
     public get evaluationTime(): number {
@@ -42,7 +43,6 @@ export default class Individual {
             this.toString(),
             this.shrink().toString(),
             this.fitness,
-            this.ourFitness,
             this.evaluationIndex,
         ];
 
@@ -57,9 +57,7 @@ export default class Individual {
     }
 
     public toLog(): string {
-        return this.toString();
-        // let json = this.toJSON();
-        // return JSON.stringify(json);
+        return `${this.toString()} [fitness: ${this.fitness}]`;
     }
 
     public toJSON() {
@@ -113,6 +111,8 @@ export default class Individual {
     public clone(): Individual {
         let ind = new Individual();
         ind.tree = this.tree.clone();
+        ind.leftPoints = this.leftPoints;
+        ind.rightPoints = this.rightPoints;
         ind.matchesOnLeft = this.matchesOnLeft;
         ind.matchesOnRight = this.matchesOnRight;
         return ind;
@@ -164,7 +164,6 @@ export default class Individual {
 
     public isBetterThan(ind: Individual): boolean {
         if (!this.isEvaluated || !ind.isEvaluated) {
-            debugger;
             throw 'Individual must have been evaluated';
         }
 
@@ -177,7 +176,7 @@ export default class Individual {
                 return true;
             }
 
-            if (this.matchesOnLeft > ind.matchesOnLeft) {
+            if (this.leftPoints > ind.leftPoints) {
                 return true;
             }
         }

@@ -25,7 +25,7 @@ export default class Logger {
             let reportRootDir = path.join(__dirname, '..', 'results', 'current');
 
             let errorLog = path.join(reportRootDir, 'error.log');
-            let combined = path.join(reportRootDir, `${this.instanceName}.log`);
+            let instanceInfo = path.join(reportRootDir, `${this.instanceName}.log`);
 
             this._wiston = winston.createLogger({
                 level: LogLevel[this.logLevel],
@@ -33,7 +33,7 @@ export default class Logger {
                 transports: [
                     // new winston.transports.Console(),
                     new winston.transports.File({ filename: errorLog, level: 'error' }),
-                    new winston.transports.File({ filename: combined}),
+                    new winston.transports.File({ filename: instanceInfo, level: 'info' }),
                 ]
             });
         }

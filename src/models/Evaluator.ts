@@ -6,8 +6,9 @@ import Logger from '../Logger';
 
 interface EvaluationResult {
     index: number;
+    leftPoints: number;
+    rightPoints: number;
     matchesOnLeft: number;
-    ourFitness: number;
     matchesOnRight: number;
 }
 
@@ -51,15 +52,15 @@ export default class Evaluator {
         ind.evaluationEndTime = new Date();
         ind.matchesOnLeft = result.matchesOnLeft;
         ind.matchesOnRight = result.matchesOnRight;
-        ind.ourFitness = result.ourFitness;
 
         this.cache[result.index] = undefined;
     }
 
     public async evaluate(ind: Individual): Promise<number> {
+        ind.leftPoints = 0;
+        ind.rightPoints = 0;
         ind.matchesOnLeft = 0;
         ind.matchesOnRight = 0;
-        ind.ourFitness = 0;
 
         return this.evaluateViaSub(ind);
     }

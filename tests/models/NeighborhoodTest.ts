@@ -41,6 +41,20 @@ export default class NeighborhoodTest {
         Expect(count).toBe(qtd);
     }
 
+    @FocusTest
+    @AsyncTest("Neighborhood generation")
+    public async testGeneration() {
+        let program = (new ILS_Shrink('abba')).init();
+
+        let initialInd = program.factory.createFromString('[a-l][tu]');
+        Expect(initialInd.toString()).toEqual('[a-l][tu]');
+
+        let hood = new Neighborhood(initialInd, program);
+        for (let neighbor of hood.getGenerator()) {
+            Expect(neighbor.toString()).not.toBe('[a-l][tu]');
+        }
+    }
+
     @Test("Neighborhood generateByRemovingNodes")
     public testRemoving() {
         let program = (new ILS_Shrink('warmup')).init();

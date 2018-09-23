@@ -75,15 +75,13 @@ async function main() {
             case 'Initial solution':
                 print(`"${log.regex}"`, '[shape=box];')
                 break;
-            case 'Starting neighborhood for':
-                print(`"${prev.regex}" -> "${log.regex}" [shape=box];`);
-                break;
             case 'Found better':
                 print(`"${prev.regex}" -> "${log.regex}";`);
                 break;
             case 'Jumped to':
                 print(`"${prev.regex}" -> "${log.regex}";`);
                 break;
+            case 'Starting neighborhood for':
             case 'Invalid':
             case 'Neighborhood error':
                 break;

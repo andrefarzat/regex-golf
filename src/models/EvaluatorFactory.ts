@@ -26,8 +26,9 @@ export default class EvaluatorFactory {
 
     protected async evaluateSimple(ind: Individual): Promise<number> {
         let result = {
+            leftPoints: 0,
+            rightPoints: 0,
             matchesOnLeft: 0,
-            ourFitness: 0,
             matchesOnRight: 0,
         };
 
@@ -35,8 +36,8 @@ export default class EvaluatorFactory {
 
         for (let name of this.left) {
             if (regex.test(name)) {
+                result.leftPoints += name.length;
                 result.matchesOnLeft += 1;
-                result.ourFitness += 1;
             }
         }
 
@@ -44,13 +45,14 @@ export default class EvaluatorFactory {
             if (regex.test(name)) {
                 result.matchesOnRight += 1;
             } else {
-                result.ourFitness += 1;
+                result.rightPoints += name.length;
             }
         }
 
+        ind.leftPoints = result.leftPoints;
+        ind.rightPoints = result.rightPoints;
         ind.matchesOnLeft = result.matchesOnLeft;
         ind.matchesOnRight = result.matchesOnRight;
-        ind.ourFitness = result.ourFitness;
 
         return ind.fitness;
     }

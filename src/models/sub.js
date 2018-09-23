@@ -6,8 +6,9 @@ process.on('message', function({regex, index, left, right}) {
 
     let result = {
         index,
+        leftPoints: 0,
+        rightPoints: 0,
         matchesOnLeft: 0,
-        ourFitness: 0,
         matchesOnRight: 0,
     };
 
@@ -15,8 +16,8 @@ process.on('message', function({regex, index, left, right}) {
 
     for (let name of left) {
         if (regex.test(name)) {
+            result.leftPoints += name.length;
             result.matchesOnLeft += 1;
-            result.ourFitness += 1;
         }
     }
 
@@ -24,7 +25,7 @@ process.on('message', function({regex, index, left, right}) {
         if (regex.test(name)) {
             result.matchesOnRight += 1;
         } else {
-            result.ourFitness += 1;
+            result.rightPoints += name.length;
         }
     }
 
