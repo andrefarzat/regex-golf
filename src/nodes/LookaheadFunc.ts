@@ -1,5 +1,6 @@
 import Func, { FuncTypes } from "./Func";
 import Terminal from "./Terminal";
+import Node from "./Node";
 
 export type NegativePositive = 'positive' | 'negative';
 
@@ -7,24 +8,19 @@ export default class LookaheadFunc extends Func {
     public type: FuncTypes = FuncTypes.lookahead;
     public negative!: boolean;
 
-    public constructor(public content: string, negativePositive: NegativePositive = 'positive') {
-        super(FuncTypes.lookahead, new Terminal(), new Terminal());
+    public constructor(public children: Node[], negativePositive: NegativePositive = 'positive') {
+        super(children);
         this.negative = negativePositive === 'negative';
     }
 
     public clone(): LookaheadFunc {
-        let func = new LookaheadFunc(this.content, this.negative ? 'negative' : 'positive');
-        func.left = this.left ? this.left.clone() : undefined;
-        func.right = this.right ? this.right.clone() : undefined;
-        func.type = this.type;
-        return func;
+        return new LookaheadFunc(this.children, this.negative ? 'negative' : 'positive');
     }
 
     public toString(): string {
         let symbol = this.negative ? '?!' : '?=';
-        let left  = this.left ? this.left.toString() : '';
-        let right = this.right ? this.right.toString() : '';
+        let text = super.toString();
 
-        return `(${symbol}${this.content})${left}${right}`;
+        return `(${symbol}${text})`;
     }
 }

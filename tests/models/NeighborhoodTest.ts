@@ -223,27 +223,6 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
-    @Test("Neighborhood generateByAddingOrOperator")
-    public testGenerateByAddingOrOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
-
-        let initialInd = program.factory.createFromString('abc');
-        Expect(initialInd.toString()).toEqual('abc');
-
-        let hood = new Neighborhood(initialInd, program);
-        hood.maxSimultaneousEvaluations = 1;
-
-        let generator = hood.generateByAddingOrOperator(initialInd);
-
-        let options: string[] = ['a|bc', 'ab|c'];
-
-        for (let ind of generator) {
-            let includes = options.includes(ind.toString());
-            Expect(includes).toBeTruthy();
-        }
-        Expect(generator.next().done).toBeTruthy();
-    }
-
     @Test("Neighborhood getAllRanges")
     public testGetAllRanges() {
         let program = (new ILS_Shrink('warmup')).init();

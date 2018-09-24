@@ -30,29 +30,29 @@ export class NodeShrinkerTest {
         Expect(ind.shrink().toString()).toEqual('abc\\$xyz$');
     }
 
-    @Test('Test Shrink concatenation')
-    public testShrinkConcatenation() {
-        let ind = this.individualFactory.createFromString('abc');
-        let shrunk = ind.shrink();
-        Expect(shrunk.toString()).toEqual('abc');
-        Expect(shrunk.tree.nodeType).toEqual(NodeTypes.func);
-        Expect(shrunk.tree.left.nodeType).toEqual(NodeTypes.terminal);
-        Expect(shrunk.tree.left.toString()).toEqual('a');
+    // @Test('Test Shrink concatenation')
+    // public testShrinkConcatenation() {
+    //     let ind = this.individualFactory.createFromString('abc');
+    //     let shrunk = ind.shrink();
+    //     Expect(shrunk.toString()).toEqual('abc');
+    //     Expect(shrunk.tree.nodeType).toEqual(NodeTypes.func);
+    //     Expect(shrunk.tree.left.nodeType).toEqual(NodeTypes.terminal);
+    //     Expect(shrunk.tree.left.toString()).toEqual('a');
 
-        Expect(shrunk.tree.right.nodeType).toEqual(NodeTypes.func);
-        let right = shrunk.tree.right as Func;
+    //     Expect(shrunk.tree.right.nodeType).toEqual(NodeTypes.func);
+    //     let right = shrunk.tree.right as Func;
 
-        Expect((right.left as Terminal).value).toEqual('b');
-        Expect((right.right as Terminal).value).toEqual('c');
+    //     Expect((right.left as Terminal).value).toEqual('b');
+    //     Expect((right.right as Terminal).value).toEqual('c');
 
-        ind = this.individualFactory.createFromString('aaaaa');
-        shrunk = ind.shrink();
-        Expect(shrunk.toString()).toEqual('a{5}');
+    //     ind = this.individualFactory.createFromString('aaaaa');
+    //     shrunk = ind.shrink();
+    //     Expect(shrunk.toString()).toEqual('a{5}');
 
-        ind = this.individualFactory.createFromString('aa{5}');
-        shrunk = ind.shrink();
-        Expect(shrunk.toString()).toEqual('a{6}');
-    }
+    //     ind = this.individualFactory.createFromString('aa{5}');
+    //     shrunk = ind.shrink();
+    //     Expect(shrunk.toString()).toEqual('a{6}');
+    // }
 
 
     @TestCase('a', 'a')
@@ -96,22 +96,22 @@ export class NodeShrinkerTest {
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
 
-    @Test('Test transforming [^] into .')
-    public testEmptyNegative() {
-        let ind = this.individualFactory.createFromString('ab[^c]');
-        let func = ind.tree.getLeastFunc();
-        func.left = new Terminal();
-        func.right = new Terminal();
-        Expect(ind.toString()).toBe('ab[^]');
+    // @Test('Test transforming [^] into .')
+    // public testEmptyNegative() {
+    //     let ind = this.individualFactory.createFromString('ab[^c]');
+    //     let func = ind.tree.getLeastFunc();
+    //     func.left = new Terminal();
+    //     func.right = new Terminal();
+    //     Expect(ind.toString()).toBe('ab[^]');
 
-        let shrunk = ind.shrink();
-        Expect(shrunk.toString()).toBe('ab.');
-    }
+    //     let shrunk = ind.shrink();
+    //     Expect(shrunk.toString()).toBe('ab.');
+    // }
 
-    @Test('Test transforming {1,} into +')
-    public testSimpleRepetitionIntoOneAndMore() {
-        let func = new RepetitionFunc(new Terminal('a'), new Terminal('b'));
-        func.repetitionNumber = '1,';
-        Expect(NodeShrinker.shrink(func).toString()).toBe('a+b');
-    }
+    // @Test('Test transforming {1,} into +')
+    // public testSimpleRepetitionIntoOneAndMore() {
+    //     let func = new RepetitionFunc(new Terminal('a'), new Terminal('b'));
+    //     func.repetitionNumber = '1,';
+    //     Expect(NodeShrinker.shrink(func).toString()).toBe('a+b');
+    // }
 }

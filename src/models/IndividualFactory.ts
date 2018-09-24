@@ -5,11 +5,20 @@ import Individual from './Individual';
 import Node from '../nodes/Node';
 import Terminal from '../nodes/Terminal'
 import Utils from '../Utils';
-import RepetitionFunc from "../nodes/RepetitionFunc";
 import RangeFunc from "../nodes/RangeFunc";
 import BackrefFunc from "../nodes/BackrefFunc";
 import LookaheadFunc, { NegativePositive } from "../nodes/LookaheadFunc";
 import LookbehindFunc from "../nodes/LookbehindFunc";
+import LineBeginFunc from "../nodes/LineBeginFunc";
+import LineEndFunc from "../nodes/LineEndFunc";
+import RepetitionFunc from "../nodes/RepetitionFunc";
+import OneOrMoreFunc from "../nodes/OneOrMoreFunc";
+import ZeroOrMoreFunc from "../nodes/ZeroOrMore";
+import OrFunc from "../nodes/OrFunc";
+import ConcatFunc from "../nodes/ConcatFunc";
+import ListFunc from "../nodes/ListFunc";
+import GroupFunc from "../nodes/GroupFunc";
+import AnyCharFunc from "../nodes/AnyCharFunc";
 
 
 export default class IndividualFactory {
@@ -28,22 +37,22 @@ export default class IndividualFactory {
         if (expression.type == 'Char') {
             return this.parseChar(expression);
         } else if (expression.type == 'Assertion') {
-            if (expression.kind == '^') return new Func.LineBegin();
-            if (expression.kind == '$') return new Func.LineEnd;
+            if (expression.kind == '^') return new LineBeginFunc();
+            if (expression.kind == '$') return new LineEndFunc;
 
             if (expression.kind == 'Lookahead') {
-                let content = this.parseExpression(expression.assertion).toString();
-                return new LookaheadFunc(content, expression.negative ? 'negative' : 'positive');
+                let content = this.parseExpression(expression.assertion);
+                return new LookaheadFunc([content], expression.negative ? 'negative' : 'positive');
             }
             if (expression.kind == 'Lookbehind') {
-                let content = this.parseExpression(expression.assertion).toString();
-                return new LookbehindFunc(content, expression.negative ? 'negative' : 'positive');
+                let content = this.parseExpression(expression.assertion);
+                return new LookbehindFunc([content], expression.negative ? 'negative' : 'positive');
             }
 
             throw new Error(`Unknown Assertion ${expression.kind}`);
         } else if (expression.type == 'Repetition') {
             if (expression.quantifier && expression.quantifier.kind == 'Range') {
-                let node = new Func.Repetition();
+                let node = new RepetitionFunc();
                 node.addChild(new Terminal((expression.expression as any).value));
 
                 if (expression.quantifier.from == expression.quantifier.to) {
@@ -54,12 +63,12 @@ export default class IndividualFactory {
 
                 return node;
             } else if (expression.quantifier && expression.quantifier.kind == '+') {
-                let node = new Func.OneOrMore();
+                let node = new OneOrMoreFunc();
                 node.addChild(new Terminal((expression.expression as any).value));
 
                 return node;
             } else if (expression.quantifier && expression.quantifier.kind == '*') {
-                let node = new Func.ZeroOrMore;
+                let node = new ZeroOrMoreFunc;
                 node.addChild(new Terminal((expression.expression as any).value));
 
                 return node;
@@ -71,10 +80,10 @@ export default class IndividualFactory {
             let exp = expression as any;
             let left = exp.left ? this.parseExpression(exp.left) : new Terminal();
             let right = exp.right ? this.parseExpression(exp.right) : new Terminal();
-            return new Func.Or(left, right);
+            return new OrFunc(left, right);
         } else if (expression.type === 'Alternative') {
             let nodes = expression.expressions.map(exp => this.parseExpression(exp));
-            return new Func.Concat(nodes);
+            return new ConcatFunc(nodes);
         } else if (expression.type === 'CharacterClass') {
             if (expression.expressions.length == 1) {
                 let n = expression.expressions[0];
@@ -89,10 +98,10 @@ export default class IndividualFactory {
 
             let nodes = expression.expressions.map((exp: any) => this.parseExpression(exp));
             let negativePositive: NegativePositive = expression.negative ? 'negative' : 'positive';
-            return new Func.List(nodes as Terminal[], negativePositive);
+            return new ListFunc(nodes as Terminal[], negativePositive);
         } else if (expression.type === 'Group') {
             let node = this.parseExpression(expression.expression);
-            return new Func.Group([node]);
+            return new GroupFunc([node]);
         } else if (expression.type === "Backreference") {
             let func = new BackrefFunc();
             func.number = expression.number;
@@ -106,7 +115,7 @@ export default class IndividualFactory {
         if (char.kind === 'simple') {
             return new Terminal(char.value);
         } else if (char.kind === 'meta') {
-            if (char.value === '.') return new Func.AnyChar();
+            if (char.value === '.') return new AnyCharFunc();
         } else {
             throw new Error(`No kind ${char.kind} on Char`);
         }
@@ -189,7 +198,7 @@ export default class IndividualFactory {
         let funcStartOperator = newInd.getFuncs().find(current => current.type == Func.Types.lineBegin);
 
         if (!funcStartOperator) {
-            newInd.tree.children.unshift(new Func.LineBegin());
+            newInd.tree.children.unshift(new LineBeginFunc());
         }
 
         return newInd;
@@ -211,7 +220,7 @@ export default class IndividualFactory {
         let funcEndOperator = newInd.getFuncs().find(current => current.type == Func.Types.lineEnd);
 
         if (!funcEndOperator) {
-            newInd.tree.children.push(new Func.LineEnd());
+            newInd.tree.children.push(new LineEndFunc());
         }
 
         return newInd;
@@ -223,21 +232,21 @@ export default class IndividualFactory {
         let neoTerminal = neo.getNodes()[index];
         let parent = neo.getParentOf(neoTerminal);
 
-        parent.children.splice(index, 1, neoTerminal, new Func.LineEnd());
+        parent.children.splice(index, 1, neoTerminal, new LineEndFunc());
         return neo;
     }
 
     public addToNegation(ind: Individual, node: Node): Individual {
         let newInd = ind.clone();
         let func = newInd.getFuncs().find(current => {
-            if (current instanceof Func.List) {
-                return current.negative == 'negative';
+            if (current instanceof ListFunc) {
+                return current.negative;
             }
             return false;
         });
 
         if (!func) {
-            func = new Func.List([node], 'negative');
+            func = new ListFunc([node], 'negative');
             return Utils.nextBoolean() ? this.appendAtBeginning(newInd, func) : this.appendAtEnd(newInd, func);
         }
 
@@ -289,7 +298,7 @@ export default class IndividualFactory {
 
     public generateRandom(depth: number): Individual {
         let ind = new Individual();
-        ind.tree = new Func.Concat();
+        ind.tree = new ConcatFunc();
         ind.tree.addChild(this.getRandomCharFromLeft());
         ind.tree.addChild(this.getRandomCharFromLeft());
 
@@ -305,13 +314,13 @@ export default class IndividualFactory {
         let neo = ind.clone();
         let neoNode = neo.getNodes()[index];
         let parent = neo.getParentOf(neoNode);
-        parent.swapChild(neoNode, new Func.Group([neoNode]));
+        parent.swapChild(neoNode, new GroupFunc([neoNode]));
 
         return neo;
     }
 
     public addBackref(ind: Individual, node: Node, number: number = 1): Individual {
-        let func = new BackrefFunc(new Terminal(''), new Terminal(''));
+        let func = new BackrefFunc();
         func.number = number;
         return this.concatenateToNode(ind, node, func);
     }

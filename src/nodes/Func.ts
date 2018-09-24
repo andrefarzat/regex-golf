@@ -1,18 +1,5 @@
 import Node, {NodeTypes} from "./Node";
 import Terminal from "./Terminal";
-import Utils from "../Utils";
-
-import AnyCharFunc from './AnyCharFunc';
-import GroupFunc from "./GroupFunc";
-import LineEndFunc from "./LineEndFunc";
-import LineBeginFunc from "./LineBeginFunc";
-import RepetitionFunc from "./RepetitionFunc";
-import OneOrMoreFunc from "./OneOrMoreFunc";
-import ZeroOrMoreFunc from "./ZeroOrMore";
-import OrFunc from "./OrFunc";
-import ConcatFunc from "./ConcatFunc";
-import ListFunc from "./ListFunc";
-
 
 export enum FuncTypes {
     concatenation = "•",
@@ -40,18 +27,6 @@ export default abstract class Func implements Node {
     public nodeType: NodeTypes = NodeTypes.func;
 
     public static Types = FuncTypes;
-
-    public static Concat = ConcatFunc;
-    public static AnyChar = AnyCharFunc;
-    public static Group = GroupFunc;
-    public static LineBegin = LineBeginFunc;
-    public static LineEnd = LineEndFunc;
-    public static Repetition = RepetitionFunc;
-    public static OneOrMore = OneOrMoreFunc;
-    public static ZeroOrMore = ZeroOrMoreFunc;
-    public static Or = OrFunc;
-    public static List = ListFunc;
-
     protected static _options: string[] = null;
 
     public static get options(): FuncTypes[] {

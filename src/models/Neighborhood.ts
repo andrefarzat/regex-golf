@@ -8,6 +8,11 @@ import Utils from "../Utils";
 import LookaheadFunc from "../nodes/LookaheadFunc";
 import LookbehindFunc from "../nodes/LookbehindFunc";
 import Logger from "../Logger";
+import ListFunc from "../nodes/ListFunc";
+import ZeroOrMoreFunc from "../nodes/ZeroOrMore";
+import OneOrMoreFunc from "../nodes/OneOrMoreFunc";
+import AnyCharFunc from "../nodes/AnyCharFunc";
+import OptionalFunc from "../nodes/OptionalFunc";
 
 
 export default class Neighborhood {
@@ -61,10 +66,6 @@ export default class Neighborhood {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingOrOperator(solution)) {
-            yield ind;
-        }
-
         for (let ind of this.generateByAddingRangeOperator(solution)) {
             yield ind;
         }
@@ -73,23 +74,19 @@ export default class Neighborhood {
             yield ind;
         }
 
-        // for (let ind of this.generateByConcatenatingFromRightChars(solution)) {
-        //     yield ind;
-        // }
-
-        for (let ind of this.generateByAddingGivenOperator(solution, FuncTypes.zeroOrMore)) {
+        for (let ind of this.generateByAddingGivenOperator(solution, ZeroOrMoreFunc)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingGivenOperator(solution, FuncTypes.oneOrMore)) {
+        for (let ind of this.generateByAddingGivenOperator(solution, OneOrMoreFunc)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingGivenOperator(solution, FuncTypes.anyChar)) {
+        for (let ind of this.generateByAddingGivenOperator(solution, AnyCharFunc)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingGivenOperator(solution, FuncTypes.optional)) {
+        for (let ind of this.generateByAddingGivenOperator(solution, OptionalFunc)) {
             yield ind;
         }
 
@@ -135,27 +132,27 @@ export default class Neighborhood {
             }
         } else {
             // Ok. Let's add a start operator to first terminal together with the OR
-            for (let node of orNodes) {
-                for (let terminal of node.getFirstTerminal()) {
-                    if (terminal.value == '') continue;
+            // for (let node of orNodes) {
+            //     for (let terminal of node.getFirstTerminal()) {
+            //         if (terminal.value == '') continue;
 
-                    let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
-                    if (neo.isValid()) {
-                        yield neo;
-                        break;
-                    }
-                }
+            //         let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
+            //         if (neo.isValid()) {
+            //             yield neo;
+            //             break;
+            //         }
+            //     }
 
-                for (let terminal of node.getRightTerminals()) {
-                    if (terminal.value == '') continue;
+            //     for (let terminal of node.getRightTerminals()) {
+            //         if (terminal.value == '') continue;
 
-                    let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
-                    if (neo.isValid()) {
-                        yield neo;
-                        break;
-                    }
-                }
-            }
+            //         let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
+            //         if (neo.isValid()) {
+            //             yield neo;
+            //             break;
+            //         }
+            //     }
+            // }
         }
     }
 
@@ -180,35 +177,35 @@ export default class Neighborhood {
             } while (true);
         } else {
             // Ok. Let's add a start operator to last terminal together with the OR
-            for (let node of orNodes) {
-                let terminals = node.getFirstTerminal();
-                do {
-                    let terminal = terminals.pop();
-                    if (!terminal) break;
+            // for (let node of orNodes) {
+            //     let terminals = node.getFirstTerminal();
+            //     do {
+            //         let terminal = terminals.pop();
+            //         if (!terminal) break;
 
-                    if (terminal.value == '') continue;
+            //         if (terminal.value == '') continue;
 
-                    let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
-                    if (neo.isValid()) {
-                        yield neo;
-                        break;
-                    }
-                } while (true);
+            //         let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
+            //         if (neo.isValid()) {
+            //             yield neo;
+            //             break;
+            //         }
+            //     } while (true);
 
-                terminals = node.getRightTerminals();
-                do {
-                    let terminal = terminals.pop();
-                    if (!terminal) break;
+            //     terminals = node.getRightTerminals();
+            //     do {
+            //         let terminal = terminals.pop();
+            //         if (!terminal) break;
 
-                    if (terminal.value == '') continue;
+            //         if (terminal.value == '') continue;
 
-                    let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
-                    if (neo.isValid()) {
-                        yield neo;
-                        break;
-                    }
-                } while (true);
-            }
+            //         let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
+            //         if (neo.isValid()) {
+            //             yield neo;
+            //             break;
+            //         }
+            //     } while (true);
+            // }
         }
     }
 
@@ -255,7 +252,7 @@ export default class Neighborhood {
         for (let c1 of chars) {
             for (let c2 of chars) {
                 if (c1 >= c2) continue;
-                let func = new RangeFunc(new Terminal(''), new Terminal(''));
+                let func = new RangeFunc();
 
                 func.from = c1;
                 func.to = c2;
@@ -290,10 +287,7 @@ export default class Neighborhood {
             if (node === solution.tree) continue;
 
             for (let char of this.program.rightCharsNotInLeft) {
-                let func = new Func();
-                func.type = Func.Types.negation;
-                func.left = new Terminal(char);
-                func.right = new Terminal('');
+                let func = new ListFunc([new Terminal(char)], 'negative');
 
                 let neo = this.factory.replaceNode(solution, node, func);
                 if (neo.isValid()) yield neo;
@@ -317,11 +311,11 @@ export default class Neighborhood {
         }
     }
 
-    public * generateByAddingGivenOperator(solution: Individual, funcType: FuncTypes) {
+    public * generateByAddingGivenOperator(solution: Individual, FuncClass: any) {
         let nodes = solution.getNodes();
 
         // Operators: zeroOrMore, oneOrMore, anyChar and optional
-        let func = new Func(funcType, new Terminal(''), new Terminal(''));
+        let func = new FuncClass();
 
         for (let node of nodes) {
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
@@ -403,13 +397,13 @@ export default class Neighborhood {
             if (terminal.toString() === '') continue;
 
             for (let char of this.program.leftCharsNotInRight) {
-                let lookahead = new LookaheadFunc(char, 'positive');
+                let lookahead = new LookaheadFunc([new Terminal(char)], 'positive');
                 let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
                 if (neo.isValid()) yield neo;
             }
 
             for (let char of this.program.rightCharsNotInLeft) {
-                let lookahead = new LookaheadFunc(char, 'negative');
+                let lookahead = new LookaheadFunc([new Terminal(char)], 'negative');
                 let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
                 if (neo.isValid()) yield neo;
             }
@@ -421,13 +415,13 @@ export default class Neighborhood {
             if (terminal.toString() === '') continue;
 
             for (let char of this.program.leftCharsNotInRight) {
-                let lookahead = new LookbehindFunc(char, 'positive');
+                let lookahead = new LookbehindFunc([new Terminal(char)], 'positive');
                 let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
                 if (neo.isValid()) yield neo;
             }
 
             for (let char of this.program.rightCharsNotInLeft) {
-                let lookahead = new LookbehindFunc(char, 'negative');
+                let lookahead = new LookbehindFunc([new Terminal(char)], 'negative');
                 let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
                 if (neo.isValid()) yield neo;
             }

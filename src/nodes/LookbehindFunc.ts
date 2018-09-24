@@ -1,30 +1,26 @@
 import { NegativePositive } from './LookaheadFunc';
 import Func, { FuncTypes } from "./Func";
 import Terminal from "./Terminal";
+import Node from './Node';
 
 
 export default class LookbehindFunc extends Func {
     public type: FuncTypes = FuncTypes.lookbehind;
     public negative!: boolean;
 
-    public constructor(public content: string, public negativePostive: NegativePositive = 'positive') {
-        super(FuncTypes.lookbehind, new Terminal(), new Terminal());
+    public constructor(public children: Node[], public negativePostive: NegativePositive = 'positive') {
+        super(children);
         this.negative = negativePostive === 'negative';
     }
 
     public clone(): LookbehindFunc {
-        let func = new LookbehindFunc(this.content, this.negative ? 'negative' : 'positive');
-        func.left = this.left ? this.left.clone() : undefined;
-        func.right = this.right ? this.right.clone() : undefined;
-        func.type = this.type;
-        return func;
+        return new LookbehindFunc(this.children, this.negative ? 'negative' : 'positive');
     }
 
     public toString(): string {
         let symbol = this.negative ? '?<!' : '?<=';
-        let left  = this.left ? this.left.toString() : '';
-        let right = this.right ? this.right.toString() : '';
+        let text  = super.toString();
 
-        return `(${symbol}${this.content})${left}${right}`;
+        return `(${symbol}${text})`;
     }
 }

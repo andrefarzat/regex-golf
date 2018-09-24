@@ -5,6 +5,7 @@ import Terminal from "../nodes/Terminal";
 import Node from "../nodes/Node";
 import NodeShrinker from '../NodeShrinker';
 import Utils from "../Utils";
+import ConcatFunc from '../nodes/ConcatFunc';
 
 
 export default class Individual {
@@ -124,8 +125,8 @@ export default class Individual {
         do {
             let parent = this.getParentOf(node);
             if (parent) {
-                parents.unshift(parent.func);
-                node = parent.func;
+                parents.unshift(parent);
+                node = parent;
             } else {
                 break;
             }
@@ -189,10 +190,7 @@ export default class Individual {
         let node = NodeShrinker.shrink(this.tree);
 
         if (node.nodeType === 'terminal') {
-            let func = new Func();
-            func.type = Func.Types.concatenation;
-            func.left = new Terminal('');
-            func.right = node;
+            let func = new ConcatFunc([node]);
             node = func;
         }
 

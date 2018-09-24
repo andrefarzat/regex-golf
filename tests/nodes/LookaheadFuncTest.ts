@@ -1,6 +1,7 @@
 import { Expect, Test, TestCase, TestFixture } from "alsatian";
 
 import LookaheadFunc from '../../src/nodes/LookaheadFunc';
+import Terminal from "../../src/nodes/Terminal";
 
 
 
@@ -10,10 +11,10 @@ export default class LockaheadFuncTest {
 
     @Test()
     public testCreateLockaheadFunc() {
-        let func = new LookaheadFunc('ac');
+        let func = new LookaheadFunc([new Terminal('a'), new Terminal('c')]);
         Expect(func.toString()).toBe('(?=ac)');
 
-        func = new LookaheadFunc('ac', 'negative');
+        func = new LookaheadFunc([new Terminal('a'), new Terminal('c')], 'negative');
         Expect(func.toString()).toBe('(?!ac)');
 
         let neo = func.clone();
