@@ -2,6 +2,17 @@ import Node, {NodeTypes} from "./Node";
 import Terminal from "./Terminal";
 import Utils from "../Utils";
 
+import AnyCharFunc from './AnyCharFunc';
+import GroupFunc from "./GroupFunc";
+import LineEndFunc from "./LineEndFunc";
+import LineBeginFunc from "./LineBeginFunc";
+import RepetitionFunc from "./RepetitionFunc";
+import OneOrMoreFunc from "./OneOrMoreFunc";
+import ZeroOrMoreFunc from "./ZeroOrMore";
+import OrFunc from "./OrFunc";
+import ConcatFunc from "./ConcatFunc";
+import ListFunc from "./ListFunc";
+
 
 export enum FuncTypes {
     concatenation = "•",
@@ -24,9 +35,21 @@ export enum FuncTypes {
 }
 
 
-export default class Func implements Node {
-    public static placeholder: FuncTypes = FuncTypes.concatenation;
-    public static Types = FuncTypes;
+export default abstract class Func implements Node {
+    public type: FuncTypes = FuncTypes.concatenation;
+    public nodeType: NodeTypes = NodeTypes.func;
+
+    public static Concat = ConcatFunc;
+    public static AnyChar = AnyCharFunc;
+    public static Group = GroupFunc;
+    public static LineBegin = LineBeginFunc;
+    public static LineEnd = LineEndFunc;
+    public static Repetition = RepetitionFunc;
+    public static OneOrMore = OneOrMoreFunc;
+    public static ZeroOrMore = ZeroOrMoreFunc;
+    public static Or = OrFunc;
+    public static List = ListFunc;
+
     protected static _options: string[] = null;
 
     public static get options(): FuncTypes[] {
@@ -34,15 +57,14 @@ export default class Func implements Node {
         return Func._options as FuncTypes[];
     }
 
-    public left: Node;
-    public right: Node;
-    public type: FuncTypes = Func.placeholder;
-    public readonly nodeType = NodeTypes.func;
+    public constructor(public children: Node[] = []) {}
 
-    public constructor(type?: FuncTypes, left?: Node, right?: Node) {
-        if (type) this.type = type;
-        this.left = left ? left : new Terminal();
-        this.right = right ? right : new Terminal();
+    public toString(): string {
+        return this.children.map(child => child.toString()).join('');
+    }
+
+    public addChild(child: Node) {
+        this.children.push(child);
     }
 
     public is(type: NodeTypes | FuncTypes): boolean {
@@ -50,20 +72,10 @@ export default class Func implements Node {
         return type == this.type;
     }
 
-    public toString(): string {
-        let left  = this.left ? this.left.toString() : '';
-        let right = this.right ? this.right.toString() : '';
-
-        switch (this.type) {
-            case FuncTypes.or: return left + "|" + right;
-            case FuncTypes.list: return this.type.replace(Func.placeholder, left) + right;
-            case FuncTypes.negation: return this.type.replace(Func.placeholder, left) + right;
-            case FuncTypes.range: throw new Error('It should be an RangeFunc instance');
-            case FuncTypes.repetition: throw new Error('It should be an RepetitionFunc instance');
-        }
-
-        let txt = left + right;
-        return this.type.replace(Func.placeholder, txt);
+    public clone(): Func {
+        let func = new (this.constructor as any)();
+        func.children = this.children.map(child => child.clone());
+        return func;
     }
 
     public toDot(i: number): string {
@@ -71,16 +83,11 @@ export default class Func implements Node {
         let result: string[] = [`n${j} [ label = "${this.type}" ]`];
 
         i += 1;
-        if (this.left) {
+        for (let node of this.children) {
             result.push(`n${j} -> n${i}`);
-            let str = this.left.toDot(i);
+            let str = node.toDot(i);
             result.push(str);
             i += (str.match(/label/g) || []).length;
-        }
-
-        if (this.right) {
-            result.push(`n${j} -> n${i}`);
-            result.push(this.right.toDot(i));
         }
 
         return result.join('; ');
@@ -90,46 +97,44 @@ export default class Func implements Node {
         return new RegExp(this.toString());
     }
 
-    public clone(): Func {
-        let func = new Func();
-        func.left = this.left.clone();
-        func.right = this.right.clone();
-        func.type = this.type;
-        return func;
-    }
-
     public getLeastTerminal(): Terminal {
-        let current: Node = this.right;
-        while (current instanceof Func) {
-            current = current.right;
+        let nodes = this.getNodes();
+
+        let node = nodes.pop();
+        while (node) {
+            if (node instanceof Terminal) {
+                return node;
+            }
+
+            node = nodes.pop();
         }
-        return current as Terminal;
+
+        return null;
     }
 
     public getLeastFunc(): Func {
-        if (this.right instanceof Terminal) {
-            return this;
+        let nodes = this.getNodes();
+
+        let node = nodes.pop();
+        while (node) {
+            if (node instanceof Func) {
+                return node;
+            }
+
+            node = nodes.pop();
         }
 
-        let current: Func = this.right as Func;
-        while (!(current.right instanceof Terminal)) {
-            current = current.right as Func;
-        }
-
-        return current;
+        return null;
     }
 
     public getNodes(): Node[] {
         let nodes: Node[] = [];
 
-        nodes.push(this.left);
-        if (this.left instanceof Func) {
-            nodes = nodes.concat(this.left.getNodes());
-        }
-
-        nodes.push(this.right);
-        if (this.right instanceof Func) {
-            nodes = nodes.concat(this.right.getNodes());
+        for (let child of this.children) {
+            nodes.push(child);
+            if (child instanceof Func) {
+                nodes = nodes.concat(child.getNodes());
+            }
         }
 
         return nodes;
@@ -141,22 +146,6 @@ export default class Func implements Node {
             if (node instanceof Terminal) nodes.push(node);
         });
         return nodes;
-    }
-
-    public getLeftTerminals(): Terminal[] {
-        if (this.left.is(NodeTypes.terminal)) {
-            return [this.left as Terminal];
-        }
-
-        return (this.left as Func).getTerminals();
-    }
-
-    public getRightTerminals(): Terminal[] {
-        if (this.right.is(NodeTypes.terminal)) {
-            return [this.right as Terminal];
-        }
-
-        return (this.right as Func).getTerminals();
     }
 
     public getFuncs(): Func[] {

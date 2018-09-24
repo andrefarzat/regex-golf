@@ -136,7 +136,7 @@ export default class Neighborhood {
         } else {
             // Ok. Let's add a start operator to first terminal together with the OR
             for (let node of orNodes) {
-                for (let terminal of node.getLeftTerminals()) {
+                for (let terminal of node.getFirstTerminal()) {
                     if (terminal.value == '') continue;
 
                     let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
@@ -181,7 +181,7 @@ export default class Neighborhood {
         } else {
             // Ok. Let's add a start operator to last terminal together with the OR
             for (let node of orNodes) {
-                let terminals = node.getLeftTerminals();
+                let terminals = node.getFirstTerminal();
                 do {
                     let terminal = terminals.pop();
                     if (!terminal) break;

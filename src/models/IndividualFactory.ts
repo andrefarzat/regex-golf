@@ -1,6 +1,6 @@
 import * as regexp from "regexp-tree";
 
-import Func, {FuncTypes} from '../nodes/Func';
+import Func, { FuncTypes } from '../nodes/Func';
 import Individual from './Individual';
 import Node from '../nodes/Node';
 import Terminal from '../nodes/Terminal'
@@ -8,65 +8,28 @@ import Utils from '../Utils';
 import RepetitionFunc from "../nodes/RepetitionFunc";
 import RangeFunc from "../nodes/RangeFunc";
 import BackrefFunc from "../nodes/BackrefFunc";
-import LookaheadFunc from "../nodes/LookaheadFunc";
+import LookaheadFunc, { NegativePositive } from "../nodes/LookaheadFunc";
 import LookbehindFunc from "../nodes/LookbehindFunc";
 
 
 export default class IndividualFactory {
-    public constructor(public leftChars: string[], public rightChars: string[]) {}
+    public constructor(public leftChars: string[], public rightChars: string[]) { }
 
-    public createFromString(phrase: string) : Individual {
+    public createFromString(phrase: string): Individual {
         let tree = regexp.parse(`/${phrase}/`);
-        let body = tree.body as any;
-        let expressions = body.expressions
-            ? body.expressions as regexp.Node.Expression[]
-            : [body] as regexp.Node.Expression[];
+        let root = this.parseExpression(tree.body);
 
         let ind = new Individual();
-        let currentFunc = new Func(Func.Types.concatenation);
-        ind.tree = currentFunc;
-
-        let i = 0;
-        for (let expression of expressions) {
-            let node = this.parseExpression(expression);
-            let isLast = ++i === expressions.length;
-
-            if (!node) continue;
-
-            if (node instanceof Terminal) {
-                if (!currentFunc.left || currentFunc.left.isEmpty()) {
-                    currentFunc.left = node;
-                } else if (isLast) {
-                    currentFunc.right = node;
-                } else {
-                    let func = new Func();
-                    func.type = Func.Types.concatenation;
-                    func.left = node;
-
-                    currentFunc.right = func;
-                    currentFunc = func;
-                }
-            } else {
-                if (!currentFunc.left) {
-                    currentFunc.left = new Terminal('');
-                }
-
-                currentFunc.right = node;
-                currentFunc = node;
-            }
-        }
-
-        if (currentFunc && !currentFunc.left)  currentFunc.left  = new Terminal('');
-        if (currentFunc && !currentFunc.right) currentFunc.right = new Terminal('');
+        ind.tree = root as Func;
         return ind;
     }
 
-    public parseExpression(expression: regexp.Node.Expression): Func | Terminal {
+    public parseExpression(expression: regexp.Node.Expression): Node {
         if (expression.type == 'Char') {
             return this.parseChar(expression);
         } else if (expression.type == 'Assertion') {
-            if (expression.kind == '^') return new Func(Func.Types.lineBegin);
-            if (expression.kind == '$') return new Func(Func.Types.lineEnd);
+            if (expression.kind == '^') return new Func.LineBegin();
+            if (expression.kind == '$') return new Func.LineEnd;
 
             if (expression.kind == 'Lookahead') {
                 let content = this.parseExpression(expression.assertion).toString();
@@ -80,8 +43,8 @@ export default class IndividualFactory {
             throw new Error(`Unknown Assertion ${expression.kind}`);
         } else if (expression.type == 'Repetition') {
             if (expression.quantifier && expression.quantifier.kind == 'Range') {
-                let node = new RepetitionFunc();
-                node.left = new Terminal((expression.expression as any).value);
+                let node = new Func.Repetition();
+                node.addChild(new Terminal((expression.expression as any).value));
 
                 if (expression.quantifier.from == expression.quantifier.to) {
                     node.repetitionNumber = expression.quantifier.from.toString();
@@ -91,13 +54,13 @@ export default class IndividualFactory {
 
                 return node;
             } else if (expression.quantifier && expression.quantifier.kind == '+') {
-                let node = new Func(FuncTypes.oneOrMore);
-                node.left = new Terminal((expression.expression as any).value);
+                let node = new Func.OneOrMore();
+                node.addChild(new Terminal((expression.expression as any).value));
 
                 return node;
             } else if (expression.quantifier && expression.quantifier.kind == '*') {
-                let node = new Func(FuncTypes.zeroOrMore);
-                node.left = new Terminal((expression.expression as any).value);
+                let node = new Func.ZeroOrMore;
+                node.addChild(new Terminal((expression.expression as any).value));
 
                 return node;
             } else {
@@ -108,27 +71,10 @@ export default class IndividualFactory {
             let exp = expression as any;
             let left = exp.left ? this.parseExpression(exp.left) : new Terminal();
             let right = exp.right ? this.parseExpression(exp.right) : new Terminal();
-            return new Func(FuncTypes.or, left, right);
+            return new Func.Or(left, right);
         } else if (expression.type === 'Alternative') {
             let nodes = expression.expressions.map(exp => this.parseExpression(exp));
-            let mainFunc = new Func(FuncTypes.concatenation);
-
-            let func = mainFunc;
-            for (let node of nodes) {
-                if (!func.left) {
-                    func.left = node;
-                } else {
-                    let right = new Func(FuncTypes.concatenation, node);
-                    func.right = right;
-                    func = right;
-                }
-            }
-
-            if (!func.right) {
-                func.right = new Terminal();
-            }
-
-            return mainFunc;
+            return new Func.Concat(nodes);
         } else if (expression.type === 'CharacterClass') {
             if (expression.expressions.length == 1) {
                 let n = expression.expressions[0];
@@ -141,15 +87,12 @@ export default class IndividualFactory {
                 }
             }
 
-            let nodes = expression.expressions.map((exp: any) => this.parseExpression(exp).toString()).join('');
-            let node = new Func(expression.negative ? Func.Types.negation : Func.Types.list);
-            node.left = this.createFromString(nodes).tree;
-            return node;
+            let nodes = expression.expressions.map((exp: any) => this.parseExpression(exp));
+            let negativePositive: NegativePositive = expression.negative ? 'negative' : 'positive';
+            return new Func.List(nodes as Terminal[], negativePositive);
         } else if (expression.type === 'Group') {
-            let nodes = this.parseExpression(expression.expression);
-            let func = new Func();
-            func.left = new Func(FuncTypes.group, nodes);
-            return func;
+            let node = this.parseExpression(expression.expression);
+            return new Func.Group([node]);
         } else if (expression.type === "Backreference") {
             let func = new BackrefFunc();
             func.number = expression.number;
@@ -163,7 +106,7 @@ export default class IndividualFactory {
         if (char.kind === 'simple') {
             return new Terminal(char.value);
         } else if (char.kind === 'meta') {
-            if (char.value === '.') return new Func(FuncTypes.anyChar);
+            if (char.value === '.') return new Func.AnyChar();
         } else {
             throw new Error(`No kind ${char.kind} on Char`);
         }

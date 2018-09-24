@@ -14,8 +14,8 @@ export default class LookaheadFunc extends Func {
 
     public clone(): LookaheadFunc {
         let func = new LookaheadFunc(this.content, this.negative ? 'negative' : 'positive');
-        func.left = this.left.clone();
-        func.right = this.right.clone();
+        func.left = this.left ? this.left.clone() : undefined;
+        func.right = this.right ? this.right.clone() : undefined;
         func.type = this.type;
         return func;
     }

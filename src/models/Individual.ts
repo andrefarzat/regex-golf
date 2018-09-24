@@ -10,7 +10,7 @@ import Utils from "../Utils";
 export default class Individual {
     protected _string: string;
     public id = Utils.getNextId();
-    public tree: Func;
+    public tree: Node;
     public matchesOnLeft: number = 0;
     public matchesOnRight: number = 0;
     public leftPoints: number = 0;

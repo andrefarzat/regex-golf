@@ -1,5 +1,6 @@
 import Func, { FuncTypes } from "./Func";
 
+
 export enum NodeTypes {
     terminal = 'terminal',
     func = 'function',

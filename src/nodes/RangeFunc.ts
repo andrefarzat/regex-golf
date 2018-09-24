@@ -14,8 +14,8 @@ export default class RangeFunc extends Func {
 
     public clone(): RangeFunc {
         let func = new RangeFunc();
-        func.left = this.left.clone();
-        func.right = this.right.clone();
+        func.left = this.left ? this.left.clone() : undefined;
+        func.right = this.right ? this.right.clone() : undefined;
         func.type = this.type;
         func.from = this.from;
         func.to = this.to;

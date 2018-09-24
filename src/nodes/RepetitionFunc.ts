@@ -7,32 +7,25 @@ export default class RepetitionFunc extends Func {
     public type: FuncTypes = FuncTypes.repetition;
     public repetitionNumber: string = '1';
 
-    public constructor(left?: Node, right?: Node) {
-        super(FuncTypes.repetition, left, right);
-    }
-
     public clone(): RepetitionFunc {
         let func = new RepetitionFunc();
-        func.left = this.left.clone();
-        func.right = this.right.clone();
-        func.type = this.type;
         func.repetitionNumber = this.repetitionNumber;
+        func.children = this.children.map(child => child.clone());
         return func;
     }
 
     public toString(): string {
-        let left  = this.left ? this.left.toString() : '';
-        let right = this.right ? this.right.toString() : '';
-        let len = left.length;
+        let text = super.toString();
+        let len = text.length;
 
         if (this.repetitionNumber === '1') {
-            return `${left}${right}`;
+            return `${text}{1}`;
         } else if (this.repetitionNumber === '2' && len < 4) {
-            return `${left}${left}${right}`;
+            return `${text}${text}`;
         } else if (this.repetitionNumber === '3'  && len < 4) {
-            return `${left}${left}${left}${right}`;
+            return `${text}${text}${text}`;
+        } else {
+            return `${text}{${this.repetitionNumber}}`;
         }
-
-        return `${left}{${this.repetitionNumber}}${right}`;
     }
 }
