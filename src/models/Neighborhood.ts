@@ -248,40 +248,6 @@ export default class Neighborhood {
         }
     }
 
-    public * generateByAddingOrOperator(solution: Individual) {
-        let funcs = solution.getFuncs();
-        let terminals = solution.getTerminals();
-
-        // Changing operator concatenating to alternative (or)
-        for (let func of funcs) {
-            if (func.type != Func.Types.concatenation) continue;
-            let neo = this.factory.changeFuncType(solution, func, Func.Types.or);
-            if (neo.isValid()) yield neo;
-        }
-
-        // // Operator: Or
-        // for (let char of this.program.validLeftChars) {
-        //     for (let terminal of terminals) {
-        //         if (terminal.value == '') continue;
-
-        //         let func = new Func();
-        //         func.type = Func.Types.or;
-        //         for (let side of ['left', 'right']) {
-        //             if (side == 'left') {
-        //                 func.left = terminal;
-        //                 func.right = new Terminal(char);
-        //             } else {
-        //                 func.left = new Terminal(char);
-        //                 func.right = terminal;
-        //             }
-
-        //             let neo = this.factory.replaceNode(solution, terminal, func);
-        //             if (neo.isValid()) yield neo;
-        //         }
-        //     }
-        // }
-    }
-
     public getAllRanges(): RangeFunc[] {
         let ranges: RangeFunc[] = [];
         let chars = Object.assign([], this.program.validLeftChars).sort();

@@ -10,7 +10,7 @@ import Utils from "../Utils";
 export default class Individual {
     protected _string: string;
     public id = Utils.getNextId();
-    public tree: Node;
+    public tree: Func;
     public matchesOnLeft: number = 0;
     public matchesOnRight: number = 0;
     public leftPoints: number = 0;
@@ -134,13 +134,13 @@ export default class Individual {
         return parents;
     }
 
-    public getParentOf(node: Node): {func: Func, side: 'left' | 'right'} {
+    public getParentOf(node: Node): Func | null {
         let funcs = this.getFuncs();
 
-        for(let i = 0; i < funcs.length; i ++) {
-            let current = funcs[i];
-            if (current.left  === node) return {func: current, side: 'left'};
-            if (current.right === node) return {func: current, side: 'right'};
+        for (let func of funcs) {
+            if (func.hasTheChild(node)) {
+                return func;
+            }
         }
 
         return null;

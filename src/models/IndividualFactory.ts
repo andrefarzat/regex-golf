@@ -124,38 +124,21 @@ export default class IndividualFactory {
 
     public appendAtEnd(ind: Individual, node: Node): Individual {
         let newInd = ind.clone();
-        let leaf = newInd.tree.getLeastFunc();
-        let func = new Func();
-        func.type = Func.Types.concatenation;
-        func.left = leaf.right;
-        func.right = node;
+        newInd.tree.addChild(node);
         return newInd;
     }
 
     public appendAtBeginning(ind: Individual, node: Node): Individual {
         let newInd = ind.clone();
-        let func = new Func();
-        func.type = Func.Types.concatenation;
-        func.left = node;
-        func.right = newInd.tree;
-        newInd.tree = func;
+        newInd.tree.children.unshift(node);
         return newInd;
     }
 
     public insertRandomly(ind: Individual, node: Node): Individual {
         let newInd = ind.clone();
-        let currentFunc = Utils.getRandomlyFromList(newInd.getFuncs());
-        let func = new Func();
-        func.type = Func.Types.concatenation;
-        func.left = node;
-        func.right = currentFunc;
-
-        let parent = newInd.getParentOf(currentFunc);
-        if (parent) {
-            if (parent.side == 'left') parent.func.left = func;
-            else parent.func.right = func;
-        }
-
+        let funcs = newInd.getFuncs();
+        let func = Utils.getRandomlyFromList(funcs);
+        func.addChild(node);
         return newInd;
     }
 
@@ -163,9 +146,9 @@ export default class IndividualFactory {
         let newInd = ind.clone();
         let currentTerminal = Utils.getRandomlyFromList(newInd.getTerminals());
         let parent = newInd.getParentOf(currentTerminal);
+
         if (parent) {
-            if (parent.side === 'left') parent.func.left = node;
-            else parent.func.right = node;
+            parent.swapChild(currentTerminal, node);
         }
 
         return newInd;
@@ -177,108 +160,48 @@ export default class IndividualFactory {
         let neoOne = neo.getNodes()[oneIndex];
 
         let parent = neo.getParentOf(neoOne);
-        if (!parent) {
-            let func = new Func();
-            func.left = new Terminal('');
-            func.right = two;
-            neo.tree = func;
-        } else if (parent.side == 'left') {
-            parent.func.left = two;
-        } else {
-            parent.func.right = two;
+
+        if (parent) {
+            parent.swapChild(neoOne, two);
         }
 
         return neo;
     }
 
     public concatenateToNode(ind: Individual, one: Node, two: Node): Individual {
-        if (one.is(FuncTypes.negation) && two.is(FuncTypes.negation)) {
-            return this.concatenateTwoNegativeOperators(ind, one as Func, two as Func);
-        }
-
         let neo = ind.clone();
-        let neoOne = neo.getNodes()[ind.getNodes().indexOf(one)];
-        let parent = neo.getParentOf(neoOne);
+        let neoIndex = ind.getNodes().indexOf(one);
+        let neoOne = neo.getNodes()[neoIndex];
 
-        let func = new Func();
-        func.type = Func.Types.concatenation;
-        func.left = neoOne;
-        func.right = two;
-
-        if (!parent) {
-            neo.tree = func;
-        } else if (parent.side == 'left') {
-            parent.func.left = func;
+        if (neoOne instanceof Func) {
+            neoOne.addChild(two);
         } else {
-            parent.func.right = func;
+            let parent = ind.getParentOf(neoOne);
+            let index = parent.children.indexOf(neoOne);
+            parent.children.splice(index, 0, two);
         }
 
-        return neo;
-    }
-
-    public concatenateTwoNegativeOperators(ind: Individual, one: Func, two: Func): Individual {
-        let neo = ind.clone();
-        let neoOne = neo.getNodes()[ind.getNodes().indexOf(one)];
-        let parent = neo.getParentOf(neoOne);
-
-        let func = new Func(FuncTypes.negation);
-        func.left = new Func(FuncTypes.concatenation, (neoOne as Func).left, two.left);
-        func.right = new Terminal();
-
-        if (!parent) {
-            neo.tree = func;
-        } else if (parent.side == 'left') {
-            parent.func.left = func;
-        } else {
-            parent.func.right = func;
-        }
-
-        return neo;
-
-    }
-
-    public changeFuncType(ind: Individual, func: Func, type: FuncTypes): Individual {
-        let neo = ind.clone();
-        let neoFunc = neo.getFuncs()[ind.getFuncs().indexOf(func)];
-        neoFunc.type = type;
         return neo;
     }
 
     public addStartOperator(ind: Individual): Individual {
-        let node = this.getRandomCharFromLeft();
         let newInd = ind.clone();
         let funcStartOperator = newInd.getFuncs().find(current => current.type == Func.Types.lineBegin);
 
         if (!funcStartOperator) {
-            let func = new Func();
-            func.type = Func.Types.lineBegin;
-            func.left = node;
-            func.right = newInd.tree;
-            newInd.tree = func;
-        } else {
-            funcStartOperator.left = node;
+            newInd.tree.children.unshift(new Func.LineBegin());
         }
 
         return newInd;
     }
 
     public addStartOperatorToTerminal(ind: Individual, terminal: Terminal): Individual {
-        let index = ind.getTerminals().indexOf(terminal);
+        let index = ind.getNodes().indexOf(terminal);
         let neo = ind.clone();
-        let neoTerminal = neo.getTerminals()[index];
+        let neoTerminal = neo.getNodes()[index];
         let parent = neo.getParentOf(neoTerminal);
 
-        let func = new Func();
-        func.type = Func.Types.lineBegin;
-        func.right = neoTerminal;
-        func.left = new Terminal('');
-
-        if (parent.side == 'left') {
-            parent.func.left = func;
-        } else {
-            parent.func.right = func;
-        }
-
+        parent.children.splice(index, 0, neoTerminal);
         return neo;
     }
 
@@ -288,65 +211,37 @@ export default class IndividualFactory {
         let funcEndOperator = newInd.getFuncs().find(current => current.type == Func.Types.lineEnd);
 
         if (!funcEndOperator) {
-            let func = new Func();
-            func.type = Func.Types.lineEnd;
-            func.left = node;
-            func.right = newInd.tree;
-            newInd.tree = func;
-        } else {
-            funcEndOperator.left = node;
+            newInd.tree.children.push(new Func.LineEnd());
         }
 
         return newInd;
     }
 
     public addEndOperatorToTerminal(ind: Individual, terminal: Terminal): Individual {
-        let index = ind.getTerminals().indexOf(terminal);
+        let index = ind.getNodes().indexOf(terminal);
         let neo = ind.clone();
-        let neoTerminal = neo.getTerminals()[index];
+        let neoTerminal = neo.getNodes()[index];
         let parent = neo.getParentOf(neoTerminal);
 
-        let func = new Func();
-        func.type = Func.Types.lineEnd;
-        func.right = neoTerminal;
-        func.left = new Terminal('');
-
-        if (parent.side == 'left') {
-            parent.func.left = func;
-        } else {
-            parent.func.right = func;
-        }
-
+        parent.children.splice(index, 1, neoTerminal, new Func.LineEnd());
         return neo;
     }
 
     public addToNegation(ind: Individual, node: Node): Individual {
         let newInd = ind.clone();
-        let func = newInd.getFuncs().find(current => current.type == Func.Types.negation);
+        let func = newInd.getFuncs().find(current => {
+            if (current instanceof Func.List) {
+                return current.negative == 'negative';
+            }
+            return false;
+        });
 
         if (!func) {
-            func = new Func();
-            func.type = Func.Types.negation;
-            func.left = new Terminal('');
-            func.right = node;
+            func = new Func.List([node], 'negative');
             return Utils.nextBoolean() ? this.appendAtBeginning(newInd, func) : this.appendAtEnd(newInd, func);
         }
 
-        if (func.left instanceof Terminal && func.left.toString() == '') {
-            func.left = node;
-        } else if (func.right instanceof Terminal && func.right.toString() == '') {
-            func.right = node;
-        } else {
-            let newFunc = new Func();
-            newFunc.type = Func.Types.concatenation;
-            newFunc.left = node;
-            newFunc.right = func;
-
-            let parent = newInd.getParentOf(func);
-            if (parent.side == 'left') parent.func.left = newFunc;
-            else parent.func.right = newFunc;
-        }
-
+        func.addChild(node);
         return newInd;
     }
 
@@ -354,19 +249,12 @@ export default class IndividualFactory {
         let neo = ind.clone();
         let terminal = Utils.getRandomlyFromList(neo.getTerminals());
         let parent = neo.getParentOf(terminal);
-
-        if (parent.side == 'left') {
-            parent.func.left = new Terminal('');
-        } else {
-            parent.func.right = new Terminal('');
-        }
-
+        parent.removeChild(terminal);
         return neo;
     }
 
     public removeRandomNode(ind: Individual): Individual {
         let node = Utils.getRandomlyFromList(ind.getNodes());
-
         return this.removeNode(ind, node);
     }
 
@@ -375,29 +263,9 @@ export default class IndividualFactory {
         let index = ind.getNodes().indexOf(node);
         let nodeToBeRemoved = neo.getNodes()[index];
         let parent = neo.getParentOf(nodeToBeRemoved);
-
-        if (!parent) {
-            neo.tree = new Func();
-            neo.tree.left = new Terminal('');
-            neo.tree.right = new Terminal('');
-            return neo;
-        }
-
-        if (parent.side == 'left') {
-            parent.func.left = new Terminal('');
-        } else {
-            parent.func.right = new Terminal('');
-        }
+        parent.removeChild(nodeToBeRemoved);
 
         return neo;
-    }
-
-    public generateNegationNodeFromList(chars: string[]): Func {
-        let func = new Func();
-        func.type = Func.Types.negation;
-        func.left = new Terminal('');
-        func.right = this.getRandomCharFromRight();
-        return func;
     }
 
     public generateRandomlyFrom(ind: Individual): Individual {
@@ -421,9 +289,9 @@ export default class IndividualFactory {
 
     public generateRandom(depth: number): Individual {
         let ind = new Individual();
-        ind.tree = new Func();
-        ind.tree.left = this.getRandomCharFromLeft();
-        ind.tree.right = this.getRandomCharFromLeft();
+        ind.tree = new Func.Concat();
+        ind.tree.addChild(this.getRandomCharFromLeft());
+        ind.tree.addChild(this.getRandomCharFromLeft());
 
         while (--depth > 0) {
             ind = this.generateRandomlyFrom(ind);
@@ -437,16 +305,7 @@ export default class IndividualFactory {
         let neo = ind.clone();
         let neoNode = neo.getNodes()[index];
         let parent = neo.getParentOf(neoNode);
-
-        let func = new Func(FuncTypes.group, new Terminal(''), neoNode);
-
-        if (!parent) {
-            neo.tree = func;
-        } else if (parent.side == 'left') {
-            parent.func.left = func;
-        } else {
-            parent.func.right = func;
-        }
+        parent.swapChild(neoNode, new Func.Group([neoNode]));
 
         return neo;
     }
@@ -455,27 +314,6 @@ export default class IndividualFactory {
         let func = new BackrefFunc(new Terminal(''), new Terminal(''));
         func.number = number;
         return this.concatenateToNode(ind, node, func);
-    }
-
-    public concatenateToNode2(ind: Individual, one: Node, two: Node): Individual {
-        let neo = ind.clone();
-        let neoOne = neo.getNodes()[ind.getNodes().indexOf(one)];
-        let parent = neo.getParentOf(neoOne);
-
-        let func = new Func();
-        func.type = Func.Types.concatenation;
-        func.left = neoOne;
-        func.right = two;
-
-        if (!parent) {
-            neo.tree = func;
-        } else if (parent.side == 'left') {
-            parent.func.left = func;
-        } else {
-            parent.func.right = func;
-        }
-
-        return neo;
     }
 
     public isNodeWrappedBy(ind: Individual, node: Node, type: FuncTypes): boolean {

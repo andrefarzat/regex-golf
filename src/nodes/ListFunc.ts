@@ -8,7 +8,7 @@ export default class ListFunc extends Func {
     public type: FuncTypes = FuncTypes.list;
 
     public constructor(
-        public children: Terminal[],
+        public children: Node[],
         public negative: NegativePositive = 'positive'
     ) {
         super(children);

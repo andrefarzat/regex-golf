@@ -39,6 +39,8 @@ export default abstract class Func implements Node {
     public type: FuncTypes = FuncTypes.concatenation;
     public nodeType: NodeTypes = NodeTypes.func;
 
+    public static Types = FuncTypes;
+
     public static Concat = ConcatFunc;
     public static AnyChar = AnyCharFunc;
     public static Group = GroupFunc;
@@ -72,6 +74,19 @@ export default abstract class Func implements Node {
         return type == this.type;
     }
 
+    public notIn(types: FuncTypes[]): boolean {
+        return types.every(type => this.is(type));
+    }
+
+    public hasTheChild(node: Node): boolean {
+        return this.children.indexOf(node) != -1;
+    }
+
+    public removeChild(node: Node) {
+        let index = this.children.indexOf(node);
+        this.children.splice(index, 1);
+    }
+
     public clone(): Func {
         let func = new (this.constructor as any)();
         func.children = this.children.map(child => child.clone());
@@ -91,6 +106,13 @@ export default abstract class Func implements Node {
         }
 
         return result.join('; ');
+    }
+
+    public swapChild(oldNode: Node, newNode: Node) {
+        let index = this.children.indexOf(oldNode);
+        if (index === -1) throw new Error('[Func.swapChild] Invalid child');
+
+        this.children.splice(index, 1, newNode);
     }
 
     public toRegex(): RegExp {
