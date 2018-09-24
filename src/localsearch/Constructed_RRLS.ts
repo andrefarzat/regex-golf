@@ -4,6 +4,8 @@ import Func from '../nodes/Func';
 import RRLS from './RRLS';
 import * as cp from 'child_process';
 import * as path from 'path';
+import ConcatFunc from '../nodes/ConcatFunc';
+import OrFunc from '../nodes/OrFunc';
 
 
 /**
@@ -17,10 +19,8 @@ export default class Constructed_RRLS extends RRLS {
         let maxIndex = this.validLeftChars.length - 1;
 
         let ind = new Individual();
-        ind.tree = new Func();
-        ind.tree.type = Func.Types.concatenation;
-        ind.tree.left = new Terminal(this.validLeftChars[index]);
-        ind.tree.right = new Terminal('');
+        ind.tree = new ConcatFunc();
+        ind.tree.addChild(new Terminal(this.validLeftChars[index]));
 
         if (this.isValidLeft(ind)) {
             return ind;
@@ -35,12 +35,10 @@ export default class Constructed_RRLS extends RRLS {
                 break;
             }
 
-            let func = new Func();
-            func.type = Func.Types.or;
-            func.left = new Terminal(this.validLeftChars[index]);
-            func.right = new Terminal(this.validLeftChars[index + 1]);
+            let left = new Terminal(this.validLeftChars[index])
+            let right = new Terminal(this.validLeftChars[index + 1]);
+            let func = new OrFunc(left, right);
 
-            current.right = func;
             current = func;
         }
 

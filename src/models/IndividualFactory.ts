@@ -258,7 +258,9 @@ export default class IndividualFactory {
         let neo = ind.clone();
         let terminal = Utils.getRandomlyFromList(neo.getTerminals());
         let parent = neo.getParentOf(terminal);
-        parent.removeChild(terminal);
+        if (parent) {
+            parent.removeChild(terminal);
+        }
         return neo;
     }
 
@@ -272,7 +274,10 @@ export default class IndividualFactory {
         let index = ind.getNodes().indexOf(node);
         let nodeToBeRemoved = neo.getNodes()[index];
         let parent = neo.getParentOf(nodeToBeRemoved);
-        parent.removeChild(nodeToBeRemoved);
+
+        if (parent) {
+            parent.removeChild(nodeToBeRemoved);
+        }
 
         return neo;
     }
