@@ -9,7 +9,7 @@
 1. https://nbviewer.jupyter.org/github/andrefarzat/regex-golf/blob/master/reports/07/report.ipynb
 1. https://nbviewer.jupyter.org/github/andrefarzat/regex-golf/blob/master/reports/08/report.ipynb
 1. https://nbviewer.jupyter.org/github/andrefarzat/regex-golf/blob/master/reports/10/report.ipynb
-1. https://nbviewer.jupyter.org/github/andrefarzat/regex-golf/blob/master/reports/11/report.ipynb
+1. https://nbviewer.jupyter.org/github/andrefarzat/regex-golf/blob/master/reports/11/report11.ipynb
 
 ## Other urls
 

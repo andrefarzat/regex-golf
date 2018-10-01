@@ -1,6 +1,4 @@
 Nome,Depth,i,seed,Melhor_solucao,Melhor_solucao_shrunk,Melhor_fitness,Nossa_fitness,Numero_de_comparacoes,Tempo_avaliacao,Tempo_para_encontrar_melhor_solucao,Tempo_total,Timed_out
-warmup,5,1,2967301147,f.o,f.o,21,42,74305,0,4825,25932,false
-warmup,5,1,2967301147,f.o,f.o,21,42,74305,0,4424,24365,false
 warmup,5,1,2967301147,f.o,f.o,21,42,74305,0,4315,26766,false
 abba,5,1,2967301147,[f-t][t-z],[f-t][t-z],12,34,128063,0,14512,20645,false
 abba,5,1,5600405384,[b-t][tuvhz],[b-t][h-z],16,38,25949,0,2420,14130,false
