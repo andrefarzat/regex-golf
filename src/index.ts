@@ -83,14 +83,6 @@ async function main() {
 
     // 6. Loop
     do {
-        // 6.1. Has timed out ?
-        //      Then -> Set as timed out
-        //           -> Stop!
-        if (program.maxTimeout.diff(new Date()) < 0) {
-            program.hasTimedOut = true;
-            // break;
-        }
-
         // 6.2. Current Solution is the Best ?
         //      Then -> Add to solutions
         let hasFoundBetter = false;
@@ -107,7 +99,6 @@ async function main() {
         // Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
 
         try {
-
             await neighborhood.evaluate(ind => {
                 Logger.debug(`[Solution]`, ind.toLog());
 
@@ -123,9 +114,15 @@ async function main() {
                     currentSolution = ind;
                     hasFoundBetter = true;
                 }
+
+                if (program.shouldStop()) throw new Error('Stop!');
             });
         } catch (e) {
-            Logger.error(`[Neighborhood error]`, e.message);
+            if (e.message === 'Stop!') {
+                Logger.error('[Timeout]');
+            } else {
+                Logger.error(`[Neighborhood error]`, e.message);
+            }
         }
 
         // 6.5. Não encontrou melhor?

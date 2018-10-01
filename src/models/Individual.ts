@@ -95,11 +95,13 @@ export default class Individual {
         if (str.length == 0) return false;
         if (str.substr(0, 1) == '|') return false;
         if (str.substr(-1) == '|') return false;
+        if (str === '^') { return false; }
         if (str === '.*') { return false;}
         if (str === '^.*') return false;
         if (str === '.*$') return false;
         if (str === '.+') { return false; }
         if (str === '.+$') { return false; }
+        if (str === '$') { return false; }
         if (/\[\^[^\]]*\[\^/.test(str)) { return false; }
 
         return true;

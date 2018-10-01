@@ -1,7 +1,7 @@
 import Func, { FuncTypes } from "../nodes/Func";
 import Individual from "../models/Individual";
 import Terminal from "../nodes/Terminal";
-import { Moment } from "moment";
+import * as Moment from "moment";
 import Neighborhood from "../models/Neighborhood";
 import IndividualFactory from "../models/IndividualFactory";
 import Utils from "../Utils";
@@ -28,7 +28,7 @@ export default abstract class LocalSearch {
 
     public budget: number;
     public depth: number;
-    public maxTimeout: Moment;
+    public maxTimeout: Moment.Moment;
     public solutions: Individual[] = [];
     public localSolutions: Individual[] = [];
     public hasTimedOut: boolean = false;
@@ -106,7 +106,16 @@ export default abstract class LocalSearch {
     }
 
     public shouldStop(): boolean {
+        let hasTimedOut = false;
+
         if (this.evaluator.evaluationCount >= this.budget) {
+            hasTimedOut = true;
+        } else if (Moment().diff(this.startTime, 'minutes') > 0) {
+            hasTimedOut = true;
+        }
+
+        if (hasTimedOut) {
+            this.hasTimedOut = true;
             this.endTime = new Date();
             return true;
         }
