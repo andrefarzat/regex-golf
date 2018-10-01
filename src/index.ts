@@ -178,16 +178,16 @@ async function main() {
         if (bestSolution) {
             csvLine.push(bestSolution.toString()); // Melhor_solucao
             csvLine.push(bestSolution.shrink().toString()); // Melhor_solucao_shrunk
+            csvLine.push(bestSolution.matchesOnLeft); // Left_matches
             csvLine.push(bestSolution.fitness); // Melhor_fitness
             csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
-            csvLine.push(bestSolution.evaluationTime); // Tempo_avaliacao
             csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds'))); // Tempo_para_encontrar_melhor_solucao
         } else {
             csvLine.push('N/A'); // Melhor_solucao
             csvLine.push('N/A'); // Melhor_solucao_shrunk
+            csvLine.push('N/A'); // Left_matches
             csvLine.push('N/A'); // Melhor_fitness
             csvLine.push('N/A'); // Numero_de_comparacoes
-            csvLine.push('N/A'); // Tempo_avaliacao
             csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
         }
 

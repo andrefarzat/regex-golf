@@ -19,12 +19,18 @@ export default class EvaluatorFactory {
         if (ind.isEvaluated) return Promise.resolve(ind.fitness);
         ind.evaluationIndex = this.getNextEvaluationIndex();
 
-        return ind.hasComplexEvaluation()
-            ? this.evaluateViaSub(ind)
-            : Promise.resolve(this.evaluateSimple(ind));
+        if (ind.evaluationIndex % 100000 == 0) {
+            console.log(`${ind.evaluationIndex} evaluated`);
+        }
+
+        return this.evaluateSimple(ind);
+
+        // return ind.hasComplexEvaluation()
+        //     ? this.evaluateViaSub(ind)
+        //     : Promise.resolve(this.evaluateSimple(ind));
     }
 
-    protected async evaluateSimple(ind: Individual): Promise<number> {
+    protected evaluateSimple(ind: Individual): number {
         let result = {
             leftPoints: 0,
             rightPoints: 0,
