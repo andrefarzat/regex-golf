@@ -19,10 +19,6 @@ export default class EvaluatorFactory {
         if (ind.isEvaluated) return Promise.resolve(ind.fitness);
         ind.evaluationIndex = this.getNextEvaluationIndex();
 
-        if (ind.evaluationIndex % 100000 == 0) {
-            console.log(`${ind.evaluationIndex} evaluated`);
-        }
-
         return this.evaluateSimple(ind);
 
         // return ind.hasComplexEvaluation()

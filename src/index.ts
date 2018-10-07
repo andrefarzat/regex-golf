@@ -20,7 +20,7 @@ import EvaluatorFactory from './models/EvaluatorFactory';
 args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS", "Constructed_RRLS"')
     .option('instance', 'O nome da instância do problema')
     .option('depth', 'O tamanho do depth', 5)
-    .option('budget', 'Número máximo de avaliações', 100000 * 6)
+    .option('budget', 'Número máximo de avaliações', 100000 * 5)
     .option('log-level', 'Log level entre 1 e 5', 3)
     .option('index', 'O índice da execução', 1)
     .option('seed', 'O seed para Random')
@@ -102,8 +102,9 @@ async function main() {
             await neighborhood.evaluate(ind => {
                 Logger.debug(`[Solution]`, ind.toLog());
 
-                if (ind.evaluationIndex % 1000 === 0) {
-                    Logger.debug(`${ind.evaluationIndex} evaluated`);
+                if (ind.evaluationIndex % 10000 === 0) {
+                    const time = moment().diff(program.startTime, 'ms');
+                    console.log(`${ind.evaluationIndex} evaluated in ${time} ms`);
                 }
 
                 // 6.4.1. Neighbor is better than current solution ?
@@ -175,20 +176,24 @@ async function main() {
         if (bestSolution) {
             csvLine.push(bestSolution.toString()); // Melhor_solucao
             csvLine.push(bestSolution.shrink().toString()); // Melhor_solucao_shrunk
-            csvLine.push(bestSolution.matchesOnLeft); // Left_matches
             csvLine.push(bestSolution.fitness); // Melhor_fitness
+            csvLine.push(bestSolution.matchesOnLeft); // Matches_on_left
+            csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
             csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
-            csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds'))); // Tempo_para_encontrar_melhor_solucao
+            csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
+            csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'seconds'))); // Tempo_para_encontrar_melhor_solucao
         } else {
             csvLine.push('N/A'); // Melhor_solucao
             csvLine.push('N/A'); // Melhor_solucao_shrunk
-            csvLine.push('N/A'); // Left_matches
             csvLine.push('N/A'); // Melhor_fitness
+            csvLine.push('N/A'); // Matches_on_left
+            csvLine.push('N/A'); // Matches_on_right
             csvLine.push('N/A'); // Numero_de_comparacoes
+            csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
             csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
         }
 
-        let totalTime = moment(program.endTime).diff(program.startTime, 'milliseconds');
+        let totalTime = moment(program.endTime).diff(program.startTime, 'seconds');
         csvLine.push(totalTime); // Tempo_total
         csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
 

@@ -31,7 +31,7 @@ export default class Individual {
     }
 
     public get fitness(): number {
-        return this.leftPoints + this.rightPoints;
+        return this.matchesOnLeft - this.matchesOnRight;
     }
 
     public get evaluationTime(): number {

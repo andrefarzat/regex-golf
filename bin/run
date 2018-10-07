@@ -11,8 +11,6 @@ i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 INSTANCES = ["warmup", "anchors", "ranges", "backrefs", "powers", "long-count", "alphabetical",
              "abba", "aman-aplan", "prime", "four", "triples", "glob", "balance", "order"]
 
-INSTANCES = ["triples", "glob", "balance", "order"]
-
 SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          8370032799, 2767986875, 3141506592, 3313543896, 8657690939, 9696640194,
          6621545651, 2492462788, 3404588599, 2330977742, 6361187489, 2805026820,
@@ -21,7 +19,7 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
 
 DEPTHS = [5]
 
-FOLDER_NAME = 'vai'
+FOLDER_NAME = 'bartoli'
 
 
 def execute(cmd):
