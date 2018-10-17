@@ -49,7 +49,6 @@ export class NodeShrinkerTest {
     }
 
 
-    @FocusTest
     @TestCase('a', 'a')
     @TestCase('bb', 'bb')
     @TestCase('ccc', 'ccc')

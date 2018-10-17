@@ -1,14 +1,15 @@
+import * as regexpTree from "regexp-tree";
+
 import Node, { NodeTypes } from './nodes/Node';
 import Func, { FuncTypes } from './nodes/Func';
 import Terminal from './nodes/Terminal';
 import Utils from './Utils';
-import IndividualFactory from './models/IndividualFactory';
 import RepetitionFunc from './nodes/RepetitionFunc';
 import RangeFunc from './nodes/RangeFunc';
 import ConcatFunc from './nodes/ConcatFunc';
-import LineBeginFunc from './nodes/LineBeginFunc';
 import OrFunc from './nodes/OrFunc';
-import LineEndFunc from './nodes/LineEndFunc';
+import ListFunc from './nodes/ListFunc';
+import IndividualFactory from "./models/IndividualFactory";
 
 
 export default class NodeShrinker {
@@ -26,7 +27,24 @@ export default class NodeShrinker {
             throw new Error('Invalid Node type to Shrink');
         }
 
-        return neo;
+        const options = [
+            'charClassToMeta',
+            'charClassToSingleChar',
+            'charClassRemoveDuplicates',
+            'quantifiersMerge',
+            'charClassClassrangesToChars',
+            'charClassClassrangesMerge',
+            'disjunctionRemoveDuplicates',
+            'groupSingleCharsToCharClass',
+            'combineRepeatingPatterns',
+        ];
+
+        const originalRe = neo.toRegex();
+        const optimizedRe: RegExp = (regexpTree as any).optimize(originalRe, options).toRegExp();
+
+        let factory = new IndividualFactory([], []);
+        let ind = factory.createFromString(optimizedRe);
+        return ind.tree;
     }
 
     public static shrinkMany(nodes: Node[]): Node[] {
@@ -42,7 +60,7 @@ export default class NodeShrinker {
             case Func.Types.concatenation: return NodeShrinker.shrinkFuncConcatenation(node);
             case Func.Types.lineBegin: return node.clone();
             case Func.Types.lineEnd: return node.clone();
-            // case Func.Types.list: return NodeShrinker.shrinkFuncList(node);
+            case Func.Types.list: return NodeShrinker.shrinkFuncList(node as ListFunc);
             // case Func.Types.negation: return NodeShrinker.shrinkFuncNegation(node);
             case Func.Types.or: return NodeShrinker.shrinkFuncOr(node as any);
             // case Func.Types.repetition: return NodeShrinker.shrinkRepetition(node as RepetitionFunc);
@@ -150,6 +168,37 @@ export default class NodeShrinker {
         }
 
         return new ConcatFunc(neoChildren);
+    }
+
+    protected static shrinkFuncList(node: ListFunc): Node {
+        let children = node.children.map(c => NodeShrinker.shrink(c));
+
+        let allAreTerminals = children.every(c => c.is(NodeTypes.terminal));
+        if (allAreTerminals) {
+            let chars = children.map(c => c.toString()).sort().join('');
+            chars = Utils.getUniqueChars(chars);
+
+            let charCode: number = 0;
+            let isSequence = Array.from(chars).every(letter => {
+                if (charCode < letter.charCodeAt(0)) {
+                    charCode = letter.charCodeAt(0);
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            if (isSequence) {
+                let func = new RangeFunc();
+                func.from = chars.charAt(0);
+                func.to = chars.substr(-1);
+                return func;
+            }
+
+            return new ListFunc(chars.split('').map(c => new Terminal(c)));
+        }
+
+        return node.clone();
     }
 
     protected static shrinkFuncOr(node: OrFunc): Node {

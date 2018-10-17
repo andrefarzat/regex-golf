@@ -24,8 +24,8 @@ import AnyCharFunc from "../nodes/AnyCharFunc";
 export default class IndividualFactory {
     public constructor(public leftChars: string[], public rightChars: string[]) { }
 
-    public createFromString(phrase: string): Individual {
-        let tree = regexp.parse(`/${phrase}/`);
+    public createFromString(phrase: string | RegExp): Individual {
+        let tree = regexp.parse(typeof phrase === 'string' ? `/${phrase}/` : phrase);
         let root = this.parseExpression(tree.body);
 
         if (root.is(NodeTypes.terminal)) {
