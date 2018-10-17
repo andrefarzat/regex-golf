@@ -136,11 +136,12 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
+    @FocusTest
     @Test("Neighborhood generateByAddingEndOperator")
     public testGenerateByAddingEndOperator() {
         let program = (new ILS_Shrink('warmup')).init();
 
-        // First test: Must add only ONE start operator
+        // First test: Must add only ONE end operator
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
@@ -156,7 +157,7 @@ export default class NeighborhoodTest {
         }
         Expect(generator.next().done).toBeTruthy();
 
-        // Second test. Must add one start operator for each OR operator
+        // Second test. Must add one end operator for each OR operator
         initialInd = program.factory.createFromString('abc|efg');
 
         hood = new Neighborhood(initialInd, program);
@@ -169,6 +170,7 @@ export default class NeighborhoodTest {
             let ind = generator.next().value;
             Expect(ind.toString()).toEqual(option);
         }
+
         Expect(generator.next().done).toBeTruthy();
     }
 

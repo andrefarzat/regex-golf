@@ -2,7 +2,7 @@ import * as moment from 'moment';
 
 import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
-import Node from "../nodes/Node";
+import Node, { NodeTypes } from "../nodes/Node";
 import NodeShrinker from '../NodeShrinker';
 import Utils from "../Utils";
 import ConcatFunc from '../nodes/ConcatFunc';
@@ -137,7 +137,7 @@ export default class Individual {
         return parents;
     }
 
-    public getParentOf(node: Node): Func | null {
+    public getParentOf(node: Node): Func | undefined {
         let funcs = this.getFuncs();
 
         for (let func of funcs) {
@@ -146,18 +146,26 @@ export default class Individual {
             }
         }
 
-        return null;
+        return undefined;
     }
 
     public getNodes(): Node[] {
         let nodes: Node[] = [this.tree];
-        nodes = nodes.concat(this.tree.getNodes());
+
+        if (this.tree.is(NodeTypes.func)) {
+            nodes = nodes.concat(this.tree.getNodes());
+        }
+
         return nodes;
     }
 
     public getFuncs(): Func[] {
-        let funcs: Func[] = [this.tree];
-        funcs = funcs.concat(this.tree.getFuncs());
+        let funcs: Func[] = [];
+
+        if (this.tree.is(NodeTypes.func)) {
+            funcs = [].concat(this.tree.getFuncs());
+        }
+
         return funcs;
     }
 

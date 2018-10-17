@@ -54,7 +54,7 @@ export default abstract class Func implements Node {
     }
 
     public hasTheChild(node: Node): boolean {
-        return this.children.indexOf(node) != -1;
+        return this.getNodes().indexOf(node) !== -1;
     }
 
     public removeChild(node: Node) {
@@ -170,5 +170,20 @@ export default abstract class Func implements Node {
 
     public isEmpty() {
         return false;
+    }
+
+    public getFirstTerminal(): Terminal {
+        let nodes = this.getNodes();
+
+        let node = nodes.shift();
+        while (node) {
+            if (node instanceof Terminal) {
+                return node;
+            }
+
+            node = nodes.shift();
+        }
+
+        return null;
     }
 }

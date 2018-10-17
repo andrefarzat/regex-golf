@@ -13,6 +13,7 @@ import ZeroOrMoreFunc from "../nodes/ZeroOrMore";
 import OneOrMoreFunc from "../nodes/OneOrMoreFunc";
 import AnyCharFunc from "../nodes/AnyCharFunc";
 import OptionalFunc from "../nodes/OptionalFunc";
+import OrFunc from "../nodes/OrFunc";
 
 
 export default class Neighborhood {
@@ -20,7 +21,7 @@ export default class Neighborhood {
     public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
     public maxSimultaneousEvaluations = 2;
 
-    public constructor(public solution: Individual, public program: LocalSearch) {}
+    public constructor(public solution: Individual, public program: LocalSearch) { }
 
     public get factory() {
         return this.program.factory;
@@ -33,11 +34,11 @@ export default class Neighborhood {
             if (!ind.isValid()) continue;
 
             await Utils.waitFor(() => i < this.maxSimultaneousEvaluations);
-            i ++;
+            i++;
 
             await this.program.evaluator.evaluate(ind);
             evalFn(ind);
-            i --;
+            i--;
         }
 
         await Utils.waitFor(() => i == 0);
@@ -158,7 +159,7 @@ export default class Neighborhood {
 
     public * generateByAddingEndOperator(solution: Individual) {
         // Let's get all OR operators first
-        let orNodes = solution.getFuncs().filter(func => func.is(FuncTypes.or));
+        let orNodes = solution.getFuncs().filter(func => func.is(FuncTypes.or)) as OrFunc[];
 
         if (orNodes.length == 0) {
             // No or nodes. Ok. Let's add a single start operator to the last terminal and that's it
@@ -177,35 +178,17 @@ export default class Neighborhood {
             } while (true);
         } else {
             // Ok. Let's add a start operator to last terminal together with the OR
-            // for (let node of orNodes) {
-            //     let terminals = node.getFirstTerminal();
-            //     do {
-            //         let terminal = terminals.pop();
-            //         if (!terminal) break;
+            for (let orNode of orNodes) {
+                for (let side of ['left', 'right']) {
+                    let terminal = orNode.getLastTerminalFrom(side as any);
+                    if (!terminal) break;
 
-            //         if (terminal.value == '') continue;
-
-            //         let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
-            //         if (neo.isValid()) {
-            //             yield neo;
-            //             break;
-            //         }
-            //     } while (true);
-
-            //     terminals = node.getRightTerminals();
-            //     do {
-            //         let terminal = terminals.pop();
-            //         if (!terminal) break;
-
-            //         if (terminal.value == '') continue;
-
-            //         let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
-            //         if (neo.isValid()) {
-            //             yield neo;
-            //             break;
-            //         }
-            //     } while (true);
-            // }
+                    let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
+                    if (neo.isValid()) {
+                        yield neo;
+                    }
+                }
+            }
         }
     }
 
@@ -270,7 +253,7 @@ export default class Neighborhood {
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
             if (node === solution.tree) continue;
 
-            for(let range of this.getAllRanges()) {
+            for (let range of this.getAllRanges()) {
                 let neo = this.factory.replaceNode(solution, node, range);
                 if (neo.isValid()) yield neo;
 
@@ -385,7 +368,7 @@ export default class Neighborhood {
                 } else {
                     Logger.error(`[Invalid]`, neo.toLog());
                 }
-            } catch(e) {
+            } catch (e) {
                 // todo: log the invalid
                 Logger.error(`[Neighborhood error]`, e.message);
             }

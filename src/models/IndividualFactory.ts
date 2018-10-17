@@ -2,7 +2,7 @@ import * as regexp from "regexp-tree";
 
 import Func, { FuncTypes } from '../nodes/Func';
 import Individual from './Individual';
-import Node from '../nodes/Node';
+import Node, { NodeTypes } from '../nodes/Node';
 import Terminal from '../nodes/Terminal'
 import Utils from '../Utils';
 import RangeFunc from "../nodes/RangeFunc";
@@ -27,6 +27,10 @@ export default class IndividualFactory {
     public createFromString(phrase: string): Individual {
         let tree = regexp.parse(`/${phrase}/`);
         let root = this.parseExpression(tree.body);
+
+        if (root.is(NodeTypes.terminal)) {
+            root = new ConcatFunc([root]);
+        }
 
         let ind = new Individual();
         ind.tree = root as Func;
@@ -73,7 +77,6 @@ export default class IndividualFactory {
 
                 return node;
             } else {
-                debugger;
                 throw new Error('Unkown expression.type == Repetition');
             }
         } else if (expression.type === 'Disjunction') {
@@ -185,9 +188,13 @@ export default class IndividualFactory {
         if (neoOne instanceof Func) {
             neoOne.addChild(two);
         } else {
-            let parent = ind.getParentOf(neoOne);
-            let index = parent.children.indexOf(neoOne);
-            parent.children.splice(index, 0, two);
+            let parent = neo.getParentOf(neoOne);
+            if (parent) {
+                let index = parent.children.indexOf(neoOne);
+                parent.children.splice(index, 0, two);
+            } else {
+                debugger;
+            }
         }
 
         return neo;
@@ -232,7 +239,19 @@ export default class IndividualFactory {
         let neoTerminal = neo.getNodes()[index];
         let parent = neo.getParentOf(neoTerminal);
 
+        if (parent.is(FuncTypes.or)) {
+            let side = (parent as OrFunc).getSideOf(neoTerminal);
+
+            if (side == 'left') {
+                parent = (parent as OrFunc).left.asFunc();
+            } else {
+                parent = (parent as OrFunc).right.asFunc();
+            }
+        }
+
+        index = parent.children.indexOf(neoTerminal);
         parent.children.splice(index, 1, neoTerminal, new LineEndFunc());
+
         return neo;
     }
 

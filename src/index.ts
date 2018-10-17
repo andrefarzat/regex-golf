@@ -1,4 +1,3 @@
-const colors = require('colors/safe');
 const args = require('args');
 const fs = require('fs');
 import * as path from 'path';
@@ -14,7 +13,6 @@ import Utils from './Utils';
 import Constructed_RRLS from "./localsearch/Constructed_RRLS";
 import Individual from "./models/Individual";
 import Neighborhood from './models/Neighborhood';
-import EvaluatorFactory from './models/EvaluatorFactory';
 
 
 args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS", "Constructed_RRLS"')
@@ -122,6 +120,8 @@ async function main() {
             if (e.message === 'Stop!') {
                 Logger.error('[Timeout]');
             } else {
+                console.log(e);
+                process.exit();
                 Logger.error(`[Neighborhood error]`, e.message);
             }
         }
@@ -165,7 +165,7 @@ async function main() {
 
     if (!flags.csv) process.exit();
 
-    !function() {
+    (function() {
         let bestSolution = program.getBestSolution();
         // Nome, Depth, i, seed
         let csvLine: (string | number)[] = [program.instanceName, program.depth, flags.index, program.seed];
@@ -199,12 +199,12 @@ async function main() {
 
         let filepath = path.join(__dirname, '..', 'results', flags.csv);
         fs.appendFileSync(filepath, csvLine.join(',') + `\n`);
-    }();
+    })();
 
     Logger.info(`[Program finished] total time: ${program.endTime.getTime() - program.startTime.getTime()}`);
 }
 
 (async function() {
     await main();
-    process.exit();
+    console.log('yep!');
 })();

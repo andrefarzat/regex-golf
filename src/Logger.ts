@@ -3,9 +3,6 @@ import * as path from 'path';
 import * as Moment from 'moment';
 import * as winston from 'winston';
 
-import Individual from './models/Individual';
-import LocalSearch from './localsearch/LocalSearch';
-
 export enum LogLevel {
     error = 0,
     warn = 1,
@@ -18,7 +15,7 @@ export enum LogLevel {
 export default class Logger {
     protected static logLevel = LogLevel.warn;
     protected static instanceName: string;
-    protected static _wiston: winston.Logger;
+    public static _wiston: winston.Logger;
 
     protected static get wiston() {
         if (!this._wiston) {
@@ -28,10 +25,10 @@ export default class Logger {
             let instanceInfo = path.join(reportRootDir, `${this.instanceName}.log`);
 
             this._wiston = winston.createLogger({
-                level: LogLevel[this.logLevel],
+                level: LogLevel[this.logLevel].toString(),
                 format: winston.format.json(),
                 transports: [
-                    // new winston.transports.Console(),
+                    // new winston.transports.Console({ level: 'info' }),
                     new winston.transports.File({ filename: errorLog, level: 'error' }),
                     new winston.transports.File({ filename: instanceInfo, level: 'info' }),
                 ]
