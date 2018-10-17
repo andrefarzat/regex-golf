@@ -39,12 +39,16 @@ export default class NodeShrinker {
             'combineRepeatingPatterns',
         ];
 
-        const originalRe = neo.toRegex();
-        const optimizedRe: RegExp = (regexpTree as any).optimize(originalRe, options).toRegExp();
+        try {
+            const originalRe = neo.toRegex();
+            const optimizedRe: RegExp = (regexpTree as any).optimize(originalRe, options).toRegExp();
 
-        let factory = new IndividualFactory([], []);
-        let ind = factory.createFromString(optimizedRe);
-        return ind.tree;
+            let factory = new IndividualFactory([], []);
+            let ind = factory.createFromString(optimizedRe);
+            return ind.isValid() ? ind.tree : neo;
+        } catch {
+            return neo;
+        }
     }
 
     public static shrinkMany(nodes: Node[]): Node[] {
