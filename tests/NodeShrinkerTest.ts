@@ -1,4 +1,4 @@
-import { Expect, Test, TestCase, TestFixture } from "alsatian";
+import { Expect, Test, TestCase, TestFixture, FocusTest } from "alsatian";
 
 import IndividualFactory from '../src/models/IndividualFactory';
 import Func, { FuncTypes } from "../src/nodes/Func";
@@ -13,48 +13,43 @@ import NodeShrinker from "../src/NodeShrinker";
 export class NodeShrinkerTest {
     private individualFactory = new IndividualFactory(['a', 'b', 'c'], [ 'x', 'y', 'z']);
 
+    @TestCase('^abc^xyz', '^abcxyz')
+    @TestCase('^abc|^xyz', '^abc|^xyz')
+    @TestCase('^ab^c|^xyz', '^abc|^xyz')
     @Test('Test Shrink LineBegin')
-    public testShrinkLineBegin() {
+    public testShrinkLineBegin(txt: string, expectedResult: string) {
         // Let's keep only one lineBegin node
-        let tree = this.individualFactory.createFromString('^abc^xyz');
-        Expect(tree.shrink().toString()).toEqual('^abcxyz');
+        let tree = this.individualFactory.createFromString(txt);
+        Expect(tree.shrink().toString()).toEqual(expectedResult);
     }
 
+    @TestCase('abc$xyz$', 'abcxyz$')
+    @TestCase('abc$|xyz$', 'abc$|xyz$')
+    @TestCase('ab$c$|x$yz$', 'abc$|xyz$')
     @Test('Test Shrink LineEnd')
-    public testShrinkLineEnd() {
+    public testShrinkLineEnd(txt: string, expectedResult: string) {
         // Let's keep only one lineEnd node
-        let ind = this.individualFactory.createFromString('abc$xyz$');
-        Expect(ind.shrink().toString()).toEqual('abcxyz$');
-
-        ind = this.individualFactory.createFromString('abc\\$xyz$');
-        Expect(ind.shrink().toString()).toEqual('abc\\$xyz$');
+        let ind = this.individualFactory.createFromString(txt);
+        Expect(ind.shrink().toString()).toEqual(expectedResult);
     }
 
-    // @Test('Test Shrink concatenation')
-    // public testShrinkConcatenation() {
-    //     let ind = this.individualFactory.createFromString('abc');
-    //     let shrunk = ind.shrink();
-    //     Expect(shrunk.toString()).toEqual('abc');
-    //     Expect(shrunk.tree.nodeType).toEqual(NodeTypes.func);
-    //     Expect(shrunk.tree.left.nodeType).toEqual(NodeTypes.terminal);
-    //     Expect(shrunk.tree.left.toString()).toEqual('a');
+    @Test('Test Shrink concatenation')
+    public testShrinkConcatenation() {
+        let ind = this.individualFactory.createFromString('abc');
+        let shrunk = ind.shrink();
+        Expect(shrunk.toString()).toEqual('abc');
 
-    //     Expect(shrunk.tree.right.nodeType).toEqual(NodeTypes.func);
-    //     let right = shrunk.tree.right as Func;
+        ind = this.individualFactory.createFromString('aaaaa');
+        shrunk = ind.shrink();
+        Expect(shrunk.toString()).toEqual('a{5}');
 
-    //     Expect((right.left as Terminal).value).toEqual('b');
-    //     Expect((right.right as Terminal).value).toEqual('c');
-
-    //     ind = this.individualFactory.createFromString('aaaaa');
-    //     shrunk = ind.shrink();
-    //     Expect(shrunk.toString()).toEqual('a{5}');
-
-    //     ind = this.individualFactory.createFromString('aa{5}');
-    //     shrunk = ind.shrink();
-    //     Expect(shrunk.toString()).toEqual('a{6}');
-    // }
+        ind = this.individualFactory.createFromString('aa{5}');
+        shrunk = ind.shrink();
+        Expect(shrunk.toString()).toEqual('a{6}');
+    }
 
 
+    @FocusTest
     @TestCase('a', 'a')
     @TestCase('bb', 'bb')
     @TestCase('ccc', 'ccc')

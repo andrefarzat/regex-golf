@@ -40,6 +40,10 @@ export default abstract class Func implements Node {
         return this.children.map(child => child.toString()).join('');
     }
 
+    public childrenToString(): string {
+        return this.children.map(child => child.toString()).join('');
+    }
+
     public addChild(child: Node) {
         this.children.push(child);
     }
