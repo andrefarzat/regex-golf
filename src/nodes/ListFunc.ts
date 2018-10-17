@@ -1,7 +1,7 @@
 import Func, { FuncTypes } from './Func';
 
 import { NegativePositive } from './LookaheadFunc';
-import Node from './Node';
+import Node, { NodeTypes } from './Node';
 
 
 export default class ListFunc extends Func {
@@ -23,5 +23,13 @@ export default class ListFunc extends Func {
     public clone() {
         let negativePositive: NegativePositive = this.negative ? 'negative' : 'positive';
         return new ListFunc(this.children.map(child => child.clone()), negativePositive);
+    }
+
+    public addChild(child: Node) {
+        if (child.is(NodeTypes.terminal)) {
+            this.children.push(child);
+        } else {
+            this.children = this.children.concat(child.asFunc().children);
+        }
     }
 }

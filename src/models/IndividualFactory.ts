@@ -146,6 +146,22 @@ export default class IndividualFactory {
         return newInd;
     }
 
+    public appendToNode(ind: Individual, nodeWhichReceive: Node, nodeWhichWillBeAppended: Node): Individual {
+        let neo = ind.clone();
+        let neoIndex = ind.getNodes().indexOf(nodeWhichReceive);
+        let neoOne = neo.getNodes()[neoIndex];
+
+        if (neoOne.is(NodeTypes.func)) {
+            neoOne.asFunc().addChild(nodeWhichWillBeAppended);
+        } else {
+            let parent = neo.getParentOf(neoOne);
+            let index = parent.children.indexOf(neoOne);
+            parent.children.splice(index, 1, neoOne, nodeWhichWillBeAppended);
+        }
+
+        return neo;
+    }
+
     public insertRandomly(ind: Individual, node: Node): Individual {
         let newInd = ind.clone();
         let funcs = newInd.getFuncs();
@@ -186,12 +202,9 @@ export default class IndividualFactory {
         let neoOne = neo.getNodes()[neoIndex];
 
         let parent = neo.getParentOf(neoOne);
-        if (parent) {
-            let index = parent.children.indexOf(neoOne);
-            parent.children.splice(index, 1, neoOne, two);
-        } else {
-            debugger;
-        }
+
+        let index = parent.children.indexOf(neoOne);
+        parent.children.splice(index, 1, neoOne, two);
 
         return neo;
     }
@@ -213,7 +226,19 @@ export default class IndividualFactory {
         let neoTerminal = neo.getNodes()[index];
         let parent = neo.getParentOf(neoTerminal);
 
-        parent.children.splice(index, 0, neoTerminal);
+        if (parent.is(FuncTypes.or)) {
+            let side = (parent as OrFunc).getSideOf(neoTerminal);
+
+            if (side == 'left') {
+                parent = (parent as OrFunc).left.asFunc();
+            } else {
+                parent = (parent as OrFunc).right.asFunc();
+            }
+        }
+
+        index = parent.children.indexOf(neoTerminal);
+        parent.children.splice(index, 1, new LineBeginFunc(), neoTerminal);
+
         return neo;
     }
 

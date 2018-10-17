@@ -42,6 +42,17 @@ export default class OrFunc extends Func {
         return func;
     }
 
+    public getFirstTerminalFrom(side: 'left' | 'right'): Terminal {
+        const node = side === 'left' ? this.left : this.right;
+
+        if (node.is(NodeTypes.terminal)) {
+            return node as Terminal;
+        }
+
+        const terminals = node.asFunc().getTerminals();
+        return terminals[0];
+    }
+
     public getLastTerminalFrom(side: 'left' | 'right'): Terminal {
         const node = side === 'left' ? this.left : this.right;
 

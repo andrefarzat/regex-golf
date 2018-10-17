@@ -60,7 +60,7 @@ export default class NeighborhoodTest {
         hood.maxSimultaneousEvaluations = 1;
 
         let generator = hood.generateByRemovingNodes(initialInd);
-        const options = ['bc', 'a', 'ac', 'ab'];
+        const options = ['bc', 'ac', 'ab'];
 
         for (let ind of generator) {
             let index = options.indexOf(ind.toString());
@@ -89,7 +89,7 @@ export default class NeighborhoodTest {
         hood.maxSimultaneousEvaluations = 1;
 
         let generator = hood.generateByExtractingSingleNode(initialInd);
-        let options = ['a', 'z', 'x', '[^z]x{5}', 'z', 'x{5}', '[b-e][^z]x{5}'];
+        let options = ['a', '[b-e]', '[^z]', 'z', 'x{5}', 'x'];
 
         for (let ind of generator) {
             let index = options.indexOf(ind.toString());
@@ -205,7 +205,7 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
-    @Test("Neighborhood generateByRemovingNodes")
+    @Test("Neighborhood generateByConcatenating")
     public testGenerateByConcatenating() {
         let program = (new ILS_Shrink('warmup')).init();
 
@@ -313,41 +313,42 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
+    @FocusTest
     @Test("Neighborhood generateByAddingNegationOperator")
     public testGenerateByAddingNegationOperator() {
         let program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('a[^b]c');
-        Expect(initialInd.toString()).toEqual('a[^b]c');
+        let initialInd = program.factory.createFromString('a[^p]c');
+        Expect(initialInd.toString()).toEqual('a[^p]c');
 
         let hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let ranges = hood.getAllRanges();
         let generator = hood.generateByAddingNegationOperator(initialInd);
 
         let chars = ["k", "b", "z", "A", "S", "O", "M", "I", "x"];
 
         let options: string[] = [];
-        options = options.concat(chars.map(c => `[^${c}][^b]c`));
-        options = options.concat(chars.map(c => `a[^${c}][^b]c`));
-        options = options.concat(chars.map(c => `a[^${c}]`));
-        options = options.concat(chars.map(c => `a[^b${c}]`));
-        options = options.concat(chars.map(c => `a[^b][^${c}]`));
-        options = options.concat(chars.map(c => `a[^b]c[^${c}]`));
+        // options = options.concat(chars.map(c => `[^${c}]a[^p]c`));
+        options = options.concat(chars.map(c => `[^${c}][^p]c`));
+        options = options.concat(chars.map(c => `a[^${c}][^p]c`));
+        options = options.concat(chars.map(c => `a[^${c}]c`));
+        options = options.concat(chars.map(c => `a[^p][^${c}]c`));
+        options = options.concat(chars.map(c => `a[^p][^${c}]`));
+        options = options.concat(chars.map(c => `a[^p${c}]c`));
+        options = options.concat(chars.map(c => `a[^p]c[^${c}]`));
 
-        let i = 0;
         for (let ind of generator) {
             let includes = options.includes(ind.toString());
             if (!includes) {
-                Expect.fail(`expect ${ind.toString()} to equal ${options[i]}`);
+                Expect.fail(`${ind.toString()} doesnt exist on list`);
+            } else {
+                this.removeFromArray(options, ind.toString());
             }
-
-            i ++;
         }
 
         Expect(generator.next().done).toBeTruthy();
-        Expect(i).toEqual(options.length);
+        Expect(options).toEqual([]);
     }
 
     @Test("Neighborhood generateByAddingGivenOperator")

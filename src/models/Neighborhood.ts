@@ -109,6 +109,7 @@ export default class Neighborhood {
 
         // Removing a node
         for (let node of nodes) {
+            if (solution.tree == node) continue;
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
 
             let neo = this.factory.removeNode(solution, node);
@@ -118,7 +119,7 @@ export default class Neighborhood {
 
     public * generateByAddingStartOperator(solution: Individual) {
         // Let's get all OR operators first
-        let orNodes = solution.getFuncs().filter(func => func.is(FuncTypes.or));
+        let orNodes = solution.getFuncs().filter(func => func.is(FuncTypes.or)) as OrFunc[];
 
         if (orNodes.length == 0) {
             // No or nodes. Ok. Let's add a single start operator to the first terminal and that's it
@@ -132,28 +133,18 @@ export default class Neighborhood {
                 }
             }
         } else {
-            // Ok. Let's add a start operator to first terminal together with the OR
-            // for (let node of orNodes) {
-            //     for (let terminal of node.getFirstTerminal()) {
-            //         if (terminal.value == '') continue;
+            // Ok. Let's add a start operator to last terminal together with the OR
+            for (let orNode of orNodes) {
+                for (let side of ['left', 'right']) {
+                    let terminal = orNode.getFirstTerminalFrom(side as any);
+                    if (!terminal) break;
 
-            //         let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
-            //         if (neo.isValid()) {
-            //             yield neo;
-            //             break;
-            //         }
-            //     }
-
-            //     for (let terminal of node.getRightTerminals()) {
-            //         if (terminal.value == '') continue;
-
-            //         let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
-            //         if (neo.isValid()) {
-            //             yield neo;
-            //             break;
-            //         }
-            //     }
-            // }
+                    let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
+                    if (neo.isValid()) {
+                        yield neo;
+                    }
+                }
+            }
         }
     }
 
@@ -277,6 +268,11 @@ export default class Neighborhood {
 
                 neo = this.factory.concatenateToNode(solution, node, func);
                 if (neo.isValid()) yield neo;
+
+                if (node.is(FuncTypes.list) && (node as ListFunc).negative) {
+                    neo = this.factory.appendToNode(solution, node, func);
+                    if (neo.isValid()) yield neo;
+                }
             }
         }
     }
