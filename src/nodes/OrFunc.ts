@@ -32,6 +32,10 @@ export default class OrFunc extends Func {
         return nodes;
     }
 
+    public hasTheChild(node: Node): boolean {
+        return this.getNodes().indexOf(node) !== -1;
+    }
+
     public clone(): Func {
         let func = new OrFunc(this.left.clone(), this.right.clone());
         func.children = this.children.map(child => child.clone());

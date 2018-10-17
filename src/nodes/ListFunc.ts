@@ -19,4 +19,9 @@ export default class ListFunc extends Func {
     public toString(): string {
         return this.negative ? `[^${super.toString()}]` : `[${super.toString()}]`;
     }
+
+    public clone() {
+        let negativePositive: NegativePositive = this.negative ? 'negative' : 'positive';
+        return new ListFunc(this.children.map(child => child.clone()), negativePositive);
+    }
 }

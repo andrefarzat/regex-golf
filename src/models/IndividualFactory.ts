@@ -185,16 +185,12 @@ export default class IndividualFactory {
         let neoIndex = ind.getNodes().indexOf(one);
         let neoOne = neo.getNodes()[neoIndex];
 
-        if (neoOne instanceof Func) {
-            neoOne.addChild(two);
+        let parent = neo.getParentOf(neoOne);
+        if (parent) {
+            let index = parent.children.indexOf(neoOne);
+            parent.children.splice(index, 1, neoOne, two);
         } else {
-            let parent = neo.getParentOf(neoOne);
-            if (parent) {
-                let index = parent.children.indexOf(neoOne);
-                parent.children.splice(index, 0, two);
-            } else {
-                debugger;
-            }
+            debugger;
         }
 
         return neo;

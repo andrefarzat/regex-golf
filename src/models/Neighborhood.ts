@@ -310,6 +310,9 @@ export default class Neighborhood {
             neo = this.factory.concatenateToNode(solution, node, func);
             if (neo.isValid()) yield neo;
         }
+
+        let neo = this.factory.appendAtEnd(solution, func);
+        if (neo.isValid()) yield neo;
     }
 
     public * generateByAddingBackrefOperator(solution: Individual) {

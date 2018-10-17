@@ -5,10 +5,18 @@ import Neighborhood from "../../src/models/Neighborhood";
 import ILS_Shrink from "../../src/localsearch/ILS_shrink";
 import Individual from "../../src/models/Individual";
 import { FuncTypes } from "../../src/nodes/Func";
+import AnyCharFunc from "../../src/nodes/AnyCharFunc";
 
 
 @TestFixture()
 export default class NeighborhoodTest {
+
+    private removeFromArray(arr: any[], item: any) {
+        let index = arr.indexOf(item);
+        if (index !== -1) {
+            arr.splice(index, 1);
+        }
+    }
 
     @Timeout(4000)
     @AsyncTest("Neighborhood evaluation")
@@ -136,7 +144,6 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
-    @FocusTest
     @Test("Neighborhood generateByAddingEndOperator")
     public testGenerateByAddingEndOperator() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -353,11 +360,10 @@ export default class NeighborhoodTest {
         let hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let ranges = hood.getAllRanges();
-        let generator = hood.generateByAddingGivenOperator(initialInd, FuncTypes.anyChar);
+        let generator = hood.generateByAddingGivenOperator(initialInd, AnyCharFunc);
 
         let options: string[] = [
-            ".[^b]c", "a.[^b]c", "a.", "a[^b]c.", "a[^.]c", "a[^b.]c", "a[^b].c", "a.c", "a[^b]c.", "a[^b]."
+            ".[^b]c", "a.[^b]c", "a[^b]c.", "a[^.]c", "a[^b.]c", "a[^b].c", "a.c", "a[^b]c.", "a[^b]."
         ];
 
         let i = 0;
@@ -365,15 +371,18 @@ export default class NeighborhoodTest {
             let includes = options.includes(ind.toString());
             if (!includes) {
                 Expect.fail(`expect ${ind.toString()} to equal ${options[i]}`);
+            } else {
+                this.removeFromArray(options, ind.toString());
             }
 
             i ++;
         }
 
         Expect(generator.next().done).toBeTruthy();
-        Expect(i).toEqual(options.length);
+        Expect(options).toEqual([]);
     }
 
+    @IgnoreTest()
     @Test("Neighborhood generateByAddingBackrefOperator")
     public testGenerateByAddingBackrefOperator() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -444,6 +453,7 @@ export default class NeighborhoodTest {
         Expect(hood.isValidBackref(regex, i)).toBe(expectedResult);
     }
 
+    @IgnoreTest()
     @Test()
     public testGenerateLookahead() {
         let program = (new ILS_Shrink('warmup')).init();
@@ -478,6 +488,7 @@ export default class NeighborhoodTest {
         }
     }
 
+    @IgnoreTest()
     @Test()
     public testGenerateLookbehind() {
         let program = (new ILS_Shrink('warmup')).init();
