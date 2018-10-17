@@ -85,12 +85,7 @@ export default abstract class Func implements Node {
 
     public swapChild(oldNode: Node, newNode: Node) {
         let index = this.children.indexOf(oldNode);
-
-
-        if (index === -1) {
-            debugger;
-            throw new Error('[Func.swapChild] Invalid child');
-        }
+        if (index === -1) throw new Error('[Func.swapChild] Invalid child');
 
         this.children.splice(index, 1, newNode);
     }
