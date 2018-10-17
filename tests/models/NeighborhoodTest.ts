@@ -313,7 +313,6 @@ export default class NeighborhoodTest {
         Expect(generator.next().done).toBeTruthy();
     }
 
-    @FocusTest
     @Test("Neighborhood generateByAddingNegationOperator")
     public testGenerateByAddingNegationOperator() {
         let program = (new ILS_Shrink('warmup')).init();

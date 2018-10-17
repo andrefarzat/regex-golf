@@ -205,6 +205,7 @@ export default class Neighborhood {
     public * generateByConcatenating(solution: Individual) {
         // Concatenating
         for (let node of solution.getNodes()) {
+            if (solution.tree == node) continue;
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
 
             for (let char of this.program.validLeftChars) {

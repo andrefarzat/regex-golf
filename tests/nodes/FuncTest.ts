@@ -1,4 +1,4 @@
-import { Expect, Test, TestCase, TestFixture } from "alsatian";
+import { Expect, Test, TestCase, TestFixture, FocusTest, IgnoreTest } from "alsatian";
 
 import Func, { FuncTypes } from "../../src/nodes/Func";
 import IndividualFactory from "../../src/models/IndividualFactory";
@@ -10,9 +10,12 @@ import RepetitionFunc from "../../src/nodes/RepetitionFunc";
 export class FuncTest {
     private individualFactory = new IndividualFactory(['a', 'b', 'c'], [ 'x', 'y', 'z']);
 
+    @IgnoreTest()
+    @TestCase('^abc', '^abc')
+    @TestCase('a^bc', '^abc')
     @TestCase('abc$', 'abc$')
     @TestCase('ab$c', 'abc$')
-    @Test('Negation must be always at the end of the string')
+    @Test('Operators positions')
     public testNegationAtEnd(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
         Expect(ind.toString()).toBe(expectedResult);
