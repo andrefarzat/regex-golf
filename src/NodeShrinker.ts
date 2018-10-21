@@ -10,6 +10,8 @@ import ConcatFunc from './nodes/ConcatFunc';
 import OrFunc from './nodes/OrFunc';
 import ListFunc from './nodes/ListFunc';
 import IndividualFactory from "./models/IndividualFactory";
+import LineBeginFunc from "./nodes/LineBeginFunc";
+import LineEndFunc from "./nodes/LineEndFunc";
 
 
 export default class NodeShrinker {
@@ -60,24 +62,30 @@ export default class NodeShrinker {
     }
 
     public static shrinkFunc(node: Func): Node {
-        switch (node.type) {
-            case Func.Types.concatenation: return NodeShrinker.shrinkFuncConcatenation(node);
-            case Func.Types.lineBegin: return node.clone();
-            case Func.Types.lineEnd: return node.clone();
-            case Func.Types.list: return NodeShrinker.shrinkFuncList(node as ListFunc);
+        if (node instanceof ConcatFunc) return NodeShrinker.shrinkFuncConcatenation(node);
+        if (node instanceof LineBeginFunc) return node.clone();
+        if (node instanceof LineEndFunc) return node.clone();
+        if (node instanceof ListFunc) return NodeShrinker.shrinkFuncList(node);
+        if (node instanceof OrFunc) return NodeShrinker.shrinkFuncOr(node);
+
+        if (node.is(Func.Types.concatenation)) {
+            throw new Error('Should not reach here like this');
+        }
+        
+        // switch (node.type) {
             // case Func.Types.negation: return NodeShrinker.shrinkFuncNegation(node);
-            case Func.Types.or: return NodeShrinker.shrinkFuncOr(node as any);
             // case Func.Types.repetition: return NodeShrinker.shrinkRepetition(node as RepetitionFunc);
             // case Func.Types.range: return NodeShrinker.shrinkRange(node as RangeFunc);
-        }
-
-        // zeroOrMore = "•*+",
-        // oneOrMore = "•?+",
-        // group = "(•)",
+            // zeroOrMore = "•*+",
+            // oneOrMore = "•?+",
+            // group = "(•)",
+        // }
 
         // Our default is shrink left and right and return a new Func
         if (node instanceof Func) {
-            return node.clone();
+            const neo = node.clone();
+            neo.children = NodeShrinker.shrinkMany(neo.children);
+            return neo;
         } else {
             // Terminal
             return new ConcatFunc([NodeShrinker.shrink(node)]);
