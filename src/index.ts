@@ -79,6 +79,8 @@ async function main() {
     await program.evaluator.evaluate(currentSolution);
     Logger.info(`[Initial solution]`, currentSolution.toLog());
 
+    let visitedRegexes: string[] = [];
+
     // 6. Loop
     do {
         // 6.2. Current Solution is the Best ?
@@ -112,15 +114,26 @@ async function main() {
                     Logger.info(`[Found better]`, ind.toLog());
                     currentSolution = ind;
                     hasFoundBetter = true;
+
+                    // Testing to see if we have somekind of loop
+                    const hasVisitedThisInd = visitedRegexes.includes(ind.toString());
+                    if (hasVisitedThisInd) {
+                        Logger.error(`[Already visited]`, ind.toLog());
+                    } else {
+                        visitedRegexes.push(ind.toString());
+                    }
                 }
 
                 if (program.shouldStop()) throw new Error('Stop!');
             });
         } catch (e) {
             if (e.message === 'Stop!') {
-                Logger.error('[Timeout]');
+                if (program.hasTimedOut) {
+                    Logger.error('[Timeout]');
+                } else {
+                    // Budged reached!
+                }
             } else {
-                console.log(e);
                 process.exit();
                 Logger.error(`[Neighborhood error]`, e.message);
             }

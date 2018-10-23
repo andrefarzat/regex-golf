@@ -366,7 +366,7 @@ export default class Neighborhood {
                 if (neo.isValid()) {
                     yield neo;
                 } else {
-                    Logger.error(`[Invalid]`, neo.toLog());
+                    // Logger.error(`[Invalid generateByExtractingSingleNode]`, neo.toLog());
                 }
             } catch (e) {
                 // todo: log the invalid

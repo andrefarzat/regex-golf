@@ -26,6 +26,8 @@ export default class Individual {
     public createdDate = new Date();
     public hasTimedOut = false;
 
+    public invalidRegexes = ['^', '.*', '^.*',  '.*$', '.+', '.+$', '$', '+?', '[]', '[^]', `\b`];
+
     public get isEvaluated(): boolean {
         return this.evaluationIndex != undefined;
     }
@@ -95,16 +97,7 @@ export default class Individual {
         if (str.length == 0) return false;
         if (str.substr(0, 1) == '|') return false;
         if (str.substr(-1) == '|') return false;
-        if (str === '^') { return false; }
-        if (str === '.*') { return false;}
-        if (str === '^.*') return false;
-        if (str === '.*$') return false;
-        if (str === '.+') { return false; }
-        if (str === '.+$') { return false; }
-        if (str === '$') { return false; }
-        if (str === '+?') { return false; }
-        if (str === '[]') { return false; }
-        if (str === '[^]') { return false; }
+        if (this.invalidRegexes.includes(str)) return false;
         if (/\[\^[^\]]*\[\^/.test(str)) { return false; }
 
         return true;
@@ -178,7 +171,7 @@ export default class Individual {
 
     public isBetterThan(ind: Individual): boolean {
         if (!this.isEvaluated || !ind.isEvaluated) {
-            throw 'Individual must have been evaluated';
+            throw new Error('Individual must have been evaluated');
         }
 
         if (this.fitness > ind.fitness) {
@@ -187,10 +180,6 @@ export default class Individual {
 
         if (this.fitness == ind.fitness) {
             if (this.toString().length < ind.toString().length) {
-                return true;
-            }
-
-            if (this.leftPoints > ind.leftPoints) {
                 return true;
             }
         }
