@@ -30,7 +30,7 @@ export default class Logger {
                 transports: [
                     // new winston.transports.Console({ level: 'info' }),
                     new winston.transports.File({ filename: errorLog, level: 'error' }),
-                    new winston.transports.File({ filename: instanceInfo, level: 'info' }),
+                    // new winston.transports.File({ filename: instanceInfo, level: 'info' }),
                 ]
             });
         }

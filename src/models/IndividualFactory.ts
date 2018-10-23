@@ -226,18 +226,14 @@ export default class IndividualFactory {
         let neoTerminal = neo.getNodes()[index];
         let parent = neo.getParentOf(neoTerminal);
 
-        if (parent.is(FuncTypes.or)) {
-            let side = (parent as OrFunc).getSideOf(neoTerminal);
-
-            if (side == 'left') {
-                parent = (parent as OrFunc).left.asFunc();
-            } else {
-                parent = (parent as OrFunc).right.asFunc();
-            }
+        if (parent instanceof OrFunc) {
+            let side = parent.getSideOf(neoTerminal);
+            let localNeoTerminal = parent[side];
+            parent[side] = new ConcatFunc([new LineBeginFunc(), localNeoTerminal]);
+        } else {
+            index = parent.children.indexOf(neoTerminal);
+            parent.children.splice(index, 1, new LineBeginFunc(), neoTerminal);
         }
-
-        index = parent.children.indexOf(neoTerminal);
-        parent.children.splice(index, 1, new LineBeginFunc(), neoTerminal);
 
         return neo;
     }
@@ -260,18 +256,14 @@ export default class IndividualFactory {
         let neoTerminal = neo.getNodes()[index];
         let parent = neo.getParentOf(neoTerminal);
 
-        if (parent.is(FuncTypes.or)) {
-            let side = (parent as OrFunc).getSideOf(neoTerminal);
-
-            if (side == 'left') {
-                parent = (parent as OrFunc).left.asFunc();
-            } else {
-                parent = (parent as OrFunc).right.asFunc();
-            }
+        if (parent instanceof OrFunc) {
+            let side = parent.getSideOf(neoTerminal);
+            let localNeoTerminal = parent[side];
+            parent[side] = new ConcatFunc([localNeoTerminal, new LineEndFunc()]);
+        } else {
+            index = parent.children.indexOf(neoTerminal);
+            parent.children.splice(index, 1, neoTerminal, new LineEndFunc());
         }
-
-        index = parent.children.indexOf(neoTerminal);
-        parent.children.splice(index, 1, neoTerminal, new LineEndFunc());
 
         return neo;
     }

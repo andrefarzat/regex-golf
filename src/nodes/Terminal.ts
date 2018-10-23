@@ -45,6 +45,7 @@ export default class Terminal implements Node {
     }
 
     public asFunc(): never {
+        debugger;
         throw new Error(`Cannot convert Terminal to Function!`);
     }
 

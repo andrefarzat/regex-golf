@@ -18,28 +18,16 @@ export default class Constructed_RRLS extends RRLS {
         let index = 0;
         let maxIndex = this.validLeftChars.length - 1;
 
-        let ind = new Individual();
-        ind.tree = new ConcatFunc();
-        ind.tree.addChild(new Terminal(this.validLeftChars[index]));
-
-        if (this.isValidLeft(ind)) {
-            return ind;
-        }
-
-        let current = ind.tree;
+        let current: string[] = [this.validLeftChars[index]];
+        let ind = this.factory.createFromString(current.join('|'));
         while (!this.isValidLeft(ind)) {
-            current.type = Func.Types.or;
-            index ++;
-
             if ((index + 1) > maxIndex) {
                 break;
             }
 
-            let left = new Terminal(this.validLeftChars[index])
-            let right = new Terminal(this.validLeftChars[index + 1]);
-            let func = new OrFunc(left, right);
-
-            current = func;
+            index += 1;
+            current.push(this.validLeftChars[index]);
+            ind = this.factory.createFromString(current.join('|'));
         }
 
         return ind;

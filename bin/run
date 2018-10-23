@@ -1,15 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import datetime, os
 from subprocess import call
 from threading import Thread
 import sys
 
-PROGRAMS = ['ILS_Shrink', 'Constructed_RRLS']
+PROGRAMS = ['Constructed_RRLS']
 
 i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 
 INSTANCES = ["warmup", "anchors", "ranges", "backrefs", "powers", "long-count", "alphabetical",
              "abba", "aman-aplan", "prime", "four", "triples", "glob", "balance", "order"]
+
+INSTANCES = ["aman-aplan"]
 
 SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          8370032799, 2767986875, 3141506592, 3313543896, 8657690939, 9696640194,
@@ -53,7 +55,7 @@ for program in PROGRAMS:
                        "--name", program,
                        "--instance", instance,
                        "--depth", depth,
-                       "--index", index,
+                       "--index", "%s" % index,
                        "--seed", seed,
                        "--log-level", 2,
                        "--csv", csvFilePath]

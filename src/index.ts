@@ -127,15 +127,12 @@ async function main() {
                 if (program.shouldStop()) throw new Error('Stop!');
             });
         } catch (e) {
-            if (e.message === 'Stop!') {
-                if (program.hasTimedOut) {
-                    Logger.error('[Timeout]');
-                } else {
-                    // Budged reached!
-                }
+            if (e.message === 'Stop!' && program.hasTimedOut) {
+                Logger.error('[Timeout]');
             } else {
-                process.exit();
+                debugger;
                 Logger.error(`[Neighborhood error]`, e.message);
+                process.exit();
             }
         }
 
@@ -184,7 +181,6 @@ async function main() {
         let csvLine: (string | number)[] = [program.instanceName, program.depth, flags.index, program.seed];
 
         let startTime = moment(program.startTime);
-        let endTime   = moment(program.endTime);
 
         if (bestSolution) {
             csvLine.push(bestSolution.toString()); // Melhor_solucao
