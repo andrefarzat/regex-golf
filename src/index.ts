@@ -145,10 +145,8 @@ async function main() {
         }
     } while (true);
 
-    console.log('Um');
     program.evaluator.close();
 
-    console.log('Dois');
     // 7. Apresentar resultados
     function sorter(a: Individual, b: Individual): number {
         if (a.fitness > b.fitness) return -1;
@@ -160,14 +158,12 @@ async function main() {
         return 0;
     };
 
-    console.log('Tres');
     Logger.info(`Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.sort(sorter);
     program.localSolutions.forEach(ind => {
         Logger.info(`[Local Solution]`, ind.toLog());
     });
 
-    console.log('Quatro');
     Logger.info(`Was found ${program.solutions.length} solution(s)`);
 
     program.solutions.sort(sorter);
@@ -176,7 +172,6 @@ async function main() {
     });
 
     if (!flags.csv) process.exit();
-    console.log('Cinco');
 
     (function() {
         let bestSolution = program.getBestSolution();
@@ -184,7 +179,6 @@ async function main() {
         let csvLine: (string | number)[] = [program.instanceName, program.depth, flags.index, program.seed];
 
         let startTime = moment(program.startTime);
-        console.log('Cinco Um');
 
         if (bestSolution) {
             csvLine.push(bestSolution.toString()); // Melhor_solucao
@@ -206,17 +200,14 @@ async function main() {
             csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
         }
 
-        console.log('Cinco Dois');
         let totalTime = moment(program.endTime).diff(program.startTime, 'seconds');
         csvLine.push(totalTime); // Tempo_total
         csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
 
         let filepath = path.join(__dirname, '..', 'results', flags.csv);
         fs.appendFileSync(filepath, csvLine.join(',') + `\n`);
-        console.log('Cinco Tres');
     })();
 
-    console.log('Seis');
     Logger.info(`[Program finished] total time: ${program.endTime.getTime() - program.startTime.getTime()}`);
 }
 
