@@ -81,4 +81,50 @@ export default class OrFunc extends Func {
 
         return null;
     }
+
+    private trySwapChild(oldNode: Node, newNode: Node): boolean {
+        if (this.left === oldNode) {
+            this.left = newNode;
+            return true;
+        } else if (this.left instanceof OrFunc) {
+            if (this.left.trySwapChild(oldNode, newNode)) {
+                return true;
+            }
+        } else if (this.left instanceof Func) {
+            if (this.trySwapChildByChildren(this.left.children, oldNode, newNode)) {
+                return true;
+            }
+        } 
+
+        if (this.right === oldNode) {
+            this.right = newNode;
+            return true;
+        } else if (this.right instanceof OrFunc) {
+            if (this.right.trySwapChild(oldNode, newNode)) {
+                return true;
+            }
+        } else if (this.right instanceof Func) {
+            if (this.trySwapChildByChildren(this.right.children, oldNode, newNode)) {
+                return true;
+            }
+        } 
+
+        return true;
+    }
+
+    public swapChild(oldNode: Node, newNode: Node) {
+        let hasSwapped = this.trySwapChild(oldNode, newNode);
+
+        if (!hasSwapped) {
+            debugger;
+            throw new Error('[OrFunc.swapChild] Invalid child');
+        }
+    }
+
+    private trySwapChildByChildren(children: Node[], oldNode: Node, newNode: Node): boolean {
+        let index = children.indexOf(oldNode);
+        if (index === -1) return false;
+        children.splice(index, 1, newNode);
+        return true;
+    }
 }
