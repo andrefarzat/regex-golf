@@ -46,10 +46,10 @@ export default class Neighborhood {
 
     public * getGenerator() {
         let { solution } = this;
-        debugger;   
-        // for (let ind of this.generateByRemovingNodes(solution)) {
-        //     yield ind;
-        // }
+
+        for (let ind of this.generateByRemovingNodes(solution)) {
+            yield ind;
+        }
 
         for (let ind of this.generateByAddingStartOperator(solution)) {
             yield ind;
@@ -133,7 +133,6 @@ export default class Neighborhood {
                 }
             }
         } else {
-            debugger;
             // Ok. Let's add a start operator to last terminal together with the OR
             for (let orNode of orNodes) {
                 for (let side of ['left', 'right']) {
