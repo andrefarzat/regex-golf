@@ -18,10 +18,10 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          5236888092, 1337360711, 7659837985, 2521100877, 8801535107, 9651599436]
 
 DEPTHS = [
-    [1, 3],
-    [7, 10],
-    [13, 15],
-] # 5
+    [5],
+    [18],
+    [20],
+]
 
 FOLDER_NAME = 'depth'
 
@@ -38,17 +38,17 @@ for program in PROGRAMS:
             for index, seed in enumerate(SEEDS):
                 today = datetime.date.today().strftime("%Y-%m-%d")
                 resultsDir = FOLDER_NAME
-                absResultsDir = "%s/results/%s" % (os.getcwd(), resultsDir)
+                absResultsDir = os.path.join(os.getcwd(), "results", resultsDir)
 
                 if not os.path.isdir(absResultsDir):
                     os.mkdir(absResultsDir)
 
-                absCurrentDir = "%s/results/current" % (os.getcwd())
+                absCurrentDir = os.path.join(os.getcwd(), "results", "current")
                 if not os.path.isdir(absCurrentDir):
                     os.mkdir(absCurrentDir)
 
-                absCsvFilePath = "%s/%s.csv" % (absResultsDir, program)
-                csvFilePath = "%s/%s.csv" % (resultsDir, program)
+                absCsvFilePath = os.path.join(absResultsDir, "%s.csv" % program)
+                csvFilePath = os.path.join(resultsDir, "%s.csv" % program)
 
                 if not os.path.isfile(absCsvFilePath):
                     call(['touch', absCsvFilePath])
