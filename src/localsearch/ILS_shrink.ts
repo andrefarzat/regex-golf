@@ -1,7 +1,5 @@
 import ILS from './ILS';
 import Individual from '../models/Individual';
-import Evaluator from '../models/Evaluator';
-import EvaluatorFactory from '../models/EvaluatorFactory';
 
 
 export default class ILS_Shrink extends ILS {

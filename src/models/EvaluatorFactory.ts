@@ -1,6 +1,8 @@
-import Evaluator from "./Evaluator";
 import Individual from "./Individual";
 import Logger from "../Logger";
+import { Evaluator } from "./Evaluator";
+import { ServerEvaluator } from "./ServerEvaluator";
+import { BrowserEvaluator } from "./BrowserEvaluator";
 
 
 export default class EvaluatorFactory {
@@ -9,7 +11,11 @@ export default class EvaluatorFactory {
     private readonly MAX_EVALUATORS = 1000;
     public evaluationCount = 0;
 
-    public constructor(public left: string[], public right: string[]) { }
+    public constructor(
+        public left: string[],
+        public right: string[],
+        private env: 'server' | 'browser',
+    ) { }
 
     public getNextEvaluationIndex(): number {
         return this.evaluationCount ++;
@@ -87,7 +93,7 @@ export default class EvaluatorFactory {
                 }
 
                 if (this.evaluators.length < this.MAX_EVALUATORS) {
-                    let evaluator = new Evaluator(this.left, this.right);
+                    let evaluator = this.getNewEvaluator(this.left, this.right);
                     let len = this.evaluators.push(evaluator);
                     this.evaluatorsStatus[len - 1] = false;
                     return resolve(evaluator);
@@ -98,6 +104,10 @@ export default class EvaluatorFactory {
 
             setImmediate(fn);
         });
+    }
+
+    public getNewEvaluator(left: string[], right: string[]): Evaluator {
+        return this.env === 'server' ? new ServerEvaluator(left, right) : new BrowserEvaluator(left, right);
     }
 
     public setEvaluatorFree(evaluator: Evaluator) {

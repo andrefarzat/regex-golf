@@ -21,6 +21,7 @@ export default abstract class LocalSearch {
     public endTime: Date;
     public seed: number;
     public index: number;
+    public env: 'server' | 'browser' = 'server';
 
     public budget: number;
     public depth: number;
@@ -53,7 +54,8 @@ export default abstract class LocalSearch {
         this.chars.left = this.extractUniqueChars(this.left);
         this.chars.right = this.extractUniqueChars(this.right);
         this.factory = new IndividualFactory(this.validLeftChars, this.validRightChars);
-        this.evaluator = new EvaluatorFactory(this.left, this.right);
+        this.evaluator = new EvaluatorFactory(this.left, this.right, this.env);
+        
         return this;
     }
 
