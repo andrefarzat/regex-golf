@@ -12,31 +12,33 @@
     "localsearch": "ts-node src/index.ts",
     "copy-instances": "cp -r instances dist",
     "neighborhood": "ts-node src/cli/generate-neighborhood.ts",
-    "read-log": "ts-node src/cli/read-log.ts"
+    "read-log": "ts-node src/cli/read-log.ts",
+    "build": "webpack "
   },
   "dependencies": {
-    "@types/args": "^3.0.0",
-    "@types/mersenne-twister": "^1.1.2",
-    "@types/node": "^8.0.34",
-    "alsatian": "^2.2.1",
-    "args": "^3.0.8",
-    "color": "2.0.1",
-    "mersenne-twister": "^1.1.0",
-    "moment": "^2.19.4",
-    "raw-loader": "^0.5.1",
+    "@types/args": "3.0.0",
+    "@types/mersenne-twister": "1.1.2",
+    "@types/node": "11.10.4",
+    "alsatian": "2.3.0",
+    "args": "5.0.1",
+    "color": "3.1.0",
+    "mersenne-twister": "1.1.0",
+    "moment": "2.24.0",
+    "raw-loader": "1.0.0",
     "regexp-tree": "0.0.85",
-    "tap-dot": "1.0.0",
-    "ts-loader": "^2.3.7",
-    "ts-node": "^3.3.0",
-    "tslint": "^5.7.0",
-    "typescript": "^2.5.2",
-    "webpack": "^3.6.0",
-    "winston": "^3.1.0"
+    "tap-dot": "2.0.0",
+    "ts-loader": "5.3.3",
+    "ts-node": "8.0.2",
+    "tslint": "5.13.1",
+    "typescript": "3.3.3333",
+    "webpack": "4.29.6",
+    "winston": "3.2.1"
   },
   "devDependencies": {
-    "coveralls": "^3.0.2",
-    "nyc": "^12.0.2",
-    "source-map-support": "^0.5.9"
+    "coveralls": "3.0.2",
+    "nyc": "12.0.2",
+    "source-map-support": "0.5.9",
+    "webpack-cli": "3.2.3"
   },
   "nyc": {
     "extension": [

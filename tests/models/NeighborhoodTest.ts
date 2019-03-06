@@ -6,6 +6,7 @@ import ILS_Shrink from "../../src/localsearch/ILS_shrink";
 import Individual from "../../src/models/Individual";
 import { FuncTypes } from "../../src/nodes/Func";
 import AnyCharFunc from "../../src/nodes/AnyCharFunc";
+import Utils from "../../src/Utils";
 
 
 @TestFixture()
@@ -21,7 +22,8 @@ export default class NeighborhoodTest {
     @Timeout(4000)
     @AsyncTest("Neighborhood evaluation")
     public async testEvaluation() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('a');
         Expect(initialInd.toString()).toEqual('a');
@@ -51,7 +53,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByRemovingNodes")
     public testRemoving() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
@@ -80,7 +83,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateBySingleNode")
     public testGenerateBySingleNode() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('a[b-e][^z]x{5}');
         Expect(initialInd.toString()).toEqual('a[b-e][^z]x{5}');
@@ -110,7 +114,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingStartOperator")
     public testGenerateByAddingStartOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         // First test: Must add only ONE start operator
         let initialInd = program.factory.createFromString('abc');
@@ -146,7 +151,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingEndOperator")
     public testGenerateByAddingEndOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         // First test: Must add only ONE end operator
         let initialInd = program.factory.createFromString('abc');
@@ -183,7 +189,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateBySwapping")
     public testGenerateBySwapping() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
@@ -207,7 +214,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByConcatenating")
     public testGenerateByConcatenating() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
@@ -234,7 +242,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood getAllRanges")
     public testGetAllRanges() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
@@ -281,7 +290,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingRangeOperator")
     public testGenerateByAddingRangeOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
@@ -315,7 +325,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingNegationOperator")
     public testGenerateByAddingNegationOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('a[^p]c');
         Expect(initialInd.toString()).toEqual('a[^p]c');
@@ -352,7 +363,8 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingGivenOperator")
     public testGenerateByAddingGivenOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('a[^b]c');
         Expect(initialInd.toString()).toEqual('a[^b]c');
@@ -385,7 +397,8 @@ export default class NeighborhoodTest {
     @IgnoreTest()
     @Test("Neighborhood generateByAddingBackrefOperator")
     public testGenerateByAddingBackrefOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
@@ -442,7 +455,8 @@ export default class NeighborhoodTest {
     @TestCase(`(a)(b)\\1c\\2`, 2, true)
     @TestCase(`(a)\\2(b)\\1c`, 2, false)
     public testIsValidBackref(regex: string, i: number, expectedResult: boolean) {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
@@ -456,7 +470,8 @@ export default class NeighborhoodTest {
     @IgnoreTest()
     @Test()
     public testGenerateLookahead() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
@@ -491,7 +506,8 @@ export default class NeighborhoodTest {
     @IgnoreTest()
     @Test()
     public testGenerateLookbehind() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const instance = Utils.loadInstance('warmup');
+        let program = (new ILS_Shrink(instance.left, instance.right)).init();
 
         let initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');

@@ -2,6 +2,7 @@ import { Expect, TestFixture, AsyncTest, Timeout, FocusTest } from "alsatian";
 
 // import EvaluatorFactory from "../../src/models/EvaluatorFactory";
 import ILS from "../../src/localsearch/ILS";
+import Utils from "../../src/Utils";
 
 
 
@@ -11,7 +12,8 @@ export default class EvaluatorFactoryTest {
     @AsyncTest()
     @Timeout(6000)
     public async testEvaluate() {
-        let program = new ILS('family');
+        const instance = Utils.loadInstance('family');
+        let program = new ILS(instance.left, instance.right);
         program.init();
 
         let ind = program.factory.createFromString('a');
@@ -35,7 +37,8 @@ export default class EvaluatorFactoryTest {
     @AsyncTest()
     @Timeout(6000)
     public async testWarmupWeirdCase() {
-        let program = new ILS('warmup');
+        const instance = Utils.loadInstance('warmup');
+        let program = new ILS(instance.left, instance.right);
         program.init();
 
         let ind = program.factory.createFromString('n');

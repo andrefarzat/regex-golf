@@ -3,6 +3,7 @@ const args = require('args');
 
 import ILS_S from '../localsearch/ILS';
 import Neighborhood from '../models/Neighborhood';
+import Utils from '../Utils';
 
 
 
@@ -24,7 +25,9 @@ if (!flags.instance || !flags.solution) {
 
 /** Start */
 
-let program = (new ILS_S(flags.instance)).init();
+let instance = Utils.loadInstance(flags.instance);
+let program = (new ILS_S(instance.left, instance.right)).init();
+program.instanceName = flags.instance;
 let initialInd = program.factory.createFromString(flags.solution);
 let hood = new Neighborhood(initialInd, program);
 

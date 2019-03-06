@@ -12,8 +12,7 @@ export interface Solution {
 
 
 export default abstract class LocalSearch {
-    public left: string[] = [];
-    public right: string[] = [];
+    public instanceName: string;
     public chars: { left: { [key: string]: number }, right: { [key: string]: number } } = { left: {}, right: {} };
     public factory: IndividualFactory;
     public evaluator: EvaluatorFactory;
@@ -31,11 +30,7 @@ export default abstract class LocalSearch {
     public hasTimedOut: boolean = false;
     public readonly TWO_MINUTES = 1000 * 60 * 2;
 
-    constructor(public instanceName: string) {
-        let instance = Utils.loadInstance(instanceName);
-        this.left = instance.left;
-        this.right = instance.right;
-    }
+    constructor(public left: string[], public right: string[]) { }
 
     public get validLeftChars(): string[] {
         return Object.keys(this.chars.left);

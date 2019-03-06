@@ -47,12 +47,12 @@ Utils.setIndex(flags.index);
 if (flags.seed) Utils.setSeed(flags.seed);
 Logger.init({logLevel: flags.logLevel, instanceName: flags.instance});
 
-function getProgram(): LocalSearch {
+function getProgram(left: string[], right: string[]): LocalSearch {
     switch (flags.name) {
-        case 'ILS':              return new ILS(flags.instance);
-        case 'ILS_Shrink':       return new ILS_Shrink(flags.instance);
-        case 'RRLS':             return new RRLS(flags.instance);
-        case 'Constructed_RRLS': return new Constructed_RRLS(flags.instance);
+        case 'ILS':              return new ILS(left, right);
+        case 'ILS_Shrink':       return new ILS_Shrink(left, right);
+        case 'RRLS':             return new RRLS(left, right);
+        case 'Constructed_RRLS': return new Constructed_RRLS(left, right);
     }
 
     console.log(`${flags.name} não é um algoritmo válido.`);
@@ -61,8 +61,11 @@ function getProgram(): LocalSearch {
 
 async function main() {
     // 1. Carrega a instância do problema
+    const instance = Utils.loadInstance(flags.instance);
+
     // 2. Instância o programa
-    let program = getProgram();
+    let program = getProgram(instance.left, instance.right);
+    program.instanceName = flags.instance;
 
     // 3. Seta o Budget
     program.budget = flags.budget;
