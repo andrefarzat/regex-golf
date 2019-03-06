@@ -17,13 +17,11 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          4323456912, 8361101999, 9935136846, 5217407358, 5619256299, 4560422870,
          5236888092, 1337360711, 7659837985, 2521100877, 8801535107, 9651599436]
 
-DEPTHS = [
-    [5],
-    [18],
-    [20],
-]
+DEPTHS = [5]
 
-FOLDER_NAME = 'depth_3'
+MAX_EVALUATIONS = [300, 500, 600]
+
+FOLDER_NAME = 'max_evals'
 
 
 def execute(cmd):
@@ -35,34 +33,36 @@ for program in PROGRAMS:
     for instance in INSTANCES:
         instance = instance.strip()
         for depth in DEPTHS[i]:
-            for index, seed in enumerate(SEEDS):
-                today = datetime.date.today().strftime("%Y-%m-%d")
-                resultsDir = FOLDER_NAME
-                absResultsDir = os.path.join(os.getcwd(), "results", resultsDir)
+            for budget in MAX_EVALUATIONS:
+                for index, seed in enumerate(SEEDS):
+                    today = datetime.date.today().strftime("%Y-%m-%d")
+                    resultsDir = FOLDER_NAME
+                    absResultsDir = os.path.join(os.getcwd(), "results", resultsDir)
 
-                if not os.path.isdir(absResultsDir):
-                    os.mkdir(absResultsDir)
+                    if not os.path.isdir(absResultsDir):
+                        os.mkdir(absResultsDir)
 
-                absCurrentDir = os.path.join(os.getcwd(), "results", "current")
-                if not os.path.isdir(absCurrentDir):
-                    os.mkdir(absCurrentDir)
+                    absCurrentDir = os.path.join(os.getcwd(), "results", "current")
+                    if not os.path.isdir(absCurrentDir):
+                        os.mkdir(absCurrentDir)
 
-                absCsvFilePath = os.path.join(absResultsDir, "%s.csv" % program)
-                csvFilePath = os.path.join(resultsDir, "%s.csv" % program)
+                    absCsvFilePath = os.path.join(absResultsDir, "%s.csv" % program)
+                    csvFilePath = os.path.join(resultsDir, "%s.csv" % program)
 
-                if not os.path.isfile(absCsvFilePath):
-                    call(['touch', absCsvFilePath])
+                    if not os.path.isfile(absCsvFilePath):
+                        call(['touch', absCsvFilePath])
 
-                cmd = ["npm", "run", "localsearch", "--",
-                       "--name", program,
-                       "--instance", instance,
-                       "--depth", depth,
-                       "--index", "%s" % index,
-                       "--seed", seed,
-                       "--log-level", 2,
-                       "--csv", csvFilePath]
+                    cmd = ["npm", "run", "localsearch", "--",
+                        "--name", program,
+                        "--instance", instance,
+                        "--depth", depth,
+                        "--index", "%s" % index,
+                        "--seed", seed,
+                        "--log-level", 2,
+                        "--budget", budget,
+                        "--csv", csvFilePath]
 
-                thread = Thread(target=execute, args=(cmd,))
-                thread.start()
-                thread.join()
+                    thread = Thread(target=execute, args=(cmd,))
+                    thread.start()
+                    thread.join()
 
