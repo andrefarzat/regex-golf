@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div class="grid-container">
+    <div class="grid-container" id="app">
         <div class="grid-x grid-margin-x">
             <div class="cell">
                 <h1>Regex Golf</h1>
@@ -18,13 +18,13 @@
             <div class="cell medium-6">
                 <label>
                     Match list
-                    <textarea placeholder="Type here..." rows="10" style="resize: none"></textarea>
+                    <textarea placeholder="Type here..." rows="10" v-model="matchList" style="resize: none"></textarea>
                 </label>
             </div>
             <div class="cell medium-6">
                 <label>
                     Unmatch list
-                    <textarea placeholder="Type here..." rows="10" style="resize: none"></textarea>
+                    <textarea placeholder="Type here..." rows="10" v-model="unmatchList" style="resize: none"></textarea>
                 </label>
             </div>
         </div>
@@ -32,19 +32,19 @@
         <div class="grid-x grid-margin-x">
             <label class="cell medium-4">
                 Budget
-                <input type="number" value="500000" min="100000" max="999999" step="1" />
+                <input type="number" v-model="budget" min="100000" max="999999" step="1" />
             </label>
             <label class="cell medium-4">
                 Depth
-                <input type="number" value="5" min="1" max="10"  step="1" />
+                <input type="number" v-model="depth" min="1" max="10"  step="1" />
             </label>
             <label class="cell medium-4">
                 Seed
-                <input type="text" value="2967301147" />
+                <input type="text" v-model="seed" />
             </label>
             <label class="cell medium-4">
                 Timeout em miliseconds
-                <input type="number" value="120000" step="1" min="1000" />
+                <input type="number" v-model="timeout" step="1" min="1000" />
             </label>
         </div>
 
@@ -55,8 +55,8 @@
         </div>
     </div>
 
+    <!-- script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.js"></script -->
     <script src="public/bundle.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.js"></script>
 </body>
 
 </html>

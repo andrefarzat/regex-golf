@@ -14,11 +14,12 @@ module.exports = {
     module: {
         rules: [
             { test: /\.tsx?$/, use: 'ts-loader' },
-            { test: /\.txt$/,  use: 'raw-loader' },
+            { test: /\.txt$/, use: 'raw-loader' },
         ]
     },
     node: {
         fs: 'empty',
         child_process: 'empty',
-    }
+    },
+    // externals: { vue: 'Vue' }
 };
