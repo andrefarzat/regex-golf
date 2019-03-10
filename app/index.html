@@ -22,7 +22,7 @@
                         Match list <small>one item per line</small>
                         <textarea placeholder="Type here..." name="matchlist" rows="10" v-model="matchList" style="resize: none" required min-items></textarea>
 
-                        <field-messages name="matchlist" show="$submitted">
+                        <field-messages name="matchlist" show="$touched">
                             <div slot="required" class="form-error is-visible">Please, add the items</div>
                             <div slot="min-items" class="form-error is-visible">Please, add at least two items</div>
                         </field-messages>
@@ -33,7 +33,7 @@
                         Unmatch list <small>one item per line</small>
                         <textarea placeholder="Type here..." rows="10" name="unmatchList" v-model="unmatchList" style="resize: none" required min-items></textarea>
 
-                        <field-messages name="unmatchList" show="$submitted">
+                        <field-messages name="unmatchList" show="$touched">
                             <div slot="required" class="form-error is-visible">Please, add the items</div>
                             <div slot="min-items" class="form-error is-visible">Please, add at least two items</div>
                         </field-messages>
@@ -46,7 +46,7 @@
                     Budget
                     <input type="number" name="budget" v-model="budget" min="100000" max="999999" step="1" required />
 
-                    <field-messages name="budget" show="$submitted">
+                    <field-messages name="budget" show="$touched">
                         <div slot="required" class="form-error is-visible">Required</div>
                         <div slot="number" class="form-error is-visible">Must be a number</div>
                         <div slot="min" class="form-error is-visible">Min value: 100000</div>
@@ -57,7 +57,7 @@
                     Depth
                     <input type="number" name="depth" v-model="depth" min="1" max="10" step="1" required />
 
-                    <field-messages name="depth" show="$submitted">
+                    <field-messages name="depth" show="$touched">
                         <div slot="required" class="form-error is-visible">Required</div>
                         <div slot="number" class="form-error is-visible">Must be a number</div>
                         <div slot="min" class="form-error is-visible">Min value: 1</div>
@@ -68,7 +68,7 @@
                     Seed
                     <input type="number" name="seed" v-model="seed" step="1" min="1000000000" max="9999999999" required />
 
-                    <field-messages name="seed" show="$submitted">
+                    <field-messages name="seed" show="$touched">
                         <div slot="required" class="form-error is-visible">Required</div>
                         <div slot="number" class="form-error is-visible">Must be a number</div>
                         <div slot="min" class="form-error is-visible">Min value: 1000000000</div>
@@ -79,7 +79,7 @@
                     Timeout <small>em miliseconds</small>
                     <input type="number" name="timeout" v-model="timeout" step="1" min="1000" required />
 
-                    <field-messages name="seed" show="$submitted">
+                    <field-messages name="seed" show="$touched">
                         <div slot="required" class="form-error is-visible">Required</div>
                         <div slot="number" class="form-error is-visible">Must be a number</div>
                         <div slot="min" class="form-error is-visible">Min value: 1000</div>
@@ -89,7 +89,7 @@
 
             <div class="grid-x grid-margin-x" v-show="! hasStarted">
                 <div class="cell">
-                    <button class="button large expanded" type="submit">Let's roll!</button>
+                    <a id="btn-start" class="button large expanded">Let's roll!</a>
                 </div>  
             </div>
 
@@ -100,6 +100,17 @@
                 </div>  
             </div>
         </vue-form>
+
+
+        <div class="grid-x grid-margin-x">
+            <div class="cell" id="logs">
+                <div class="callout">
+                    <h5>This is a callout.</h5>
+                    <p>It has an easy to override visual style, and is appropriately subdued.</p>
+                    <a href="#0">It's dangerous to go alone, take this.</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.js"></script-->
