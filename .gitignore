@@ -3,6 +3,7 @@ node_modules/
 dist/
 .ipynb_checkpoints
 *.log
+.cache/
 
 .nyc_output
 coverage

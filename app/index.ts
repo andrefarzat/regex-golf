@@ -1,5 +1,4 @@
-import Vue from 'vue';
-import ILS_Shrink from '../localsearch/ILS_Shrink';
+import ILS_Shrink from '../src/localsearch/ILS_Shrink';
 
 declare const window: any;
 
