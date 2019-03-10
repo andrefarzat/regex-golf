@@ -27,6 +27,8 @@ const data = () => {
         depth: 5,
         seed: 2967301147,
         timeout: 120000,
+        isRunning: false,
+        hasStarted: false,
     };
 };
 
@@ -51,6 +53,8 @@ const methods = {
             timeout: vue.timeout,
         };
 
+        vue.isRunning = true;
+        vue.hasStarted = true;
         // main(config);
     },
     hasError(name: string): boolean {
@@ -69,6 +73,7 @@ const methods = {
 Vue.use(VueForm, {
     validators: {
         'min-items': function(value: string): boolean {
+            console.log('min-items', value);
             return value.trim().split('\n').length >= 2;
         }
     },
@@ -79,6 +84,19 @@ const vue = new Vue({ data, created, methods });
 
 async function init() {
     vue.$mount('#app');
+}
+
+async function isRunning() {
+    if (vue.isRunning) return Promise.resolve(true);
+
+    return new Promise<boolean>((resolve) => {
+        const fn = () => {
+            if (vue.isRunning) resolve(true);
+            else setTimeout(fn, 100);
+        };
+
+        fn();
+    });
 }
 
 
@@ -127,6 +145,8 @@ async function main(config: MainConfig) {
         // 6.4 Evaluate Neighborhood
         let neighborhood = new Neighborhood(currentSolution, program);
         // Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
+
+        await isRunning();
 
         try {
             await neighborhood.evaluate(ind => {
