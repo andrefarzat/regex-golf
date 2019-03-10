@@ -1,5 +1,5 @@
 import Individual from "../models/Individual";
-import * as Moment from "moment";
+import Moment = require("moment");
 import IndividualFactory from "../models/IndividualFactory";
 import Utils from "../Utils";
 import EvaluatorFactory from "../models/EvaluatorFactory";

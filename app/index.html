@@ -11,48 +11,88 @@
 
 <body>
     <div class="grid-container" id="app">
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <h1>Regex Golf</h1>
-            </div>
-            <div class="cell medium-6">
-                <label>
-                    Match list
-                    <textarea placeholder="Type here..." rows="10" v-model="matchList" style="resize: none"></textarea>
-                </label>
-            </div>
-            <div class="cell medium-6">
-                <label>
-                    Unmatch list
-                    <textarea placeholder="Type here..." rows="10" v-model="unmatchList" style="resize: none"></textarea>
-                </label>
-            </div>
-        </div>
+        <vue-form :state="formstate" @submit.prevent="letsRoll">
+            <div class="grid-x grid-margin-x">
+                <div class="cell">
+                    <h1>Regex Golf</h1>
+                </div>
 
-        <div class="grid-x grid-margin-x">
-            <label class="cell medium-4">
-                Budget
-                <input type="number" v-model="budget" min="100000" max="999999" step="1" />
-            </label>
-            <label class="cell medium-4">
-                Depth
-                <input type="number" v-model="depth" min="1" max="10"  step="1" />
-            </label>
-            <label class="cell medium-4">
-                Seed
-                <input type="text" v-model="seed" />
-            </label>
-            <label class="cell medium-4">
-                Timeout em miliseconds
-                <input type="number" v-model="timeout" step="1" min="1000" />
-            </label>
-        </div>
+                <div class="cell medium-6">
+                    <validate tag="label" :class="{'is-invalid-label': hasError('matchlist')}">
+                        Match list <small>one item per line</small>
+                        <textarea placeholder="Type here..." name="matchlist" rows="10" v-model="matchList" style="resize: none" required min-items></textarea>
 
-        <div class="grid-x grid-margin-x">
-            <div class="cell">
-                <a class="button large expanded" href="#" disabled>Let's roll!</a>
-            </div>  
-        </div>
+                        <field-messages name="matchlist" show="$submitted">
+                            <div slot="required" class="form-error is-visible">Please, add the items</div>
+                            <div slot="min-items" class="form-error is-visible">Please, add at least two items</div>
+                        </field-messages>
+                    </validate>
+                </div>
+                <div class="cell medium-6">
+                    <validate tag="label" :class="{'is-invalid-label': hasError('unmatchList')}">
+                        Unmatch list <small>one item per line</small>
+                        <textarea placeholder="Type here..." rows="10" v-model="unmatchList" style="resize: none" required min-items></textarea>
+
+                        <field-messages name="unmatchList" show="$submitted">
+                            <div slot="required" class="form-error is-visible">Please, add the items</div>
+                            <div slot="min-items" class="form-error is-visible">Please, add at least two items</div>
+                        </field-messages>
+                    </validate>
+                </div>
+            </div>
+
+            <div class="grid-x grid-margin-x">
+                <validate tag="label" class="cell medium-4" :class="{'is-invalid-label': hasError('budget')}">
+                    Budget
+                    <input type="number" name="budget" v-model="budget" min="100000" max="999999" step="1" required />
+
+                    <field-messages name="budget" show="$submitted">
+                        <div slot="required" class="form-error is-visible">Required</div>
+                        <div slot="number" class="form-error is-visible">Must be a number</div>
+                        <div slot="min" class="form-error is-visible">Min value: 100000</div>
+                        <div slot="max" class="form-error is-visible">Max value: 999999</div>
+                    </field-messages>
+                </validate>
+                <validate tag="label" class="cell medium-4" :class="{'is-invalid-label': hasError('depth')}">
+                    Depth
+                    <input type="number" name="depth" v-model="depth" min="1" max="10" step="1" required />
+
+                    <field-messages name="depth" show="$submitted">
+                        <div slot="required" class="form-error is-visible">Required</div>
+                        <div slot="number" class="form-error is-visible">Must be a number</div>
+                        <div slot="min" class="form-error is-visible">Min value: 1</div>
+                        <div slot="max" class="form-error is-visible">Max value: 10</div>
+                    </field-messages>
+                </validate>
+                <validate tag="label" class="cell medium-4" :class="{'is-invalid-label': hasError('seed')}">
+                    Seed
+                    <input type="number" name="seed" v-model="seed" step="1" min="1000000000" max="9999999999" required />
+
+                    <field-messages name="seed" show="$submitted">
+                        <div slot="required" class="form-error is-visible">Required</div>
+                        <div slot="number" class="form-error is-visible">Must be a number</div>
+                        <div slot="min" class="form-error is-visible">Min value: 1000000000</div>
+                        <div slot="max" class="form-error is-visible">Max value: 9999999999</div>
+                    </field-messages>
+                </validate>
+                <validate tag="label" class="cell medium-4" :class="{'is-invalid-label': hasError('timeout')}">
+                    Timeout <small>em miliseconds</small>
+                    <input type="number" name="timeout" v-model="timeout" step="1" min="1000" required />
+
+                    <field-messages name="seed" show="$submitted">
+                        <div slot="required" class="form-error is-visible">Required</div>
+                        <div slot="number" class="form-error is-visible">Must be a number</div>
+                        <div slot="min" class="form-error is-visible">Min value: 1000</div>
+                    </field-messages>
+                </validate>
+            </div>
+
+            <div class="grid-x grid-margin-x">
+                <div class="cell">
+                    <button class="button large expanded" type="submit">Let's roll!</button>
+                </div>  
+            </div>
+        </vue-form>
     </div>
 
     <!-- script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.js"></script-->
