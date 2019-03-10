@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
+        "moduleResolution": "node",
         "experimentalDecorators": true,
         "outDir": "./dist/",
         "sourceMap": true,
         "noImplicitAny": true,
         "module": "commonjs",
         "downlevelIteration": true,
-        "target": "ES2018",
+        "target": "es5",
         "lib": ["es6", "es2017"]
     },
     "include": [

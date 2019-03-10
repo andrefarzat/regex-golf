@@ -1,6 +1,4 @@
-import * as fs from 'fs';
 import * as path from 'path';
-import * as Moment from 'moment';
 import * as winston from 'winston';
 
 export enum LogLevel {
