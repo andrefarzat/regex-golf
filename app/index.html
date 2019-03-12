@@ -12,6 +12,10 @@
     <style>
         [v-cloak] > * { display:none }
         [v-cloak]::before { content: "loading…" }
+
+        .progress-meter {
+            transition: width 1s;
+        }
     </style>
 </head>
 
@@ -115,7 +119,7 @@
             <div class="cell">
                 <div class="callout">
                     <p id="evaluation-div" class="text-center"></p>
-                    <div class="success progress">
+                    <div class="progress">
                         <div id="progressbar" class="progress-meter"></div>
                     </div>
                 </div>

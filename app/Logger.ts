@@ -40,8 +40,11 @@ export class Logger {
 
     static async evaluation(ind: Individual, time: number) {
         Logger.getEl('evaluation-div').innerText = `${ind.evaluationIndex} evaluated in ${time} ms`;
-        const percentage = (ind.evaluationIndex * 100) / Logger.maxEvaluations;
-        Logger.getEl('progressbar').style.width = `${percentage}%`;
+        const percentage = Math.ceil((ind.evaluationIndex * 100) / Logger.maxEvaluations);
+
+        const progressbar = Logger.getEl('progressbar');
+        progressbar.style.width = `${percentage}%`;
+        progressbar.innerHTML = `<p class="progress-meter-text">${percentage}%</p>`;
     }
 
     static async foundBetter(ind: Individual) {

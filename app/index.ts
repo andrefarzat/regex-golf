@@ -197,6 +197,8 @@ async function main(config: MainConfig) {
         } catch (e) {
             if (e.message === 'Stop!' && program.hasTimedOut) {
                 Logger.error('Error', '[Timeout]');
+            } else if (e.message === 'Stop!') {
+                // we are good
             } else {
                 Logger.error(`[Index Neighborhood error]`, e.message);
             }
