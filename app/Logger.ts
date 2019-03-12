@@ -4,23 +4,15 @@ import Individual from "../src/models/Individual";
 type LogLevel = '' | 'primary' | 'secondary' | 'success' | 'warning' | 'alert';
 
 export class Logger {
-    private static _div: HTMLDivElement;
-    private static _evaluationDiv: HTMLDivElement;
+    public static maxEvaluations: number = 0;
+    private static cache: {[key: string]: HTMLDivElement} = {};
 
-    static get div(): HTMLDivElement {
-        if (!Logger._div) {
-            Logger._div = document.getElementById('logs') as HTMLDivElement;
+    static getEl(id: string): HTMLDivElement {
+        if (!(id in Logger.cache)) {
+            Logger.cache[id] = document.getElementById(id) as HTMLDivElement;
         }
 
-        return Logger._div;
-    }
-
-    static get evaluationDiv(): HTMLDivElement {
-        if (!Logger._evaluationDiv) {
-            Logger._evaluationDiv = document.getElementById('evaluation-div') as HTMLDivElement;
-        }
-
-        return Logger._evaluationDiv;
+        return Logger.cache[id];
     }
 
     static async log(title: string, msg: string, level: LogLevel = '') {
@@ -31,7 +23,7 @@ export class Logger {
         p.innerText = `${title}: ${msg}`;
         callout.appendChild(p);
         
-        Logger.div.appendChild(callout);
+        Logger.getEl('logs').appendChild(callout);
     }
 
     static async logInitialSolution(ind: Individual) {
@@ -47,11 +39,13 @@ export class Logger {
     }
 
     static async evaluation(ind: Individual, time: number) {
-        Logger.evaluationDiv.innerText = `${ind.evaluationIndex} evaluated in ${time} ms`;
+        Logger.getEl('evaluation-div').innerText = `${ind.evaluationIndex} evaluated in ${time} ms`;
+        const percentage = (ind.evaluationIndex * 100) / Logger.maxEvaluations;
+        Logger.getEl('progressbar').style.width = `${percentage}%`;
     }
 
     static async foundBetter(ind: Individual) {
-        Logger.log('Start Neighborhood', ind.toLog(), 'primary');
+        Logger.log('Found Better', ind.toLog(), 'success');
     }
 
     static async alreadyVisited(ind: Individual) {

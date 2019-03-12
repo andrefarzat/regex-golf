@@ -6,15 +6,25 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Regex Golf</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.3/dist/css/foundation.min.css" integrity="sha256-xpOKVlYXzQ3P03j397+jWFZLMBXLES3IiryeClgU5og= sha384-gP4DhqyoT9b1vaikoHi9XQ8If7UNLO73JFOOlQV1RATrA7D0O7TjJZifac6NwPps sha512-AKwIib1E+xDeXe0tCgbc9uSvPwVYl6Awj7xl0FoaPFostZHOuDQ1abnDNCYtxL/HWEnVOMrFyf91TDgLPi9pNg==" crossorigin="anonymous">
+    <!-- link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.3/dist/css/foundation.min.css" integrity="sha256-xpOKVlYXzQ3P03j397+jWFZLMBXLES3IiryeClgU5og= sha384-gP4DhqyoT9b1vaikoHi9XQ8If7UNLO73JFOOlQV1RATrA7D0O7TjJZifac6NwPps sha512-AKwIib1E+xDeXe0tCgbc9uSvPwVYl6Awj7xl0FoaPFostZHOuDQ1abnDNCYtxL/HWEnVOMrFyf91TDgLPi9pNg==" crossorigin="anonymous" -->
+    <link rel="stylesheet" href="assets/foundation.min.css" />
+
+    <style>
+        [v-cloak] > * { display:none }
+        [v-cloak]::before { content: "loading…" }
+    </style>
 </head>
 
 <body>
-    <div class="grid-container" id="app">
+    <div class="grid-container" id="app" v-cloak>
         <vue-form :state="formstate" @submit.prevent="letsRoll">
             <div class="grid-x grid-margin-x">
                 <div class="cell">
                     <h1>Regex Golf</h1>
+                </div>
+
+                <div class="cell">
+                    <a class="button primary" v-for="(instance, key) in instances" :key="key" @click="fulfillFromInstance(instance)">{{ key }}</a>
                 </div>
 
                 <div class="cell medium-6">
@@ -101,19 +111,17 @@
             </div>
         </vue-form>
 
-
-        <div class="grid-x grid-margin-x">
+        <div class="grid-x grid-margin-x" v-show="hasStarted">
             <div class="cell">
-                <div class="callout text-center" id="evaluation-div"></div>
-            </div>
-
-            <div class="cell" id="logs">
                 <div class="callout">
-                    <h5>This is a callout.</h5>
-                    <p>It has an easy to override visual style, and is appropriately subdued.</p>
-                    <a href="#0">It's dangerous to go alone, take this.</a>
+                    <p id="evaluation-div" class="text-center"></p>
+                    <div class="success progress">
+                        <div id="progressbar" class="progress-meter"></div>
+                    </div>
                 </div>
             </div>
+
+            <div class="cell" id="logs" style="height: 400px; overflow: scroll"></div>
         </div>
     </div>
 

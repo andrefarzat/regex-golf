@@ -5,9 +5,9 @@ const moment = require("moment");
 import ILS_Shrink from '../src/localsearch/ILS_Shrink';
 import Neighborhood from '../src/models/Neighborhood';
 import { Logger } from './Logger';
-import { watchFile } from 'fs';
 import Utils from '../src/Utils';
 
+import { instances } from './instances';
 
 declare const window: any;
 
@@ -24,8 +24,8 @@ interface MainConfig {
 const data = () => {
     return {
         formstate: {} as any,
-        matchList: `abc\ndsa` as string,
-        unmatchList: `abc\ndsa` as string,
+        matchList: instances.warmup.left.join('\n'),
+        unmatchList: instances.warmup.right.join('\n'),
         budget: 500000,
         depth: 5,
         seed: 2967301147,
@@ -35,8 +35,8 @@ const data = () => {
     };
 };
 
-const created = () => {
-
+const computed = {
+    instances() { return instances; }
 };
 
 const methods = {
@@ -71,6 +71,10 @@ const methods = {
 
         return false;
     },
+    fulfillFromInstance(instance: {left: string[], right: string[]}) {
+        this.matchList = instance.left.join('\n');
+        this.unmatchList = instance.right.join('\n');
+    }
 };
 
 Vue.use(VueForm, {
@@ -82,7 +86,7 @@ Vue.use(VueForm, {
 });
 
 
-const vue = new Vue({ data, created, methods });
+const vue = new Vue({ data, computed, methods });
 
 async function init() {
     vue.$mount('#app');
@@ -117,12 +121,12 @@ async function main(config: MainConfig) {
     const instance = { left: config.left, right: config.right };
 
     // 2. Instância o programa
-    const program = new ILS_Shrink(config.left, config.right);
+    const program = new ILS_Shrink(instance.left, instance.right);
     program.env = 'browser';
     program.instanceName = 'browser';
 
     // 3. Seta o Budget
-    program.budget = config.budget;
+    program.budget = Logger.maxEvaluations = config.budget;
     program.depth = config.depth;
     program.seed = config.seed;
     program.index = 1;
@@ -165,7 +169,7 @@ async function main(config: MainConfig) {
             await neighborhood.evaluate(ind => {
                 Logger.debug(ind);
 
-                if (ind.evaluationIndex % 10000 === 0) {
+                if (ind.evaluationIndex % 100 === 0) {
                     const time = moment().diff(program.startTime, 'ms');
                     Logger.evaluation(ind, time)
                     // console.log(`${ind.evaluationIndex} evaluated in ${time} ms`);
