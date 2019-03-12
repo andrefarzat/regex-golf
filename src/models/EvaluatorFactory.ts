@@ -32,7 +32,7 @@ export default class EvaluatorFactory {
         //     : Promise.resolve(this.evaluateSimple(ind));
     }
 
-    protected evaluateSimple(ind: Individual): number {
+    protected evaluateSimple(ind: Individual): Promise<number> {
         let result = {
             leftPoints: 0,
             rightPoints: 0,
@@ -42,14 +42,14 @@ export default class EvaluatorFactory {
 
         let regex = ind.toRegex();
 
-        for (let name of this.left) {
+        for (const name of this.left) {
             if (regex.test(name)) {
                 result.leftPoints += name.length;
                 result.matchesOnLeft += 1;
             }
         }
 
-        for (let name of this.right) {
+        for (const name of this.right) {
             if (regex.test(name)) {
                 result.matchesOnRight += 1;
             } else {
@@ -62,7 +62,7 @@ export default class EvaluatorFactory {
         ind.matchesOnLeft = result.matchesOnLeft;
         ind.matchesOnRight = result.matchesOnRight;
 
-        return ind.fitness;
+        return Promise.resolve(ind.fitness);
     }
 
     protected async evaluateViaSub(ind: Individual) {
@@ -72,8 +72,10 @@ export default class EvaluatorFactory {
             evaluator = await this.getFreeEvaluator();
             await evaluator.evaluate(ind);
         } catch(e) {
-            Logger.error('[Evaluator error]', e);
-            process.exit();
+            if (this.env === 'server') {
+                Logger.error('[Evaluator error]', e);
+                process.exit();
+            } 
         } finally {
             this.setEvaluatorFree(evaluator);
         }

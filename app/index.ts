@@ -5,6 +5,8 @@ const moment = require("moment");
 import ILS_Shrink from '../src/localsearch/ILS_Shrink';
 import Neighborhood from '../src/models/Neighborhood';
 import { Logger } from './Logger';
+import { watchFile } from 'fs';
+import Utils from '../src/Utils';
 
 
 declare const window: any;
@@ -89,7 +91,6 @@ async function init() {
 }
 
 async function letsRoll() {
-    debugger;
     if (vue.formstate.$invalid) {
         return;
     }
@@ -108,19 +109,6 @@ async function letsRoll() {
     vue.isRunning = true;
     vue.hasStarted = true;
     setTimeout(async () => main(config), 100);
-}
-
-async function isRunning() {
-    if (vue.isRunning) return Promise.resolve(true);
-
-    return new Promise<boolean>((resolve) => {
-        const fn = () => {
-            if (vue.isRunning) resolve(true);
-            else setTimeout(fn, 100);
-        };
-
-        fn();
-    });
 }
 
 
@@ -170,9 +158,10 @@ async function main(config: MainConfig) {
         // Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
         Logger.logStartNeighborhood(currentSolution);
 
-        await isRunning();
+        await Utils.waitFor(() => vue.isRunning);
 
         try {
+            await Utils.wait(13);
             await neighborhood.evaluate(ind => {
                 Logger.debug(ind);
 

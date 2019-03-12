@@ -75,10 +75,8 @@ export default class Utils {
         });
     }
 
-    static async wait(seconds: number) {
-        return new Promise<void>((resolve) => {
-            setTimeout(resolve, seconds * 1000);
-        });
+    static async wait(timeout: number) {
+        return new Promise<void>(resolve => setTimeout(resolve, timeout));
     }
 
     static times<T>(n: number, fn: (i: number) => T): T[] {

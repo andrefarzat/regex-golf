@@ -5,6 +5,7 @@ type LogLevel = '' | 'primary' | 'secondary' | 'success' | 'warning' | 'alert';
 
 export class Logger {
     private static _div: HTMLDivElement;
+    private static _evaluationDiv: HTMLDivElement;
 
     static get div(): HTMLDivElement {
         if (!Logger._div) {
@@ -12,6 +13,14 @@ export class Logger {
         }
 
         return Logger._div;
+    }
+
+    static get evaluationDiv(): HTMLDivElement {
+        if (!Logger._evaluationDiv) {
+            Logger._evaluationDiv = document.getElementById('evaluation-div') as HTMLDivElement;
+        }
+
+        return Logger._evaluationDiv;
     }
 
     static async log(title: string, msg: string, level: LogLevel = '') {
@@ -34,11 +43,11 @@ export class Logger {
     }
 
     static async debug(ind: Individual) {
-        console.log('Debug', ind.toLog());
+        // console.log('Debug', ind.toLog());
     }
 
     static async evaluation(ind: Individual, time: number) {
-        Logger.log('Evaluations', `${ind.evaluationIndex} evaluated in ${time} ms`);
+        Logger.evaluationDiv.innerText = `${ind.evaluationIndex} evaluated in ${time} ms`;
     }
 
     static async foundBetter(ind: Individual) {

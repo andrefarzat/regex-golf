@@ -370,7 +370,7 @@ export default class Neighborhood {
                 }
             } catch (e) {
                 // todo: log the invalid
-                Logger.error(`[Neighborhood error]`, e.message);
+                // Logger.error(`[Neighborhood error]`, e.message);
             }
         }
     }
