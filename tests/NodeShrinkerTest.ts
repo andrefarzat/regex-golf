@@ -71,7 +71,6 @@ export class NodeShrinkerTest {
     @Test('Test Shrink to list or range')
     public testShrinkListExamples(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
-        debugger;
         let shrunk = ind.shrink();
 
         Expect(shrunk.toString()).toEqual(expectedResult);

@@ -116,7 +116,6 @@ export default class OrFunc extends Func {
         let hasSwapped = this.trySwapChild(oldNode, newNode);
 
         if (!hasSwapped) {
-            debugger;
             throw new Error('[OrFunc.swapChild] Invalid child');
         }
     }
