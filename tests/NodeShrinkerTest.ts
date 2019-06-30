@@ -33,19 +33,15 @@ export class NodeShrinkerTest {
         Expect(ind.shrink().toString()).toEqual(expectedResult);
     }
 
+    @TestCase('abc', 'abc')
+    @TestCase('aaaaa', 'a{5}')
+    @TestCase('aa{5}', 'a{6}')
     @Test('Test Shrink concatenation')
-    public testShrinkConcatenation() {
-        let ind = this.individualFactory.createFromString('abc');
+    public testShrinkConcatenation(txt: string, expectedResult: string) {
+        let ind = this.individualFactory.createFromString(txt);
         let shrunk = ind.shrink();
-        Expect(shrunk.toString()).toEqual('abc');
 
-        ind = this.individualFactory.createFromString('aaaaa');
-        shrunk = ind.shrink();
-        Expect(shrunk.toString()).toEqual('a{5}');
-
-        ind = this.individualFactory.createFromString('aa{5}');
-        shrunk = ind.shrink();
-        Expect(shrunk.toString()).toEqual('a{6}');
+        Expect(shrunk.toString()).toEqual(expectedResult);
     }
 
 
@@ -75,6 +71,7 @@ export class NodeShrinkerTest {
     @Test('Test Shrink to list or range')
     public testShrinkListExamples(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
+        debugger;
         let shrunk = ind.shrink();
 
         Expect(shrunk.toString()).toEqual(expectedResult);

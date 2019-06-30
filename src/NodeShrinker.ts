@@ -16,18 +16,8 @@ import LineEndFunc from "./nodes/LineEndFunc";
 
 export default class NodeShrinker {
 
-    public static shrink(node?: Node): Node {
-        let neo: Node;
-
-        if (node instanceof Func) {
-            neo = NodeShrinker.shrinkFunc(node);
-        } else if (node instanceof Terminal) {
-            neo = NodeShrinker.shrinkTerminal(node);
-        } else if (node === undefined) {
-            neo = new Terminal('');
-        } else {
-            throw new Error('Invalid Node type to Shrink');
-        }
+    public static shrinkRoot(node: Node): Node {
+        let neo = NodeShrinker.shrink(node);
 
         const options = [
             'charClassToMeta',
@@ -50,6 +40,18 @@ export default class NodeShrinker {
             return ind.isValid() ? ind.tree : neo;
         } catch {
             return neo;
+        }
+    }
+
+    public static shrink(node?: Node): Node {
+        if (node instanceof Func) {
+            return NodeShrinker.shrinkFunc(node);
+        } else if (node instanceof Terminal) {
+            return NodeShrinker.shrinkTerminal(node);
+        } else if (node === undefined) {
+            return new Terminal('');
+        } else {
+            throw new Error('Invalid Node type to Shrink');
         }
     }
 
@@ -93,7 +95,9 @@ export default class NodeShrinker {
     }
 
     protected static shrinkFuncConcatenation(func: ConcatFunc): Node {
-        let children = func.children.map(node => NodeShrinker.shrink(node));
+        let children = func.children
+            .map(node => NodeShrinker.shrink(node))
+            .map(node => NodeShrinker.shrink(node));
 
         const orFuncs = children.filter(func => func.is(FuncTypes.or)) as OrFunc[];
         if (orFuncs.length == 0) {
@@ -128,6 +132,9 @@ export default class NodeShrinker {
         }
 
         children = children.filter(child => child.toString() !== '');
+        if (children.length == 1 && children[0].is(NodeTypes.terminal)) {
+            return new Terminal(children[0].toString());
+        }
 
         let neoChildren: Node[] = [];
         let current = children.shift();
@@ -189,6 +196,10 @@ export default class NodeShrinker {
         if (allAreTerminals) {
             let chars = children.map(c => c.toString()).sort().join('');
             chars = Utils.getUniqueChars(chars);
+
+            if (chars.length === 1) {
+                return new Terminal(chars);
+            }
 
             let charCode: number = 0;
             let isSequence = Array.from(chars).every(letter => {

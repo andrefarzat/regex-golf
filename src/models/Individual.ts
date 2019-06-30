@@ -195,7 +195,7 @@ export default class Individual {
 
     public shrink(): Individual {
         let ind = new Individual();
-        let node = NodeShrinker.shrink(this.tree);
+        let node = NodeShrinker.shrinkRoot(this.tree);
 
         if (node.nodeType === 'terminal') {
             let func = new ConcatFunc([node]);
