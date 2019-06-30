@@ -105,6 +105,10 @@ export default class Individual {
         return true;
     }
 
+    public isTheRootNode(node: Node): boolean {
+        return this.tree == node;
+    }
+
     public hasComplexEvaluation(): boolean {
         return this.tree.getFuncs().some(func => this.COMPLEX_FUNC_TYPES.includes(func.type));
     }

@@ -65,7 +65,7 @@ export default abstract class LocalSearch {
     public extractUniqueChars(text: string[]): { [key: string]: number } {
         let chars: { [key: string]: number } = {};
         text.forEach(name => {
-            let uniqueChars = new Set();
+            let uniqueChars = new Set<string>();
             name.split('').forEach(letter => uniqueChars.add(letter));
 
             uniqueChars.forEach(char => {

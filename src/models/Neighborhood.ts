@@ -109,7 +109,7 @@ export default class Neighborhood {
 
         // Removing a node
         for (let node of nodes) {
-            if (solution.tree == node) continue;
+            if (solution.isTheRootNode(node)) continue;
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
 
             let neo = this.factory.removeNode(solution, node);
@@ -205,7 +205,7 @@ export default class Neighborhood {
     public * generateByConcatenating(solution: Individual) {
         // Concatenating
         for (let node of solution.getNodes()) {
-            if (solution.tree == node) continue;
+            if (solution.isTheRootNode(node)) continue;
             if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
 
             for (let char of this.program.validLeftChars) {
@@ -358,7 +358,7 @@ export default class Neighborhood {
 
     public * generateByExtractingSingleNode(solution: Individual) {
         for (let node of solution.getNodes()) {
-            if (solution.tree === node) continue;
+            if (solution.isTheRootNode(node)) continue;
             if (node.toString() === '') continue;
 
             try {
