@@ -33,8 +33,6 @@ export default class IndividualFactoryTest {
     @Test('Test creating from string')
     public testCreateFromString(text: string) {
         let ind = this.factory.createFromString(text);
-        debugger;
-        console.log(ind.toString(), text);
         Expect(ind.toString()).toEqual(text);
     }
 

@@ -1,7 +1,7 @@
 import ConcatFunc from "../nodes/ConcatFunc";
 import Node, { NodeTypes } from "../nodes/Node";
 import { NodeShrinker } from "./NodeShrinker";
-import { FuncTypes } from "../nodes/Func";
+import Func, { FuncTypes } from "../nodes/Func";
 import OrFunc from "../nodes/OrFunc";
 import Terminal from "../nodes/Terminal";
 import RepetitionFunc from "../nodes/RepetitionFunc";
@@ -68,6 +68,7 @@ export class ConcatenationShrinker {
     private isOkToSequenceTest(node: Node): boolean {
         if (node.is(NodeTypes.terminal)) return true;
         if (node.is(FuncTypes.list)) return true;
+        if (node.is(FuncTypes.range)) return true;
         if (node.is(FuncTypes.negation)) return true;
 
         return false;
@@ -79,7 +80,6 @@ export class ConcatenationShrinker {
         let i = 0;
         for (let i = 0; i < children.length; i++) {
             const current = children[i];
-            debugger;
 
             if (this.isOkToSequenceTest(current)) {
                 const localChildren = children.slice(i + 1);
@@ -100,7 +100,20 @@ export class ConcatenationShrinker {
                     i += sequenceCount;
                     continue;
                 }
+
+                const next = children[i + 1];
+                if (next instanceof RepetitionFunc) {
+                    const isEqual = next.childrenToString() === current.toString();
+                    if (isEqual) {
+                        const neo = next.clone();
+                        neo.repetitionNumber = NodeShrinker.addToRepetitionNumber(neo, '1');
+                        neoChildren.push(neo);
+                        i += 1;
+                        continue;
+                    }
+                }
             }
+
 
             if (current instanceof RepetitionFunc) {
                 const next = children[i + 1];

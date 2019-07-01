@@ -130,7 +130,7 @@ export class NodeShrinker {
                 return func;
             }
 
-            return new ListFunc(chars.split('').map(c => new Terminal(c)));
+            return new ListFunc(chars.split('').map(c => new Terminal(c)), node.negative ? 'negative' : 'positive');
         }
 
         return node.clone();
