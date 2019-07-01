@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import Node, { NodeTypes } from "../nodes/Node";
-import NodeShrinker from '../NodeShrinker';
+import { NodeShrinker } from '../shrinker/NodeShrinker';
 import Utils from "../Utils";
 import ConcatFunc from '../nodes/ConcatFunc';
 

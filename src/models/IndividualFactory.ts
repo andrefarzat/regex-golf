@@ -57,7 +57,13 @@ export default class IndividualFactory {
         } else if (expression.type == 'Repetition') {
             if (expression.quantifier && expression.quantifier.kind == 'Range') {
                 let node = new RepetitionFunc();
-                node.addChild(new Terminal((expression.expression as any).value));
+
+                if (expression.expression.type === 'CharacterClass') {
+                    const children = expression.expression.expressions.map((char: any) => char.value);
+                    node.addChild(new ListFunc(children));
+                } else {
+                    node.addChild(new Terminal((expression.expression as any).value));
+                }
 
                 if (expression.quantifier.from == expression.quantifier.to) {
                     node.repetitionNumber = expression.quantifier.from.toString();

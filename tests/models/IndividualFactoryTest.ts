@@ -28,19 +28,15 @@ export default class IndividualFactoryTest {
     //     Expect((right.right as Terminal).value).toEqual('c');
     // }
 
-    // @Test('Test creating from string')
-    // public testCreateFromString() {
-    //     let ind = this.factory.createFromString('^abc$');
-    //     Expect(ind.tree.toString()).toEqual('^abc$');
-
-    //     let right = ind.tree.right as Func;
-    //     Expect(right.nodeType).toEqual(NodeTypes.func);
-    //     Expect(right.type).toEqual(Func.Types.lineBegin);
-
-    //     let least = ind.tree.getLeastFunc();
-    //     Expect(least.nodeType).toEqual(NodeTypes.func);
-    //     Expect(least.type).toEqual(Func.Types.lineEnd);
-    // }
+    @TestCase('^abc$')
+    @TestCase('a[abc]{2}')
+    @Test('Test creating from string')
+    public testCreateFromString(text: string) {
+        let ind = this.factory.createFromString(text);
+        debugger;
+        console.log(ind.toString(), text);
+        Expect(ind.toString()).toEqual(text);
+    }
 
     // @Test('Test creating with repetition')
     // public testCreateWithRepetition() {

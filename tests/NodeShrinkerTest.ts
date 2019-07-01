@@ -1,12 +1,6 @@
 import { Expect, Test, TestCase, TestFixture, FocusTest } from "alsatian";
 
 import IndividualFactory from '../src/models/IndividualFactory';
-import Func, { FuncTypes } from "../src/nodes/Func";
-import Terminal from "../src/nodes/Terminal";
-import Individual from "../src/models/Individual";
-import { NodeTypes } from "../src/nodes/Node";
-import RepetitionFunc from "../src/nodes/RepetitionFunc";
-import NodeShrinker from "../src/NodeShrinker";
 
 
 @TestFixture('NodeShrinkerTest')
@@ -52,7 +46,7 @@ export class NodeShrinkerTest {
     @TestCase('bcccccccbb', 'bc{7}bb')
     @TestCase('aaaaaa', 'a{6}')
     @TestCase('zza{5}a{5}hh', 'zza{10}hh')
-    // @TestCase('abcabc', '(abc){2}')
+    // @TestCase('abcabc', '(abc){2}') <- this should become '(abc)\1'
     @Test('Test Shrink to repetition')
     public testShrinkRepetitionExamples(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
@@ -61,11 +55,12 @@ export class NodeShrinkerTest {
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
 
-    @TestCase('a[a]aa', 'a{4}')
-    @TestCase('a[abcabcabc]z', 'a[abc]z')
-    @TestCase('a[abcdefghijklmnopqrstuvwxyz]z', 'a[a-z]z')
-    @TestCase('p[x-z]', 'p[xyz]')
-    @TestCase('abcef[a-b]fecba', 'abcef[ab]fecba')
+    @FocusTest
+    // @TestCase('a[a]aa', 'a{4}')
+    // @TestCase('a[abcabcabc]z', 'a[abc]z')
+    // @TestCase('a[abcdefghijklmnopqrstuvwxyz]z', 'a[a-z]z')
+    // @TestCase('p[x-z]', 'p[xyz]')
+    // @TestCase('abcef[a-b]fecba', 'abcef[ab]fecba')
     @TestCase('a[abc][abc]', 'a[abc]{2}')
     @TestCase('abc[abcd][abcd]', 'abc[a-d]{2}')
     @Test('Test Shrink to list or range')
@@ -75,7 +70,6 @@ export class NodeShrinkerTest {
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
-
 
     @TestCase('z[^abcabc]a', 'z[^abc]a')
     @TestCase('a[^abcdefghijklmnopqrstuvwxyz]z', 'a[^a-z]z')
