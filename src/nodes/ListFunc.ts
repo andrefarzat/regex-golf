@@ -32,4 +32,8 @@ export default class ListFunc extends Func {
             this.children = this.children.concat(child.asFunc().children);
         }
     }
+
+    public isEmpty(): boolean {
+        return this.children.every(child => child.toString() === '');
+    }
 }

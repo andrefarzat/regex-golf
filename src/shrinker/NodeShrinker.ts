@@ -13,6 +13,7 @@ import IndividualFactory from "../models/IndividualFactory";
 import LineBeginFunc from "../nodes/LineBeginFunc";
 import LineEndFunc from "../nodes/LineEndFunc";
 import { ConcatenationShrinker } from "./ConcatenationShrinker";
+import AnyCharFunc from "../nodes/AnyCharFunc";
 
 
 export class NodeShrinker {
@@ -102,7 +103,12 @@ export class NodeShrinker {
     }
 
     protected static shrinkFuncList(node: ListFunc): Node {
-        let children = node.children.map(c => NodeShrinker.shrink(c));
+        debugger;
+        if (node.isEmpty()) {
+            return node.negative ? new AnyCharFunc() : new Terminal('');
+        }
+
+        const children = node.children.map(c => NodeShrinker.shrink(c));
 
         let allAreTerminals = children.every(c => c.is(NodeTypes.terminal));
         if (allAreTerminals) {

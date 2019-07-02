@@ -82,17 +82,16 @@ export class NodeShrinkerTest {
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
 
-    // @Test('Test transforming [^] into .')
-    // public testEmptyNegative() {
-    //     let ind = this.individualFactory.createFromString('ab[^c]');
-    //     let func = ind.tree.getLeastFunc();
-    //     func.left = new Terminal();
-    //     func.right = new Terminal();
-    //     Expect(ind.toString()).toBe('ab[^]');
+    @Test('Test transforming [^] into .')
+    @TestCase('ab[^]', 'ab.')
+    @TestCase('ab[^][^][^][^]', 'ab.{4}')
+    @TestCase('a[]b[^]', 'ab.')
+    public testEmptyLists(txt: string, expectedResult: string) {
+        let ind = this.individualFactory.createFromString(txt);
+        let shrunk = ind.shrink();
 
-    //     let shrunk = ind.shrink();
-    //     Expect(shrunk.toString()).toBe('ab.');
-    // }
+        Expect(shrunk.toString()).toEqual(expectedResult);
+    }
 
     // @Test('Test transforming {1,} into +')
     // public testSimpleRepetitionIntoOneAndMore() {

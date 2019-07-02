@@ -52,4 +52,8 @@ export default class RangeFunc extends Func {
         return false;
     }
 
+    public isEmpty(): boolean {
+        return this.children.every(child => child.toString() === '');
+    }
+
 }
