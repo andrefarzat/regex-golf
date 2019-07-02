@@ -62,7 +62,9 @@ export default class IndividualFactory {
                 if (expression.quantifier.from == expression.quantifier.to) {
                     node.repetitionNumber = expression.quantifier.from.toString();
                 } else {
-                    node.repetitionNumber = `${expression.quantifier.from},${expression.quantifier.to}`;
+                    node.repetitionNumber = expression.quantifier.to ?
+                        `${expression.quantifier.from},${expression.quantifier.to}`
+                        : `${expression.quantifier.from},`;
                 }
 
                 return node;

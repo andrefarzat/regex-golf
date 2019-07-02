@@ -5,6 +5,6 @@ export default class ZeroOrMoreFunc extends Func {
     public type: FuncTypes = FuncTypes.zeroOrMore;
 
     public toString(): string {
-        return '*?';
+        return '*';
     }
 }

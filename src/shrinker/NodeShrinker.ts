@@ -12,8 +12,10 @@ import ListFunc from '../nodes/ListFunc';
 import IndividualFactory from "../models/IndividualFactory";
 import LineBeginFunc from "../nodes/LineBeginFunc";
 import LineEndFunc from "../nodes/LineEndFunc";
-import { ConcatenationShrinker } from "./ConcatenationShrinker";
+import { ConcatFuncShrinker } from "./ConcatenationShrinker";
 import AnyCharFunc from "../nodes/AnyCharFunc";
+import { RepetitionFuncShrinker } from "./RepetitionFuncShrinker";
+import { ListFuncShrinker } from "./ListFuncShrinker";
 
 
 export class NodeShrinker {
@@ -67,11 +69,15 @@ export class NodeShrinker {
     }
 
     public static shrinkFunc(node: Func): Node {
-        if (node instanceof ConcatFunc) return NodeShrinker.shrinkFuncConcatenation(node);
-        if (node instanceof LineBeginFunc) return node.clone();
-        if (node instanceof LineEndFunc) return node.clone();
-        if (node instanceof ListFunc) return NodeShrinker.shrinkFuncList(node);
-        if (node instanceof OrFunc) return NodeShrinker.shrinkFuncOr(node);
+        if (node instanceof ConcatFunc) return (new ConcatFuncShrinker()).shrink(node);
+        if (node instanceof RepetitionFunc) return (new RepetitionFuncShrinker()).shrink(node);
+        if (node instanceof ListFunc) return (new ListFuncShrinker()).shrink(node);
+        if (node instanceof OrFunc) return NodeShrinker.shrinkOrFunc(node);
+
+        // Anchors
+        if (node instanceof LineBeginFunc || node instanceof LineEndFunc) {
+            return node.clone();
+        }
 
         if (node.is(Func.Types.concatenation)) {
             throw new Error('Should not reach here like this');
@@ -97,70 +103,7 @@ export class NodeShrinker {
         }
     }
 
-    protected static shrinkFuncConcatenation(func: ConcatFunc): Node {
-        const shrinker = new ConcatenationShrinker();
-        return shrinker.shrink(func);
-    }
-
-    protected static shrinkFuncList(node: ListFunc): Node {
-        debugger;
-        if (node.isEmpty()) {
-            return node.negative ? new AnyCharFunc() : new Terminal('');
-        }
-
-        const children = node.children.map(c => NodeShrinker.shrink(c));
-
-        let allAreTerminals = children.every(c => c.is(NodeTypes.terminal));
-        if (allAreTerminals) {
-            let chars = children.map(c => c.toString()).sort().join('');
-            chars = Utils.getUniqueChars(chars);
-
-            if (chars.length === 1) {
-                return new Terminal(chars);
-            }
-
-            let charCode: number = 0;
-            let isSequence = Array.from(chars).every(letter => {
-                if (charCode < letter.charCodeAt(0)) {
-                    charCode = letter.charCodeAt(0);
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-
-            if (isSequence && chars.length > 3) {
-                let func = new RangeFunc();
-                func.from = chars.charAt(0);
-                func.to = chars.substr(-1);
-                func.negative = node.negative;
-                return func;
-            }
-
-            return new ListFunc(chars.split('').map(c => new Terminal(c)), node.negative ? 'negative' : 'positive');
-        }
-
-        return node.clone();
-    }
-
-    protected static shrinkFuncOr(node: OrFunc): Node {
+    protected static shrinkOrFunc(node: OrFunc): Node {
         return new OrFunc(NodeShrinker.shrink(node.left), NodeShrinker.shrink(node.right));
-    }
-
-    public static addToRepetitionNumber(func: RepetitionFunc, value: number | string): string {
-        let numbers = func.repetitionNumber.split(',');
-
-        if (typeof value === 'string') {
-            let values = value.split(',');
-            value = values.length == 2 ? values[1] : values[0];
-            value = parseInt(value, 10);
-        }
-
-        switch (numbers.length) {
-            case 1: return (parseInt(numbers[0], 10) + value).toString();
-            case 2: return (parseInt(numbers[1], 10) + value).toString();
-        }
-
-        return value.toString()
     }
 }

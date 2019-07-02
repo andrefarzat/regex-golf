@@ -93,10 +93,14 @@ export class NodeShrinkerTest {
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
 
-    // @Test('Test transforming {1,} into +')
-    // public testSimpleRepetitionIntoOneAndMore() {
-    //     let func = new RepetitionFunc(new Terminal('a'), new Terminal('b'));
-    //     func.repetitionNumber = '1,';
-    //     Expect(NodeShrinker.shrink(func).toString()).toBe('a+b');
-    // }
+    @Test('Test transforming {1,} into +')
+    @TestCase('a{1,}', 'a+')
+    @TestCase('abc{1,}', 'abc+')
+    @TestCase('kjasidjaa{1,}', 'kjasidjaa+')
+    public testSimpleRepetitionIntoOneAndMore(txt: string, expectedResult: string) {
+        let ind = this.individualFactory.createFromString(txt);
+        let shrunk = ind.shrink();
+
+        Expect(shrunk.toString()).toEqual(expectedResult);
+    }
 }

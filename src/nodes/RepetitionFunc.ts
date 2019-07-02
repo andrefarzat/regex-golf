@@ -1,6 +1,4 @@
 import Func, { FuncTypes } from "./Func";
-import Node from "./Node";
-import Utils from "../Utils";
 
 
 export default class RepetitionFunc extends Func {
