@@ -1,7 +1,6 @@
 import * as cp from 'child_process';
 import * as moment from 'moment';
 import Individual from '../models/Individual';
-import { resolve } from 'dns';
 import Logger from '../Logger';
 
 interface EvaluationResult {

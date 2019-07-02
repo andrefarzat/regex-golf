@@ -104,4 +104,14 @@ export class NodeShrinkerTest {
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
+
+
+    @Test('Random tests')
+    @TestCase('[^aton][tu]', '[^anot][tu]')
+    public randomTests(txt: string, expectedResult: string) {
+        let ind = this.individualFactory.createFromString(txt);
+        let shrunk = ind.shrink();
+
+        Expect(shrunk.toString()).toEqual(expectedResult);
+    }
 }

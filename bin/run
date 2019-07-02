@@ -11,6 +11,8 @@ i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 INSTANCES = ["warmup", "anchors", "ranges", "backrefs", "powers", "long-count", "alphabetical",
              "abba", "aman-aplan", "prime", "four", "triples", "glob", "balance", "order"]
 
+INSTANCES = ["abba"]
+
 SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          8370032799, 2767986875, 3141506592, 3313543896, 8657690939, 9696640194,
          6621545651, 2492462788, 3404588599, 2330977742, 6361187489, 2805026820,
@@ -19,9 +21,9 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
 
 DEPTHS = [5]
 
-MAX_EVALUATIONS = [300, 500, 600]
+MAX_EVALUATIONS = [300000]
 
-FOLDER_NAME = 'max_evals'
+FOLDER_NAME = 'ED'
 
 
 def execute(cmd):
@@ -32,7 +34,7 @@ def execute(cmd):
 for program in PROGRAMS:
     for instance in INSTANCES:
         instance = instance.strip()
-        for depth in DEPTHS[i]:
+        for depth in DEPTHS:
             for budget in MAX_EVALUATIONS:
                 for index, seed in enumerate(SEEDS):
                     today = datetime.date.today().strftime("%Y-%m-%d")
@@ -61,6 +63,8 @@ for program in PROGRAMS:
                         "--log-level", 2,
                         "--budget", budget,
                         "--csv", csvFilePath]
+                    
+                    # print(" ".join(map(lambda x: str(x), cmd)))
 
                     thread = Thread(target=execute, args=(cmd,))
                     thread.start()

@@ -86,7 +86,7 @@ async function main() {
         // 6.2. Current Solution is the Best ?
         //      Then -> Add to solutions
         let hasFoundBetter = false;
-        if (await program.isBest(currentSolution)) {
+        if (program.isBest(currentSolution)) {
             program.addSolution(currentSolution);
         }
 
@@ -124,7 +124,9 @@ async function main() {
                     }
                 }
 
-                if (program.shouldStop()) throw new Error('Stop!');
+                if (program.shouldStop()) {
+                    throw new Error('Stop!');
+                }
             });
         } catch (e) {
             if (e.message === 'Stop!' && program.hasTimedOut) {

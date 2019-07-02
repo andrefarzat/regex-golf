@@ -7,7 +7,6 @@ import OneOrMoreFunc from "../nodes/OneOrMoreFunc";
 
 export class RepetitionFuncShrinker implements FuncShrinker {
     public shrink(node: RepetitionFunc): Node {
-        debugger;
         const children = node.children.map(c => NodeShrinker.shrink(c));
 
         if (node.repetitionNumber === '1,') {

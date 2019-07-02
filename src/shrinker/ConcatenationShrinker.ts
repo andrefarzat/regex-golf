@@ -79,6 +79,12 @@ export class ConcatFuncShrinker implements FuncShrinker {
         for (let i = 0; i < children.length; i++) {
             const current = children[i];
 
+            const hasNext = !!children[i + 1];
+            if (! hasNext) {
+                neoChildren.push(current.clone());
+                continue;
+            }
+
             if (this.isOkToSequenceTest(current)) {
                 const localChildren = children.slice(i + 1);
                 let sequenceCount = 0;

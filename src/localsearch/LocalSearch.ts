@@ -81,7 +81,7 @@ export default abstract class LocalSearch {
         return this.left.every(name => ind.test(name));
     }
 
-    public async isBest(ind: Individual): Promise<boolean> {
+    public isBest(ind: Individual): boolean {
         try {
             let fitness = ind.fitness;
             return fitness >= this.getMaxFitness();

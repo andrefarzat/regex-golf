@@ -25,15 +25,7 @@ export class ListFuncShrinker implements FuncShrinker {
                 return new Terminal(chars);
             }
 
-            let charCode: number = 0;
-            let isSequence = Array.from(chars).every(letter => {
-                if (charCode < letter.charCodeAt(0)) {
-                    charCode = letter.charCodeAt(0);
-                    return true;
-                } else {
-                    return false;
-                }
-            });
+            const isSequence = Utils.isSequence(chars);
 
             if (isSequence && chars.length > 3) {
                 let func = new RangeFunc();

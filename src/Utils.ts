@@ -55,6 +55,7 @@ export default class Utils {
     static getUniqueChars(str: string): string {
         let ret: string[] = [];
         (new Set(str)).forEach(s => ret.push(s));
+        ret.sort();
         return ret.join('');
     }
 
@@ -85,5 +86,24 @@ export default class Utils {
         let accum: T[] = Array(Math.max(0, n));
         for (var i = 0; i < n; i ++) accum[i] = fn(i);
         return accum;
+    }
+
+    static isSequence(chars: string): boolean {
+        const isNextChar = (one: string, two: string): boolean => {
+            const oneCode = one.charCodeAt(0);
+            const twoCode = two.charCodeAt(0);
+    
+            const diff = Math.abs(oneCode - twoCode);
+            return diff === 1;
+        };
+
+        let currentChar: string = null;
+        return Array.from(chars).every(char => {
+            const is = currentChar === null ? true : isNextChar(currentChar, char);
+            currentChar = char;
+
+            return is;
+        });
+
     }
 }
