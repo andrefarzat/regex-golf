@@ -127,6 +127,7 @@ export class NodeShrinker {
                 let func = new RangeFunc();
                 func.from = chars.charAt(0);
                 func.to = chars.substr(-1);
+                func.negative = node.negative;
                 return func;
             }
 

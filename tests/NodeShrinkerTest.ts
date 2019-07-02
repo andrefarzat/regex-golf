@@ -27,12 +27,11 @@ export class NodeShrinkerTest {
         Expect(ind.shrink().toString()).toEqual(expectedResult);
     }
 
-    @FocusTest
-    // @TestCase('abc', 'abc')
-    // @TestCase('aaaaa', 'a{5}')
-    // @TestCase('aa{5}', 'a{6}')
-    // @TestCase('[a]a{5}', 'a{6}')
-    // @TestCase('[abc][abc]{5}', '[abc]{6}')
+    @TestCase('abc', 'abc')
+    @TestCase('aaaaa', 'a{5}')
+    @TestCase('aa{5}', 'a{6}')
+    @TestCase('[a]a{5}', 'a{6}')
+    @TestCase('[abc][abc]{5}', '[abc]{6}')
     @TestCase('[^abc][^abc]{5}', '[^abc]{6}')
     @Test('Test Shrink concatenation')
     public testShrinkConcatenation(txt: string, expectedResult: string) {
@@ -75,7 +74,7 @@ export class NodeShrinkerTest {
     }
 
     @TestCase('z[^abcabc]a', 'z[^abc]a')
-    @TestCase('a[^abcdefghijklmnopqrstuvwxyz]z', 'a[^a-z]z')
+    @TestCase('a[^abcdefghijklmnopqrstuvwxyz]z', 'a[^abcdefghijklmnopqrstuvwxyz]z')
     public testShrinkNegation(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
         let shrunk = ind.shrink();

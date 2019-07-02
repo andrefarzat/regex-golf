@@ -13,15 +13,15 @@ export default class RangeFunc extends Func {
         func.children = this.children.map(child => child.clone());
         func.from = this.from;
         func.to = this.to;
+        func.negative = this.negative;
         return func;
     }
 
     public getRangeAsString(): string {
-        let simbol = this.negative ? '^' : '';
         let diff = this.to.charCodeAt(0) - this.from.charCodeAt(0);
 
-        if (diff > 2) {
-            return `[${simbol}${this.from}-${this.to}]`;
+        if (!this.negative && diff > 2) {
+            return `${this.from}-${this.to}`;
         } else {
             let txt = '';
             let currentCharCode = this.from.charCodeAt(0);
@@ -30,13 +30,16 @@ export default class RangeFunc extends Func {
                 currentCharCode++;
             }
 
-            return `[${simbol}${txt}]`;
+            return txt;
         }
     }
 
     public toString(): string {
-        let text = super.toString();
-        return `${this.getRangeAsString()}${text}`;
+        const text = super.toString();
+        const range = this.getRangeAsString();
+        const symbol = this.negative ? '^' : '';
+
+        return `[${symbol}${range}]${text}`;
     }
 
     public equals(node: Node): boolean {

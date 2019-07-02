@@ -1,12 +1,10 @@
 import ConcatFunc from "../nodes/ConcatFunc";
 import Node, { NodeTypes } from "../nodes/Node";
 import { NodeShrinker } from "./NodeShrinker";
-import Func, { FuncTypes } from "../nodes/Func";
+import { FuncTypes } from "../nodes/Func";
 import OrFunc from "../nodes/OrFunc";
 import Terminal from "../nodes/Terminal";
 import RepetitionFunc from "../nodes/RepetitionFunc";
-import { SSL_OP_NETSCAPE_DEMO_CIPHER_CHANGE_BUG } from "constants";
-import ListFunc from "../nodes/ListFunc";
 
 
 export class ConcatenationShrinker {
@@ -132,7 +130,7 @@ export class ConcatenationShrinker {
                 if (next instanceof RepetitionFunc) {
                     const isEqual = next.childrenToString() === current.childrenToString();
                     if (isEqual) {
-                        const neo = new RepetitionFunc(current.children);
+                        const neo = current.clone();
                         neo.repetitionNumber = NodeShrinker.addToRepetitionNumber(neo, next.repetitionNumber);
                         neoChildren.push(neo);
                         i += 1;
