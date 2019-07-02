@@ -95,6 +95,7 @@ export class NodeShrinkerTest {
 
     @Test('Test transforming {1,} into +')
     @TestCase('a{1,}', 'a+')
+    @TestCase('a{1,}|aaaa', 'a+|a{4}')
     @TestCase('abc{1,}', 'abc+')
     @TestCase('kjasidjaa{1,}', 'kjasidjaa+')
     public testSimpleRepetitionIntoOneAndMore(txt: string, expectedResult: string) {
