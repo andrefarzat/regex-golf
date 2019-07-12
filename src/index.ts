@@ -222,7 +222,7 @@ async function main() {
 (async function() {
     try {
         await main();
-        console.log('yep!');
+        console.log('Done!');
     } catch (e) {
         console.log('Error:');
         console.error(e);

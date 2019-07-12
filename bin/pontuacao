@@ -6,6 +6,25 @@ from typing import List
 from functools import reduce
 
 
+WEIGHT = {
+    "warmup": 10,
+    "anchors": 10,
+    "ranges": 10,
+    "backrefs": 10,
+    "abba": 10,
+    "aman-aplan": 10,
+    "prime": 15,
+    "four": 10,
+    "order": 10,
+    "triples": 30,
+    "glob": 20,
+    "balance": 10,
+    "powers": 10,
+    "long-count": 270,
+    "alphabetical": 20,
+}
+
+
 OURS = {
     "warmup": r"foo",
     "anchors": r"k$",
@@ -90,24 +109,24 @@ def get_content_from_file(instance, filename) -> List[str]:
 def compute(instance, regex_str):
     left_content = get_content_from_file(instance, 'left')
     right_content = get_content_from_file(instance, 'right')
+    weight = WEIGHT[instance]
 
     if instance not in MAX_FITNESS:
-        left_max_fitness = reduce(lambda x, y: x + y, [len(name) for name in left_content])
-        right_max_fitness = reduce(lambda x, y: x + y, [len(name) for name in right_content])
-        MAX_FITNESS[instance] = left_max_fitness + right_max_fitness
+        MAX_FITNESS[instance] = weight * len(left_content)
 
     regex = re.compile(regex_str)
 
     i = 0
     for name in left_content:
         if regex.search(name) is not None:
-            i += len(name)
+            i += 1
 
     for name in right_content:
-        if regex.search(name) is None:
-            i += len(name)
-
-    print('"%s": [%d, %d],' % (instance, i, len(regex_str)))
+        if regex.search(name) is not None:
+            i -= 1
+    
+    fitness = (weight * i) - len(regex_str)
+    print('"%s": [%d, %d],' % (instance, fitness, len(regex_str)))
 
 
 def main():
