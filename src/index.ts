@@ -184,11 +184,13 @@ async function main() {
         let csvLine: (string | number)[] = [program.instanceName, program.depth, flags.index, program.seed];
 
         let startTime = moment(program.startTime);
+        const maxFitess = flags.weight * program.left.length;
 
         if (bestSolution) {
             csvLine.push(bestSolution.toString()); // Melhor_solucao
             csvLine.push(bestSolution.shrink().toString()); // Melhor_solucao_shrunk
             csvLine.push(bestSolution.fitness); // Melhor_fitness
+            csvLine.push(maxFitess); // Maximo_finess
             csvLine.push(bestSolution.matchesOnLeft); // Matches_on_left
             csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
             csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
@@ -198,6 +200,7 @@ async function main() {
             csvLine.push('N/A'); // Melhor_solucao
             csvLine.push('N/A'); // Melhor_solucao_shrunk
             csvLine.push('N/A'); // Melhor_fitness
+            csvLine.push(maxFitess); // Maximo_finess
             csvLine.push('N/A'); // Matches_on_left
             csvLine.push('N/A'); // Matches_on_right
             csvLine.push('N/A'); // Numero_de_comparacoes
