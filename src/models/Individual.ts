@@ -10,6 +10,8 @@ import ConcatFunc from '../nodes/ConcatFunc';
 
 export default class Individual {
     protected _string: string;
+    private static weight = 1;
+
     public id = Utils.getNextId();
     public tree: Func;
     public matchesOnLeft: number = 0;
@@ -33,12 +35,16 @@ export default class Individual {
     }
 
     public get fitness(): number {
-        return this.matchesOnLeft - this.matchesOnRight;
+        return Individual.weight * (this.matchesOnLeft - this.matchesOnRight) - this.toString().length;
     }
 
     public get evaluationTime(): number {
         if (!this.evaluationEndTime) return 0;
         return moment(this.evaluationEndTime).diff(this.evaluationStartTime, 'millisecond');
+    }
+
+    public static setWeight(weight: number) {
+        Individual.weight = weight;
     }
 
     public toCSV(withDot: boolean = false): string {

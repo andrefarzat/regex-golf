@@ -17,6 +17,7 @@ import Neighborhood from './models/Neighborhood';
 
 args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS", "Constructed_RRLS"')
     .option('instance', 'O nome da instância do problema')
+    .option('weight', 'O peso da fitness', 1)
     .option('depth', 'O tamanho do depth', 5)
     .option('budget', 'Número máximo de avaliações', 100000 * 5)
     .option('log-level', 'Log level entre 1 e 5', 3)
@@ -28,6 +29,7 @@ args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS",
 const flags: {
     name: 'ILS'| 'ILS_Shrink' | 'RRLS' | 'Constructed_RRLS',
     instance: string,
+    weight: number,
     depth: number,
     budget: number,
     logLevel: number,
@@ -44,6 +46,7 @@ if (!flags.name) {
 
 
 Utils.setIndex(flags.index);
+Individual.setWeight(flags.weight);
 if (flags.seed) Utils.setSeed(flags.seed);
 Logger.init({logLevel: flags.logLevel, instanceName: flags.instance});
 
