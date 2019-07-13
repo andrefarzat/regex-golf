@@ -9,11 +9,11 @@ PROGRAMS = ['ILS_Shrink'] # , 'Constructed_RRLS'
 i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 
 INSTANCES = {
-    # "warmup": 10,
-    # "anchors": 10,
-    # "ranges": 10,
-    # "backrefs": 10,
-    # "abba": 10,
+    "warmup": 10,
+    "anchors": 10,
+    "ranges": 10,
+    "backrefs": 10,
+    "abba": 10,
     "aman-aplan": 10,
     "prime": 15,
     "four": 10,
