@@ -10,7 +10,7 @@ i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 
 INSTANCES = {
     # "typist": 10,
-    "anyway": 10,
+    # "anyway": 10,
     "tic-tac-toe": 10
 }
 
@@ -40,7 +40,7 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
 
 DEPTHS = [5]
 
-MAX_EVALUATIONS = [600000, 300000]
+MAX_EVALUATIONS = [300000]
 
 FOLDER_NAME = 'teeste'
 
