@@ -21,6 +21,13 @@ export class FuncTest {
         Expect(ind.toString()).toBe(expectedResult);
     }
 
+    @TestCase('[^h-u]*', '[^h-u]*')
+    @Test('Negative list')
+    public testNegativeList(txt:string, expectedResult: string) {
+        const ind = this.individualFactory.createFromString(txt);
+        Expect(ind.toString()).toBe(expectedResult);
+    }
+
     // @Test('Test .toDot')
     // public testToDot() {
     //     let func = new Func(FuncTypes.concatenation, new Terminal('a'), new Terminal('b'));

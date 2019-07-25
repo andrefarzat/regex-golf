@@ -70,12 +70,12 @@ export default class IndividualFactory {
                 return node;
             } else if (expression.quantifier && expression.quantifier.kind == '+') {
                 let node = new OneOrMoreFunc();
-                node.addChild(new Terminal((expression.expression as any).value));
+                node.addChild(this.parseExpression(expression.expression));
 
                 return node;
             } else if (expression.quantifier && expression.quantifier.kind == '*') {
-                let node = new ZeroOrMoreFunc;
-                node.addChild(new Terminal((expression.expression as any).value));
+                let node = new ZeroOrMoreFunc();
+                node.addChild(this.parseExpression(expression.expression));
 
                 return node;
             } else {

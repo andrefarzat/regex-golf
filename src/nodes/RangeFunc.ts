@@ -20,7 +20,7 @@ export default class RangeFunc extends Func {
     public getRangeAsString(): string {
         let diff = this.to.charCodeAt(0) - this.from.charCodeAt(0);
 
-        if (!this.negative && diff > 2) {
+        if (diff > 2) {
             return `${this.from}-${this.to}`;
         } else {
             let txt = '';

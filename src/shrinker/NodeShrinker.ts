@@ -73,6 +73,7 @@ export class NodeShrinker {
         if (node instanceof RepetitionFunc) return (new RepetitionFuncShrinker()).shrink(node);
         if (node instanceof ListFunc) return (new ListFuncShrinker()).shrink(node);
         if (node instanceof OrFunc) return NodeShrinker.shrinkOrFunc(node);
+        if (node instanceof RangeFunc) return node.clone();
 
         // Anchors
         if (node instanceof LineBeginFunc || node instanceof LineEndFunc) {

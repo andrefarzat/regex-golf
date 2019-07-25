@@ -74,7 +74,7 @@ export class NodeShrinkerTest {
     }
 
     @TestCase('z[^abcabc]a', 'z[^abc]a')
-    @TestCase('a[^abcdefghijklmnopqrstuvwxyz]z', 'a[^abcdefghijklmnopqrstuvwxyz]z')
+    @TestCase('a[^abcdefghijklmnopqrstuvwxyz]z', 'a[^a-z]z')
     public testShrinkNegation(txt: string, expectedResult: string) {
         let ind = this.individualFactory.createFromString(txt);
         let shrunk = ind.shrink();
@@ -108,7 +108,14 @@ export class NodeShrinkerTest {
 
     @Test('Random tests')
     @TestCase('[^aton][tu]', '[^anot][tu]')
+    @TestCase('[abc][^wkil]*$', '[abc][^iklw]*$')
+    @TestCase('[cde]v*[^edkwrntq]', '[cde]v*[^deknqrtw]')
+    @TestCase('[a-e][^rdw].*', '[a-e][^drw].*')
+    @TestCase('[a-f].*[^ndts]$', '[a-f].*[^dnst]$')
+    // @TestCase('[d-o][b-y][^[h-u]]*', '[d-o][b-y][^\[]*')
+    @TestCase('[a-n][p-t]*[^gdnt]$', '[a-n][p-t]*[^dgnt]$')
     public randomTests(txt: string, expectedResult: string) {
+        debugger;
         let ind = this.individualFactory.createFromString(txt);
         let shrunk = ind.shrink();
 
