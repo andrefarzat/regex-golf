@@ -8,13 +8,13 @@ PROGRAMS = ['ILS_Shrink'] # , 'Constructed_RRLS'
 
 i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 
-INSTANCES = {
-    # "typist": 10,
-    # "anyway": 10,
+_INSTANCES = {
+    "typist": 10,
+    "anyway": 10,
     "tic-tac-toe": 10
 }
 
-_INSTANCES = {
+INSTANCES = {
     "warmup": 10,
     "anchors": 10,
     "ranges": 10,
@@ -40,9 +40,9 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
 
 DEPTHS = [5]
 
-MAX_EVALUATIONS = [300000]
+MAX_EVALUATIONS = [300000, 400000, 500000, 600000]
 
-FOLDER_NAME = 'teeste'
+FOLDER_NAME = 'evals'
 
 
 def execute(cmd):

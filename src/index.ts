@@ -195,7 +195,7 @@ async function main() {
             csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
             csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
             csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
-            csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'seconds'))); // Tempo_para_encontrar_melhor_solucao
+            csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds'))); // Tempo_para_encontrar_melhor_solucao
         } else {
             csvLine.push('N/A'); // Melhor_solucao
             csvLine.push('N/A'); // Melhor_solucao_shrunk
@@ -208,7 +208,7 @@ async function main() {
             csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
         }
 
-        let totalTime = moment(program.endTime).diff(program.startTime, 'seconds');
+        let totalTime = moment(program.endTime).diff(program.startTime, 'milliseconds');
         csvLine.push(totalTime); // Tempo_total
         csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
 
