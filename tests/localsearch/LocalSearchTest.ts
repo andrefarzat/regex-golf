@@ -14,7 +14,6 @@ class MyLocalSearch extends LocalSearch {
 @TestFixture('LocalSearchTest')
 export class LocalSearchTest {
 
-    @FocusTest
     @AsyncTest('everything')
     @Timeout(1000)
     public async testEverything() {
