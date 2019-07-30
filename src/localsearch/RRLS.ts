@@ -1,5 +1,5 @@
 import Individual from '../models/Individual';
-import LocalSearch from './LocalSearch';
+import { LocalSearch } from './LocalSearch';
 
 
 export default class RRLS extends LocalSearch {

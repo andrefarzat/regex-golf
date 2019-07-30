@@ -5,7 +5,7 @@ import * as moment from "moment";
 
 import ILS from './localsearch/ILS';
 import ILS_Shrink from './localsearch/ILS_Shrink';
-import LocalSearch from './localsearch/LocalSearch';
+import { LocalSearch } from './localsearch/LocalSearch';
 import RRLS from './localsearch/RRLS';
 
 import Logger from './Logger';

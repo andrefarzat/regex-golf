@@ -11,7 +11,7 @@ export interface Solution {
 }
 
 
-export default abstract class LocalSearch {
+export abstract class LocalSearch {
     public left: string[] = [];
     public right: string[] = [];
     public chars: { left: { [key: string]: number }, right: { [key: string]: number } } = { left: {}, right: {} };
@@ -133,6 +133,19 @@ export default abstract class LocalSearch {
     public abstract async restartFromSolution(ind: Individual): Promise<Individual>;
 
     public getBestSolution(): Individual | undefined {
+        this.localSolutions.sort(this.sorter);
+        this.solutions.sort(this.sorter);
+
         return this.solutions.length > 0 ? this.solutions[0] : this.localSolutions[0];
     }
+
+    public sorter(a: Individual, b: Individual): number {
+        if (a.fitness > b.fitness) return -1;
+        if (a.fitness < b.fitness) return 1;
+
+        if (a.toString().length > b.toString().length) return 1;
+        if (a.toString().length < b.toString().length) return -1;
+
+        return 0;
+    };
 }

@@ -1,5 +1,5 @@
 import Individual from "./Individual";
-import LocalSearch from "../localsearch/LocalSearch";
+import { LocalSearch } from "../localsearch/LocalSearch";
 import Func, { FuncTypes } from "../nodes/Func";
 import Terminal from "../nodes/Terminal";
 import RangeFunc from "../nodes/RangeFunc";

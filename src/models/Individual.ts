@@ -10,7 +10,7 @@ import ConcatFunc from '../nodes/ConcatFunc';
 
 export default class Individual {
     protected _string: string;
-    private static weight = 1;
+    private static weight = 10;
 
     public id = Utils.getNextId();
     public tree: Func;
