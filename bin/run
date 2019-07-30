@@ -14,6 +14,11 @@ _INSTANCES = {
     "tic-tac-toe": 10
 }
 
+# ./bin/run "warmup" "abba" "order" "powers"
+# ./bin/run "anchors" "aman-aplan" "triples"
+# ./bin/run "ranges" "prime" "glob" "long-count"
+# ./bin/run "backrefs" "four" "balance" "alphabetical"
+
 INSTANCES = {
     "warmup": 10,
     "anchors": 10,
@@ -42,17 +47,29 @@ DEPTHS = [5]
 
 MAX_EVALUATIONS = [300000, 400000, 500000, 600000]
 
-FOLDER_NAME = 'evals'
+FOLDER_NAME = 'evals_round2'
 
 
 def execute(cmd):
     cmd = list(map(str, cmd))
     call(cmd, shell=os.name == 'nt')
 
+instances = INSTANCES.keys() if len(sys.argv) == 1 else sys.argv[1:]
+
+# Validating
+for instance in instances:
+    if instance not in INSTANCES.keys():
+        print("Invalid instance name:", instance)
+        exit(1)
+
 
 for program in PROGRAMS:
     for instance, weight in INSTANCES.items():
         instance = instance.strip()
+
+        if instance not in instances:
+            continue
+
         for depth in DEPTHS:
             for budget in MAX_EVALUATIONS:
                 for index, seed in enumerate(SEEDS):
