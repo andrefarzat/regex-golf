@@ -150,70 +150,57 @@ async function main() {
     program.evaluator.close();
 
     // 7. Apresentar resultados
-    function sorter(a: Individual, b: Individual): number {
-        if (a.fitness > b.fitness) { return -1; }
-        if (a.fitness < b.fitness) { return 1; }
-
-        if (a.toString().length > b.toString().length) { return 1; }
-        if (a.toString().length < b.toString().length) { return -1; }
-
-        return 0;
-    }
+    const bestSolution = program.getBestSolution();
 
     Logger.info(`Was found ${program.localSolutions.length} local solution(s)`);
-    program.localSolutions.sort(sorter);
     program.localSolutions.forEach((ind) => {
         Logger.info(`[Local Solution]`, ind.toLog());
     });
 
     Logger.info(`Was found ${program.solutions.length} solution(s)`);
 
-    program.solutions.sort(sorter);
     program.solutions.forEach((ind) => {
         Logger.info(`[Solution]`, ind.toLog());
     });
 
     if (!flags.csv) { process.exit(); }
 
-    (function() {
-        const bestSolution = program.getBestSolution();
-        // Nome, Depth, i, seed
-        const csvLine: Array<string | number> = [program.instanceName, program.depth, flags.index, program.seed];
+    // Nome, Depth, i, seed
+    const csvLine: Array<string | number> = [program.instanceName, program.depth, flags.index, program.seed];
 
-        const startTime = moment(program.startTime);
-        const maxFitess = flags.weight * program.left.length;
+    const startTime = moment(program.startTime);
+    const maxFitess = flags.weight * program.left.length;
 
-        if (bestSolution) {
-            csvLine.push(bestSolution.toString()); // Melhor_solucao
-            csvLine.push(bestSolution.shrink().toString()); // Melhor_solucao_shrunk
-            csvLine.push(bestSolution.fitness); // Melhor_fitness
-            csvLine.push(maxFitess); // Maximo_finess
-            csvLine.push(bestSolution.matchesOnLeft); // Matches_on_left
-            csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
-            csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
-            csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
+    if (bestSolution) {
+        csvLine.push(bestSolution.toString()); // Melhor_solucao
+        csvLine.push(bestSolution.shrink().toString()); // Melhor_solucao_shrunk
+        csvLine.push(bestSolution.fitness); // Melhor_fitness
+        csvLine.push(maxFitess); // Maximo_finess
+        csvLine.push(bestSolution.matchesOnLeft); // Matches_on_left
+        csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
+        csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
+        csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
 
-            // Tempo_para_encontrar_melhor_solucao
-            csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds')));
-        } else {
-            csvLine.push('N/A'); // Melhor_solucao
-            csvLine.push('N/A'); // Melhor_solucao_shrunk
-            csvLine.push('N/A'); // Melhor_fitness
-            csvLine.push(maxFitess); // Maximo_finess
-            csvLine.push('N/A'); // Matches_on_left
-            csvLine.push('N/A'); // Matches_on_right
-            csvLine.push('N/A'); // Numero_de_comparacoes
-            csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
-            csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
-        }
+        // Tempo_para_encontrar_melhor_solucao
+        csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds')));
+    } else {
+        csvLine.push('N/A'); // Melhor_solucao
+        csvLine.push('N/A'); // Melhor_solucao_shrunk
+        csvLine.push('N/A'); // Melhor_fitness
+        csvLine.push(maxFitess); // Maximo_finess
+        csvLine.push('N/A'); // Matches_on_left
+        csvLine.push('N/A'); // Matches_on_right
+        csvLine.push('N/A'); // Numero_de_comparacoes
+        csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
+        csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
+    }
 
-        const totalTime = moment(program.endTime).diff(program.startTime, 'milliseconds');
-        csvLine.push(totalTime); // Tempo_total
-        csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
+    const totalTime = moment(program.endTime).diff(program.startTime, 'milliseconds');
+    csvLine.push(totalTime); // Tempo_total
+    csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
 
-        const filepath = path.join(__dirname, '..', 'results', flags.csv);
-        fs.appendFileSync(filepath, csvLine.join(',') + `\n`);
-    })();
+    const filepath = path.join(__dirname, '..', 'results', flags.csv);
+    fs.appendFileSync(filepath, csvLine.join(',') + `\n`);
 
     Logger.info(`[Program finished] total time: ${program.endTime.getTime() - program.startTime.getTime()}`);
 }

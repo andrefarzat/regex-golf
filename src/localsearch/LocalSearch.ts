@@ -146,6 +146,9 @@ export abstract class LocalSearch {
         if (a.toString().length > b.toString().length) { return 1; }
         if (a.toString().length < b.toString().length) { return -1; }
 
+        if (a.evaluationIndex < b.evaluationIndex) { return -1; }
+        if (a.evaluationIndex > b.evaluationIndex) { return 1; }
+
         return 0;
     }
 }
