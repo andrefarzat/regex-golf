@@ -1,12 +1,9 @@
-import ILS from './ILS';
-import Individual from '../models/Individual';
-import Evaluator from '../models/Evaluator';
-import EvaluatorFactory from '../models/EvaluatorFactory';
+import { Individual } from '../models/Individual';
+import { ILS } from './ILS';
 
-
-export default class ILS_Shrink extends ILS {
+export class ILS_Shrink extends ILS {
     public async restartFromSolution(ind: Individual): Promise<Individual> {
-        let shunkCurrentSolution = ind.shrink();
+        const shunkCurrentSolution = ind.shrink();
 
         if (!shunkCurrentSolution.isValid()) {
             // FIXME: We should not shrink to an invalid option

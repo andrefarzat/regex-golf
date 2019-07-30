@@ -2,14 +2,13 @@ const colors = require('colors/safe');
 const args = require('args');
 
 import ILS_S from '../localsearch/ILS';
-import Neighborhood from '../models/Neighborhood';
+import { Neighborhood } from '../models/Neighborhood';
 
-
+// tslint:disable no-console
 
 args.option('instance', 'O nome da instância do problema')
     .option('solution', 'A solução da qual será gerada a vizinhança')
     .option('log-level', 'Log level entre 1 e 5', 3);
-
 
 const flags: {
     instance: string,
@@ -24,10 +23,9 @@ if (!flags.instance || !flags.solution) {
 
 /** Start */
 
-let program = (new ILS_S(flags.instance)).init();
-let initialInd = program.factory.createFromString(flags.solution);
-let hood = new Neighborhood(initialInd, program);
-
+const program = (new ILS_S(flags.instance)).init();
+const initialInd = program.factory.createFromString(flags.solution);
+const hood = new Neighborhood(initialInd, program);
 
 console.log('');
 console.log(`Neighborhood for solution ${initialInd.toString()} in instance ${flags.instance}`);
@@ -40,7 +38,7 @@ console.log('');
 console.log('');
 
 let i = 0;
-for (let ind of hood.getGenerator()) {
+for (const ind of hood.getGenerator()) {
     console.log(ind.toString());
     i ++;
 }

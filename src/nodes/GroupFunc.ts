@@ -1,8 +1,7 @@
-import Func, { FuncTypes } from './Func';
-import Node from './Node';
+import { Func, FuncTypes } from './Func';
+import { Node } from './Node';
 
-
-export default class GroupFunc extends Func {
+export class GroupFunc extends Func {
     public type: FuncTypes = FuncTypes.group;
 
     public toString(): string {

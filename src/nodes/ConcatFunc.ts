@@ -1,27 +1,25 @@
-import Func, { FuncTypes } from "./Func";
-import Node, { NodeTypes } from "./Node";
-import Utils from "../Utils";
-import OrFunc from "./OrFunc";
+import { Func, FuncTypes } from "./Func";
+import { Node } from "./Node";
+import { OrFunc } from "./OrFunc";
 
-
-export default class ConcatFunc extends Func {
+export class ConcatFunc extends Func {
     public type: FuncTypes = FuncTypes.concatenation;
 
     public toString(): string {
-        let orFuncs = this.children.filter(c => c.is(FuncTypes.or)) as OrFunc[];
+        const orFuncs = this.children.filter((c) => c.is(FuncTypes.or)) as OrFunc[];
         if (orFuncs.length > 0) {
-            return orFuncs.map(or => this.orderOrToString(or)).join('');
+            return orFuncs.map((or) => this.orderOrToString(or)).join('');
         } else {
             return this.orderChildrenToLines(this.children);
         }
     }
 
     public orderChildrenToLines(children: Node[]) {
-        let hasLineBegin = false; children.some(c => c.is(FuncTypes.lineBegin));
-        let hasLineEnd = false; children.some(c => c.is(FuncTypes.lineEnd));
+        let hasLineBegin = false; children.some((c) => c.is(FuncTypes.lineBegin));
+        let hasLineEnd = false; children.some((c) => c.is(FuncTypes.lineEnd));
 
-        let txt: string[] = [];
-        for (let child of children) {
+        const txt: string[] = [];
+        for (const child of children) {
             if (child.is(FuncTypes.lineBegin)) {
                 hasLineBegin = true;
             } else if (child.is(FuncTypes.lineEnd)) {
@@ -35,7 +33,7 @@ export default class ConcatFunc extends Func {
     }
 
     public orderOrToString(or: OrFunc): string {
-        let txt: string[] = [];
+        const txt: string[] = [];
 
         if (or.left) {
             txt.push(or.left.toString());

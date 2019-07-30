@@ -1,14 +1,11 @@
-import Func, { FuncTypes } from "./Func";
-import Node from "./Node";
-import Utils from "../Utils";
+import { Func, FuncTypes } from "./Func";
 
-
-export default class BackrefFunc extends Func {
+export class BackrefFunc extends Func {
     public type: FuncTypes = FuncTypes.backref;
     public number: number = 1;
 
     public clone(): BackrefFunc {
-        let func = new BackrefFunc();
+        const func = new BackrefFunc();
         func.number = this.number;
         return func;
     }

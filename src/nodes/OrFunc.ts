@@ -1,9 +1,8 @@
-import Func, { FuncTypes } from './Func';
-import Node, { NodeTypes } from './Node';
-import Terminal from './Terminal';
+import { Func, FuncTypes } from './Func';
+import { Node, NodeTypes } from './Node';
+import { Terminal } from './Terminal';
 
-
-export default class OrFunc extends Func {
+export class OrFunc extends Func {
     public type: FuncTypes = FuncTypes.or;
 
     public constructor(public left: Node, public right: Node) {
@@ -37,8 +36,8 @@ export default class OrFunc extends Func {
     }
 
     public clone(): Func {
-        let func = new OrFunc(this.left.clone(), this.right.clone());
-        func.children = this.children.map(child => child.clone());
+        const func = new OrFunc(this.left.clone(), this.right.clone());
+        func.children = this.children.map((child) => child.clone());
         return func;
     }
 
@@ -66,20 +65,28 @@ export default class OrFunc extends Func {
 
     public getSideOf(node: Node): 'left' | 'right' | null {
         if (this.left.is(NodeTypes.func)) {
-            let isChildOfLeft = (this.left as Func).getNodes().indexOf(node) >= 0;
+            const isChildOfLeft = (this.left as Func).getNodes().indexOf(node) >= 0;
             if (isChildOfLeft) {
                 return 'left';
             }
         }
 
         if (this.right.is(NodeTypes.func)) {
-            let isChildOfRight = (this.right as Func).getNodes().indexOf(node) >= 0;
+            const isChildOfRight = (this.right as Func).getNodes().indexOf(node) >= 0;
             if (isChildOfRight) {
                 return 'right';
             }
         }
 
         return null;
+    }
+
+    public swapChild(oldNode: Node, newNode: Node) {
+        const hasSwapped = this.trySwapChild(oldNode, newNode);
+
+        if (!hasSwapped) {
+            throw new Error('[OrFunc.swapChild] Invalid child');
+        }
     }
 
     private trySwapChild(oldNode: Node, newNode: Node): boolean {
@@ -94,7 +101,7 @@ export default class OrFunc extends Func {
             if (this.trySwapChildByChildren(this.left.children, oldNode, newNode)) {
                 return true;
             }
-        } 
+        }
 
         if (this.right === oldNode) {
             this.right = newNode;
@@ -107,22 +114,14 @@ export default class OrFunc extends Func {
             if (this.trySwapChildByChildren(this.right.children, oldNode, newNode)) {
                 return true;
             }
-        } 
+        }
 
         return true;
     }
 
-    public swapChild(oldNode: Node, newNode: Node) {
-        let hasSwapped = this.trySwapChild(oldNode, newNode);
-
-        if (!hasSwapped) {
-            throw new Error('[OrFunc.swapChild] Invalid child');
-        }
-    }
-
     private trySwapChildByChildren(children: Node[], oldNode: Node, newNode: Node): boolean {
-        let index = children.indexOf(oldNode);
-        if (index === -1) return false;
+        const index = children.indexOf(oldNode);
+        if (index === -1) { return false; }
         children.splice(index, 1, newNode);
         return true;
     }

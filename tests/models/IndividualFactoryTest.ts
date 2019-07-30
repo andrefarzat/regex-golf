@@ -1,16 +1,15 @@
-import { Expect, Test, TestCase, TestFixture, FocusTest } from "alsatian";
+import { Expect, FocusTest, Test, TestCase, TestFixture } from "alsatian";
 
-import IndividualFactory from "../../src/models/IndividualFactory";
+import { IndividualFactory } from "../../src/models/IndividualFactory";
+import { Func, FuncTypes } from "../../src/nodes/Func";
+import { LookaheadFunc } from "../../src/nodes/LookaheadFunc";
+import { LookbehindFunc } from "../../src/nodes/LookbehindFunc";
 import { NodeTypes } from "../../src/nodes/Node";
-import Func, { FuncTypes } from "../../src/nodes/Func";
-import Terminal from "../../src/nodes/Terminal";
-import RepetitionFunc from "../../src/nodes/RepetitionFunc";
-import LookaheadFunc from "../../src/nodes/LookaheadFunc";
-import LookbehindFunc from "../../src/nodes/LookbehindFunc";
-
+import { RepetitionFunc } from "../../src/nodes/RepetitionFunc";
+import { Terminal } from "../../src/nodes/Terminal";
 
 @TestFixture("IndividualFactory Test")
-export default class IndividualFactoryTest {
+export class IndividualFactoryTest {
     private factory = new IndividualFactory(['a', 'b', 'c'], [ 'x', 'y', 'z']);
 
     // @Test('Test createFromString')
@@ -32,7 +31,7 @@ export default class IndividualFactoryTest {
     @TestCase('a[abc]{2}')
     @Test('Test creating from string')
     public testCreateFromString(text: string) {
-        let ind = this.factory.createFromString(text);
+        const ind = this.factory.createFromString(text);
         Expect(ind.toString()).toEqual(text);
     }
 

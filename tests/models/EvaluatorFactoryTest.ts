@@ -1,18 +1,16 @@
-import { Expect, TestFixture, AsyncTest, Timeout, FocusTest } from "alsatian";
+import { AsyncTest, Expect, FocusTest, TestFixture, Timeout } from "alsatian";
 
-// import EvaluatorFactory from "../../src/models/EvaluatorFactory";
-import ILS from "../../src/localsearch/ILS";
-import Individual from "../../src/models/Individual";
-
-
+// import { EvaluatorFactory } from "../../src/models/EvaluatorFactory";
+import { ILS } from "../../src/localsearch/ILS";
+import { Individual } from "../../src/models/Individual";
 
 @TestFixture("EvaluatorFactory Test")
-export default class EvaluatorFactoryTest {
+export class EvaluatorFactoryTest {
 
     @AsyncTest()
     @Timeout(6000)
     public async testEvaluate() {
-        let program = new ILS('family');
+        const program = new ILS('family');
         program.init();
         Individual.setWeight(10);
 
@@ -37,11 +35,11 @@ export default class EvaluatorFactoryTest {
     @AsyncTest()
     @Timeout(6000)
     public async testWarmupWeirdCase() {
-        let program = new ILS('warmup');
+        const program = new ILS('warmup');
         program.init();
 
-        let ind = program.factory.createFromString('n');
-        let ind2 = program.factory.createFromString('n+');
+        const ind = program.factory.createFromString('n');
+        const ind2 = program.factory.createFromString('n+');
         Expect(ind.isEvaluated).not.toBeTruthy();
 
         let fitness = await program.evaluator.evaluate(ind);

@@ -1,40 +1,56 @@
-import ConcatFunc from "../nodes/ConcatFunc";
-import Node, { NodeTypes } from "../nodes/Node";
-import { NodeShrinker } from "./NodeShrinker";
+import { ConcatFunc } from "../nodes/ConcatFunc";
 import { FuncTypes } from "../nodes/Func";
-import OrFunc from "../nodes/OrFunc";
-import Terminal from "../nodes/Terminal";
-import RepetitionFunc from "../nodes/RepetitionFunc";
+import { Node, NodeTypes } from "../nodes/Node";
+import { OrFunc } from "../nodes/OrFunc";
+import { RepetitionFunc } from "../nodes/RepetitionFunc";
+import { Terminal } from "../nodes/Terminal";
 import { FuncShrinker } from "./FuncShrinker";
-
+import { NodeShrinker } from "./NodeShrinker";
 
 export class ConcatFuncShrinker implements FuncShrinker {
 
     public shrink(func: ConcatFunc): Node {
-        let children = func.children.map(node => NodeShrinker.shrink(node));
-        const orFuncs = children.filter(func => func.is(FuncTypes.or)) as OrFunc[];
-        if (orFuncs.length == 0) {
+        let children = func.children.map((node) => NodeShrinker.shrink(node));
+        const orFuncs = children.filter((f) => f.is(FuncTypes.or)) as OrFunc[];
+        if (orFuncs.length === 0) {
             children = this.shrinkStartAnchor(children);
             children = this.shrinkEndAnchor(children);
         } else {
-            orFuncs.forEach(orFunc => {
+            orFuncs.forEach((orFunc) => {
                 orFunc.left = NodeShrinker.shrink(orFunc.left);
                 orFunc.right = NodeShrinker.shrink(orFunc.right);
             });
         }
 
-        children = children.filter(child => child.toString() !== '');
-        if (children.length == 1 && children[0].is(NodeTypes.terminal)) {
+        children = children.filter((child) => child.toString() !== '');
+        if (children.length === 1 && children[0].is(NodeTypes.terminal)) {
             return new Terminal(children[0].toString());
         }
 
         return this.mainShrink(children);
     }
 
+    protected addToRepetitionNumber(func: RepetitionFunc, value: number | string): string {
+        const numbers = func.repetitionNumber.split(',');
+
+        if (typeof value === 'string') {
+            const values = value.split(',');
+            value = values.length == 2 ? values[1] : values[0];
+            value = parseInt(value, 10);
+        }
+
+        switch (numbers.length) {
+            case 1: return (parseInt(numbers[0], 10) + value).toString();
+            case 2: return (parseInt(numbers[1], 10) + value).toString();
+        }
+
+        return value.toString();
+    }
+
     private shrinkStartAnchor(children: Node[]): Node[] {
         let quantity = 0;
 
-        return children.map(child => {
+        return children.map((child) => {
             if (child.is(FuncTypes.lineBegin)) {
                 if (quantity > 0) {
                     return new Terminal('');
@@ -50,7 +66,7 @@ export class ConcatFuncShrinker implements FuncShrinker {
     private shrinkEndAnchor(children: Node[]): Node[] {
         let quantity = 0;
 
-        return children.reverse().map(child => {
+        return children.reverse().map((child) => {
             if (child.is(FuncTypes.lineEnd)) {
                 if (quantity > 0) {
                     return new Terminal('');
@@ -64,18 +80,17 @@ export class ConcatFuncShrinker implements FuncShrinker {
     }
 
     private isOkToSequenceTest(node: Node): boolean {
-        if (node.is(NodeTypes.terminal)) return true;
-        if (node.is(FuncTypes.list)) return true;
-        if (node.is(FuncTypes.range)) return true;
-        if (node.is(FuncTypes.negation)) return true;
+        if (node.is(NodeTypes.terminal)) { return true; }
+        if (node.is(FuncTypes.list)) { return true; }
+        if (node.is(FuncTypes.range)) { return true; }
+        if (node.is(FuncTypes.negation)) { return true; }
 
         return false;
     }
-    
+
     private mainShrink(children: Node[]): ConcatFunc {
         const neoChildren: Node[] = [];
 
-        let i = 0;
         for (let i = 0; i < children.length; i++) {
             const current = children[i];
 
@@ -118,7 +133,6 @@ export class ConcatFuncShrinker implements FuncShrinker {
                 }
             }
 
-
             if (current instanceof RepetitionFunc) {
                 const next = children[i + 1];
 
@@ -149,22 +163,5 @@ export class ConcatFuncShrinker implements FuncShrinker {
         }
 
         return new ConcatFunc(neoChildren);
-    }
-
-    protected addToRepetitionNumber(func: RepetitionFunc, value: number | string): string {
-        let numbers = func.repetitionNumber.split(',');
-
-        if (typeof value === 'string') {
-            let values = value.split(',');
-            value = values.length == 2 ? values[1] : values[0];
-            value = parseInt(value, 10);
-        }
-
-        switch (numbers.length) {
-            case 1: return (parseInt(numbers[0], 10) + value).toString();
-            case 2: return (parseInt(numbers[1], 10) + value).toString();
-        }
-
-        return value.toString()
     }
 }

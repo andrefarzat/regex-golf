@@ -1,9 +1,8 @@
-import Individual from "./Individual";
-import Utils from "../Utils";
-import IndividualFactory from "./IndividualFactory";
+import { Utils } from "../Utils";
+import { Individual } from "./Individual";
+import { IndividualFactory } from "./IndividualFactory";
 
-
-export default class Population {
+export class Population {
     protected individuals: Individual[] = [];
     private dirty: boolean = true;
 
@@ -13,22 +12,22 @@ export default class Population {
 
     public sortToElitism(): void {
         this.individuals.sort(function(a, b) {
-            if (a.fitness > b.fitness) return -1;
-            if (a.fitness < b.fitness) return 1;
+            if (a.fitness > b.fitness) { return -1; }
+            if (a.fitness < b.fitness) { return 1; }
 
             // tiebreaker
-            if (a.toString().length < b.toString().length) return -1;
-            if (a.toString().length > b.toString().length) return 1;
+            if (a.toString().length < b.toString().length) { return -1; }
+            if (a.toString().length > b.toString().length) { return 1; }
 
             return 0; // Well, we really have a tie
         });
     }
 
-    public forEach(fn: (ind:Individual) => void | boolean): void {
-        let len = this.individuals.length;
+    public forEach(fn: (ind: Individual) => void | boolean): void {
+        const len = this.individuals.length;
         for (let i = 0; i < len; i ++) {
-            let shouldContinue = fn(this.individuals[i]);
-            if (shouldContinue == false) break;
+            const shouldContinue = fn(this.individuals[i]);
+            if (shouldContinue == false) { break; }
         }
     }
 
@@ -42,7 +41,7 @@ export default class Population {
     }
 
     public addAll(inds: Individual[]): void {
-        inds.forEach(ind => this.add(ind));
+        inds.forEach((ind) => this.add(ind));
     }
 
     public removeByIndex(index: number): void {
@@ -66,8 +65,8 @@ export default class Population {
 
         while (maxTries > 0) {
             // TODO: Improve this
-            let ind = Utils.getRandomlyFromList(this.individuals);
-            if (ind.fitness > 0) return ind;
+            const ind = Utils.getRandomlyFromList(this.individuals);
+            if (ind.fitness > 0) { return ind; }
             maxTries --;
         }
 

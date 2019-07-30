@@ -1,38 +1,37 @@
 import * as regexp from "regexp-tree";
 
-import Func, { FuncTypes } from '../nodes/Func';
-import Individual from './Individual';
-import Node, { NodeTypes } from '../nodes/Node';
-import Terminal from '../nodes/Terminal'
-import Utils from '../Utils';
-import RangeFunc from "../nodes/RangeFunc";
-import BackrefFunc from "../nodes/BackrefFunc";
-import LookaheadFunc, { NegativePositive } from "../nodes/LookaheadFunc";
-import LookbehindFunc from "../nodes/LookbehindFunc";
-import LineBeginFunc from "../nodes/LineBeginFunc";
-import LineEndFunc from "../nodes/LineEndFunc";
-import RepetitionFunc from "../nodes/RepetitionFunc";
-import OneOrMoreFunc from "../nodes/OneOrMoreFunc";
-import ZeroOrMoreFunc from "../nodes/ZeroOrMore";
-import OrFunc from "../nodes/OrFunc";
-import ConcatFunc from "../nodes/ConcatFunc";
-import ListFunc from "../nodes/ListFunc";
-import GroupFunc from "../nodes/GroupFunc";
-import AnyCharFunc from "../nodes/AnyCharFunc";
+import { AnyCharFunc } from "../nodes/AnyCharFunc";
+import { BackrefFunc } from "../nodes/BackrefFunc";
+import { ConcatFunc } from "../nodes/ConcatFunc";
+import { Func, FuncTypes } from '../nodes/Func';
+import { GroupFunc } from "../nodes/GroupFunc";
+import { LineBeginFunc } from "../nodes/LineBeginFunc";
+import { LineEndFunc } from "../nodes/LineEndFunc";
+import { ListFunc } from "../nodes/ListFunc";
+import { LookaheadFunc, NegativePositive } from "../nodes/LookaheadFunc";
+import { LookbehindFunc } from "../nodes/LookbehindFunc";
+import { Node, NodeTypes } from '../nodes/Node';
+import { OneOrMoreFunc } from "../nodes/OneOrMoreFunc";
+import { OrFunc } from "../nodes/OrFunc";
+import { RangeFunc } from "../nodes/RangeFunc";
+import { RepetitionFunc } from "../nodes/RepetitionFunc";
+import { Terminal } from '../nodes/Terminal';
+import { ZeroOrMoreFunc } from "../nodes/ZeroOrMore";
+import { Utils } from '../Utils';
+import { Individual } from './Individual';
 
-
-export default class IndividualFactory {
+export class IndividualFactory {
     public constructor(public leftChars: string[], public rightChars: string[]) { }
 
     public createFromString(phrase: string | RegExp): Individual {
-        let tree = regexp.parse(typeof phrase === 'string' ? `/${phrase}/` : phrase);
+        const tree = regexp.parse(typeof phrase === 'string' ? `/${phrase}/` : phrase);
         let root = this.parseExpression(tree.body);
 
         if (root.is(NodeTypes.terminal)) {
             root = new ConcatFunc([root]);
         }
 
-        let ind = new Individual();
+        const ind = new Individual();
         ind.tree = root as Func;
         return ind;
     }
@@ -41,22 +40,22 @@ export default class IndividualFactory {
         if (expression.type == 'Char') {
             return this.parseChar(expression);
         } else if (expression.type == 'Assertion') {
-            if (expression.kind == '^') return new LineBeginFunc();
-            if (expression.kind == '$') return new LineEndFunc;
+            if (expression.kind == '^') { return new LineBeginFunc(); }
+            if (expression.kind == '$') { return new LineEndFunc(); }
 
             if (expression.kind == 'Lookahead') {
-                let content = this.parseExpression(expression.assertion);
+                const content = this.parseExpression(expression.assertion);
                 return new LookaheadFunc([content], expression.negative ? 'negative' : 'positive');
             }
             if (expression.kind == 'Lookbehind') {
-                let content = this.parseExpression(expression.assertion);
+                const content = this.parseExpression(expression.assertion);
                 return new LookbehindFunc([content], expression.negative ? 'negative' : 'positive');
             }
 
             throw new Error(`Unknown Assertion ${expression.kind}`);
         } else if (expression.type == 'Repetition') {
             if (expression.quantifier && expression.quantifier.kind == 'Range') {
-                let node = new RepetitionFunc();
+                const node = new RepetitionFunc();
                 node.addChild(this.parseExpression(expression.expression));
 
                 if (expression.quantifier.from == expression.quantifier.to) {
@@ -69,12 +68,12 @@ export default class IndividualFactory {
 
                 return node;
             } else if (expression.quantifier && expression.quantifier.kind == '+') {
-                let node = new OneOrMoreFunc();
+                const node = new OneOrMoreFunc();
                 node.addChild(this.parseExpression(expression.expression));
 
                 return node;
             } else if (expression.quantifier && expression.quantifier.kind == '*') {
-                let node = new ZeroOrMoreFunc();
+                const node = new ZeroOrMoreFunc();
                 node.addChild(this.parseExpression(expression.expression));
 
                 return node;
@@ -82,16 +81,16 @@ export default class IndividualFactory {
                 throw new Error('Unkown expression.type == Repetition');
             }
         } else if (expression.type === 'Disjunction') {
-            let exp = expression as any;
-            let left = exp.left ? this.parseExpression(exp.left) : new Terminal();
-            let right = exp.right ? this.parseExpression(exp.right) : new Terminal();
+            const exp = expression as any;
+            const left = exp.left ? this.parseExpression(exp.left) : new Terminal();
+            const right = exp.right ? this.parseExpression(exp.right) : new Terminal();
             return new OrFunc(left, right);
         } else if (expression.type === 'Alternative') {
-            let nodes = expression.expressions.map(exp => this.parseExpression(exp));
+            const nodes = expression.expressions.map((exp) => this.parseExpression(exp));
             return new ConcatFunc(nodes);
         } else if (expression.type === 'CharacterClass') {
             if (expression.expressions.length == 1) {
-                let n = expression.expressions[0];
+                const n = expression.expressions[0];
                 if (n.type === 'ClassRange') {
                     const func = new RangeFunc();
                     func.from = n.from.value;
@@ -101,14 +100,14 @@ export default class IndividualFactory {
                 }
             }
 
-            let nodes = expression.expressions.map((exp: any) => this.parseExpression(exp));
-            let negativePositive: NegativePositive = expression.negative ? 'negative' : 'positive';
+            const nodes = expression.expressions.map((exp: any) => this.parseExpression(exp));
+            const negativePositive: NegativePositive = expression.negative ? 'negative' : 'positive';
             return new ListFunc(nodes as Terminal[], negativePositive);
         } else if (expression.type === 'Group') {
-            let node = this.parseExpression(expression.expression);
+            const node = this.parseExpression(expression.expression);
             return new GroupFunc([node]);
         } else if (expression.type === "Backreference") {
-            let func = new BackrefFunc();
+            const func = new BackrefFunc();
             func.number = expression.number;
             return func;
         } else {
@@ -120,44 +119,44 @@ export default class IndividualFactory {
         if (char.kind === 'simple') {
             return new Terminal(char.value);
         } else if (char.kind === 'meta') {
-            if (char.value === '.') return new AnyCharFunc();
+            if (char.value === '.') { return new AnyCharFunc(); }
         } else {
             throw new Error(`No kind ${char.kind} on Char`);
         }
     }
 
     public getRandomCharFromLeft(): Terminal {
-        let char = Utils.getRandomlyFromList(this.leftChars);
+        const char = Utils.getRandomlyFromList(this.leftChars);
         return new Terminal(char);
     }
 
     public getRandomCharFromRight(): Terminal {
-        let char = Utils.getRandomlyFromList(this.rightChars);
+        const char = Utils.getRandomlyFromList(this.rightChars);
         return new Terminal(char);
     }
 
     public appendAtEnd(ind: Individual, node: Node): Individual {
-        let newInd = ind.clone();
+        const newInd = ind.clone();
         newInd.tree.addChild(node);
         return newInd;
     }
 
     public appendAtBeginning(ind: Individual, node: Node): Individual {
-        let newInd = ind.clone();
+        const newInd = ind.clone();
         newInd.tree.children.unshift(node);
         return newInd;
     }
 
     public appendToNode(ind: Individual, nodeWhichReceive: Node, nodeWhichWillBeAppended: Node): Individual {
-        let neo = ind.clone();
-        let neoIndex = ind.getNodes().indexOf(nodeWhichReceive);
-        let neoOne = neo.getNodes()[neoIndex];
+        const neo = ind.clone();
+        const neoIndex = ind.getNodes().indexOf(nodeWhichReceive);
+        const neoOne = neo.getNodes()[neoIndex];
 
         if (neoOne.is(NodeTypes.func)) {
             neoOne.asFunc().addChild(nodeWhichWillBeAppended);
         } else {
-            let parent = neo.getParentOf(neoOne);
-            let index = parent.children.indexOf(neoOne);
+            const parent = neo.getParentOf(neoOne);
+            const index = parent.children.indexOf(neoOne);
             parent.children.splice(index, 1, neoOne, nodeWhichWillBeAppended);
         }
 
@@ -165,17 +164,17 @@ export default class IndividualFactory {
     }
 
     public insertRandomly(ind: Individual, node: Node): Individual {
-        let newInd = ind.clone();
-        let funcs = newInd.getFuncs();
-        let func = Utils.getRandomlyFromList(funcs);
+        const newInd = ind.clone();
+        const funcs = newInd.getFuncs();
+        const func = Utils.getRandomlyFromList(funcs);
         func.addChild(node);
         return newInd;
     }
 
     public swapRandomly(ind: Individual, node: Node): Individual {
-        let newInd = ind.clone();
-        let currentTerminal = Utils.getRandomlyFromList(newInd.getTerminals());
-        let parent = newInd.getParentOf(currentTerminal);
+        const newInd = ind.clone();
+        const currentTerminal = Utils.getRandomlyFromList(newInd.getTerminals());
+        const parent = newInd.getParentOf(currentTerminal);
 
         if (parent) {
             parent.swapChild(currentTerminal, node);
@@ -185,11 +184,11 @@ export default class IndividualFactory {
     }
 
     public replaceNode(ind: Individual, one: Node, two: Node): Individual {
-        let neo = ind.clone();
-        let oneIndex = ind.getNodes().indexOf(one);
-        let neoOne = neo.getNodes()[oneIndex];
+        const neo = ind.clone();
+        const oneIndex = ind.getNodes().indexOf(one);
+        const neoOne = neo.getNodes()[oneIndex];
 
-        let parent = neo.getParentOf(neoOne);
+        const parent = neo.getParentOf(neoOne);
 
         if (parent) {
             parent.swapChild(neoOne, two);
@@ -199,21 +198,21 @@ export default class IndividualFactory {
     }
 
     public concatenateToNode(ind: Individual, one: Node, two: Node): Individual {
-        let neo = ind.clone();
-        let neoIndex = ind.getNodes().indexOf(one);
-        let neoOne = neo.getNodes()[neoIndex];
+        const neo = ind.clone();
+        const neoIndex = ind.getNodes().indexOf(one);
+        const neoOne = neo.getNodes()[neoIndex];
 
-        let parent = neo.getParentOf(neoOne);
+        const parent = neo.getParentOf(neoOne);
 
-        let index = parent.children.indexOf(neoOne);
+        const index = parent.children.indexOf(neoOne);
         parent.children.splice(index, 1, neoOne, two);
 
         return neo;
     }
 
     public addStartOperator(ind: Individual): Individual {
-        let newInd = ind.clone();
-        let funcStartOperator = newInd.getFuncs().find(current => current.type == Func.Types.lineBegin);
+        const newInd = ind.clone();
+        const funcStartOperator = newInd.getFuncs().find((current) => current.type == Func.Types.lineBegin);
 
         if (!funcStartOperator) {
             newInd.tree.children.unshift(new LineBeginFunc());
@@ -224,13 +223,13 @@ export default class IndividualFactory {
 
     public addStartOperatorToTerminal(ind: Individual, terminal: Terminal): Individual {
         let index = ind.getNodes().indexOf(terminal);
-        let neo = ind.clone();
-        let neoTerminal = neo.getNodes()[index];
-        let parent = neo.getParentOf(neoTerminal);
+        const neo = ind.clone();
+        const neoTerminal = neo.getNodes()[index];
+        const parent = neo.getParentOf(neoTerminal);
 
         if (parent instanceof OrFunc) {
-            let side = parent.getSideOf(neoTerminal);
-            let localNeoTerminal = parent[side];
+            const side = parent.getSideOf(neoTerminal);
+            const localNeoTerminal = parent[side];
             parent[side] = new ConcatFunc([new LineBeginFunc(), localNeoTerminal]);
         } else {
             index = parent.children.indexOf(neoTerminal);
@@ -241,9 +240,9 @@ export default class IndividualFactory {
     }
 
     public addEndOperator(ind: Individual): Individual {
-        let node = this.getRandomCharFromLeft();
-        let newInd = ind.clone();
-        let funcEndOperator = newInd.getFuncs().find(current => current.type == Func.Types.lineEnd);
+        const node = this.getRandomCharFromLeft();
+        const newInd = ind.clone();
+        const funcEndOperator = newInd.getFuncs().find((current) => current.type == Func.Types.lineEnd);
 
         if (!funcEndOperator) {
             newInd.tree.children.push(new LineEndFunc());
@@ -254,13 +253,13 @@ export default class IndividualFactory {
 
     public addEndOperatorToTerminal(ind: Individual, terminal: Terminal): Individual {
         let index = ind.getNodes().indexOf(terminal);
-        let neo = ind.clone();
-        let neoTerminal = neo.getNodes()[index];
-        let parent = neo.getParentOf(neoTerminal);
+        const neo = ind.clone();
+        const neoTerminal = neo.getNodes()[index];
+        const parent = neo.getParentOf(neoTerminal);
 
         if (parent instanceof OrFunc) {
-            let side = parent.getSideOf(neoTerminal);
-            let localNeoTerminal = parent[side];
+            const side = parent.getSideOf(neoTerminal);
+            const localNeoTerminal = parent[side];
             parent[side] = new ConcatFunc([localNeoTerminal, new LineEndFunc()]);
         } else {
             index = parent.children.indexOf(neoTerminal);
@@ -271,8 +270,8 @@ export default class IndividualFactory {
     }
 
     public addToNegation(ind: Individual, node: Node): Individual {
-        let newInd = ind.clone();
-        let func = newInd.getFuncs().find(current => {
+        const newInd = ind.clone();
+        let func = newInd.getFuncs().find((current) => {
             if (current instanceof ListFunc) {
                 return current.negative;
             }
@@ -289,9 +288,9 @@ export default class IndividualFactory {
     }
 
     public removeRandomChar(ind: Individual): Individual {
-        let neo = ind.clone();
-        let terminal = Utils.getRandomlyFromList(neo.getTerminals());
-        let parent = neo.getParentOf(terminal);
+        const neo = ind.clone();
+        const terminal = Utils.getRandomlyFromList(neo.getTerminals());
+        const parent = neo.getParentOf(terminal);
         if (parent) {
             parent.removeChild(terminal);
         }
@@ -299,15 +298,15 @@ export default class IndividualFactory {
     }
 
     public removeRandomNode(ind: Individual): Individual {
-        let node = Utils.getRandomlyFromList(ind.getNodes());
+        const node = Utils.getRandomlyFromList(ind.getNodes());
         return this.removeNode(ind, node);
     }
 
     public removeNode(ind: Individual, node: Node): Individual {
-        let neo = ind.clone();
-        let index = ind.getNodes().indexOf(node);
-        let nodeToBeRemoved = neo.getNodes()[index];
-        let parent = neo.getParentOf(nodeToBeRemoved);
+        const neo = ind.clone();
+        const index = ind.getNodes().indexOf(node);
+        const nodeToBeRemoved = neo.getNodes()[index];
+        const parent = neo.getParentOf(nodeToBeRemoved);
 
         if (parent) {
             parent.removeChild(nodeToBeRemoved);
@@ -317,7 +316,7 @@ export default class IndividualFactory {
     }
 
     public generateRandomlyFrom(ind: Individual): Individual {
-        let node = Utils.nextBoolean()
+        const node = Utils.nextBoolean()
             ? this.getRandomCharFromLeft()
             : this.getRandomCharFromRight();
 
@@ -349,24 +348,24 @@ export default class IndividualFactory {
     }
 
     public wrapNodeWithGroup(ind: Individual, node: Node): Individual {
-        let index = ind.getNodes().indexOf(node);
-        let neo = ind.clone();
-        let neoNode = neo.getNodes()[index];
-        let parent = neo.getParentOf(neoNode);
+        const index = ind.getNodes().indexOf(node);
+        const neo = ind.clone();
+        const neoNode = neo.getNodes()[index];
+        const parent = neo.getParentOf(neoNode);
         parent.swapChild(neoNode, new GroupFunc([neoNode]));
 
         return neo;
     }
 
     public addBackref(ind: Individual, node: Node, number: number = 1): Individual {
-        let func = new BackrefFunc();
+        const func = new BackrefFunc();
         func.number = number;
         return this.concatenateToNode(ind, node, func);
     }
 
     public isNodeWrappedBy(ind: Individual, node: Node, type: FuncTypes): boolean {
-        let parents = ind.getParentsOf(node);
-        return parents.some(parent => parent.is(type));
+        const parents = ind.getParentsOf(node);
+        return parents.some((parent) => parent.is(type));
     }
 
     public isNodeWrappedByGroup(node: Node, ind: Individual): boolean {

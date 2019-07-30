@@ -1,18 +1,16 @@
-import Func, { FuncTypes } from "./Func";
-
+import { Func, FuncTypes } from "./Func";
 
 export enum NodeTypes {
     terminal = 'terminal',
     func = 'function',
 }
 
-
-export default interface Node {
+export interface Node {
+    readonly nodeType: NodeTypes;
     clone(): Node;
     toString(): string;
     toDot(i: number): string;
     toRegex(): RegExp;
-    readonly nodeType: NodeTypes;
     isEmpty(): boolean;
 
     is(type: NodeTypes | FuncTypes): boolean;
@@ -20,4 +18,3 @@ export default interface Node {
 
     asFunc(): Func;
 }
-

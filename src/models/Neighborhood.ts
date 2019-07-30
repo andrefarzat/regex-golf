@@ -1,37 +1,36 @@
-import Individual from "./Individual";
 import { LocalSearch } from "../localsearch/LocalSearch";
-import Func, { FuncTypes } from "../nodes/Func";
-import Terminal from "../nodes/Terminal";
-import RangeFunc from "../nodes/RangeFunc";
+import { Logger } from "../Logger";
+import { AnyCharFunc } from "../nodes/AnyCharFunc";
+import { Func, FuncTypes } from "../nodes/Func";
+import { ListFunc } from "../nodes/ListFunc";
+import { LookaheadFunc } from "../nodes/LookaheadFunc";
+import { LookbehindFunc } from "../nodes/LookbehindFunc";
 import { NodeTypes } from "../nodes/Node";
-import Utils from "../Utils";
-import LookaheadFunc from "../nodes/LookaheadFunc";
-import LookbehindFunc from "../nodes/LookbehindFunc";
-import Logger from "../Logger";
-import ListFunc from "../nodes/ListFunc";
-import ZeroOrMoreFunc from "../nodes/ZeroOrMore";
-import OneOrMoreFunc from "../nodes/OneOrMoreFunc";
-import AnyCharFunc from "../nodes/AnyCharFunc";
-import OptionalFunc from "../nodes/OptionalFunc";
-import OrFunc from "../nodes/OrFunc";
+import { OneOrMoreFunc } from "../nodes/OneOrMoreFunc";
+import { OptionalFunc } from "../nodes/OptionalFunc";
+import { OrFunc } from "../nodes/OrFunc";
+import { RangeFunc } from "../nodes/RangeFunc";
+import { Terminal } from "../nodes/Terminal";
+import { ZeroOrMoreFunc } from "../nodes/ZeroOrMore";
+import { Utils } from "../Utils";
+import { Individual } from "./Individual";
 
-
-export default class Neighborhood {
-    protected hood?: IterableIterator<Individual>;
-    public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
-    public maxSimultaneousEvaluations = 2;
-
-    public constructor(public solution: Individual, public program: LocalSearch) { }
+export class Neighborhood {
 
     public get factory() {
         return this.program.factory;
     }
+    public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
+    public maxSimultaneousEvaluations = 2;
+    protected hood?: IterableIterator<Individual>;
+
+    public constructor(public solution: Individual, public program: LocalSearch) { }
 
     public async evaluate(evalFn: (ind: Individual) => void) {
         let i = 0;
 
-        for (let ind of this.getGenerator()) {
-            if (!ind.isValid()) continue;
+        for (const ind of this.getGenerator()) {
+            if (!ind.isValid()) { continue; }
 
             await Utils.waitFor(() => i < this.maxSimultaneousEvaluations);
             i++;
@@ -41,53 +40,53 @@ export default class Neighborhood {
             i--;
         }
 
-        await Utils.waitFor(() => i == 0);
+        await Utils.waitFor(() => i === 0);
     }
 
     public * getGenerator() {
-        let { solution } = this;
+        const { solution } = this;
 
-        for (let ind of this.generateByRemovingNodes(solution)) {
+        for (const ind of this.generateByRemovingNodes(solution)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingStartOperator(solution)) {
+        for (const ind of this.generateByAddingStartOperator(solution)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingEndOperator(solution)) {
+        for (const ind of this.generateByAddingEndOperator(solution)) {
             yield ind;
         }
 
-        for (let ind of this.generateBySwapping(solution)) {
+        for (const ind of this.generateBySwapping(solution)) {
             yield ind;
         }
 
-        for (let ind of this.generateByConcatenating(solution)) {
+        for (const ind of this.generateByConcatenating(solution)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingRangeOperator(solution)) {
+        for (const ind of this.generateByAddingRangeOperator(solution)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingNegationOperator(solution)) {
+        for (const ind of this.generateByAddingNegationOperator(solution)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingGivenOperator(solution, ZeroOrMoreFunc)) {
+        for (const ind of this.generateByAddingGivenOperator(solution, ZeroOrMoreFunc)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingGivenOperator(solution, OneOrMoreFunc)) {
+        for (const ind of this.generateByAddingGivenOperator(solution, OneOrMoreFunc)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingGivenOperator(solution, AnyCharFunc)) {
+        for (const ind of this.generateByAddingGivenOperator(solution, AnyCharFunc)) {
             yield ind;
         }
 
-        for (let ind of this.generateByAddingGivenOperator(solution, OptionalFunc)) {
+        for (const ind of this.generateByAddingGivenOperator(solution, OptionalFunc)) {
             yield ind;
         }
 
@@ -99,34 +98,34 @@ export default class Neighborhood {
         //     yield ind;
         // }
 
-        for (let ind of this.generateByExtractingSingleNode(solution)) {
+        for (const ind of this.generateByExtractingSingleNode(solution)) {
             yield ind;
         }
     }
 
     public * generateByRemovingNodes(solution: Individual) {
-        let nodes = solution.getNodes();
+        const nodes = solution.getNodes();
 
         // Removing a node
-        for (let node of nodes) {
-            if (solution.isTheRootNode(node)) continue;
-            if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+        for (const node of nodes) {
+            if (solution.isTheRootNode(node)) { continue; }
+            if (node.is(NodeTypes.terminal) && node.toString() == '') { continue; }
 
-            let neo = this.factory.removeNode(solution, node);
-            if (neo.isValid()) yield neo;
+            const neo = this.factory.removeNode(solution, node);
+            if (neo.isValid()) { yield neo; }
         }
     }
 
     public * generateByAddingStartOperator(solution: Individual) {
         // Let's get all OR operators first
-        let orNodes = solution.getFuncs().filter(func => func instanceof OrFunc) as OrFunc[];
+        const orNodes = solution.getFuncs().filter((func) => func instanceof OrFunc) as OrFunc[];
 
         if (orNodes.length == 0) {
             // No or nodes. Ok. Let's add a single start operator to the first terminal and that's it
-            for (let terminal of solution.getTerminals()) {
-                if (terminal.value == '') continue;
+            for (const terminal of solution.getTerminals()) {
+                if (terminal.value == '') { continue; }
 
-                let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
+                const neo = this.factory.addStartOperatorToTerminal(solution, terminal);
                 if (neo.isValid()) {
                     yield neo;
                     break;
@@ -134,12 +133,12 @@ export default class Neighborhood {
             }
         } else {
             // Ok. Let's add a start operator to last terminal together with the OR
-            for (let orNode of orNodes) {
-                for (let side of ['left', 'right']) {
-                    let terminal = orNode.getFirstTerminalFrom(side as any);
-                    if (!terminal) break;
+            for (const orNode of orNodes) {
+                for (const side of ['left', 'right']) {
+                    const terminal = orNode.getFirstTerminalFrom(side as any);
+                    if (!terminal) { break; }
 
-                    let neo = this.factory.addStartOperatorToTerminal(solution, terminal);
+                    const neo = this.factory.addStartOperatorToTerminal(solution, terminal);
                     if (neo.isValid()) {
                         yield neo;
                     }
@@ -150,18 +149,18 @@ export default class Neighborhood {
 
     public * generateByAddingEndOperator(solution: Individual) {
         // Let's get all OR operators first
-        let orNodes = solution.getFuncs().filter(func => func instanceof OrFunc) as OrFunc[];
+        const orNodes = solution.getFuncs().filter((func) => func instanceof OrFunc) as OrFunc[];
 
         if (orNodes.length == 0) {
             // No or nodes. Ok. Let's add a single start operator to the last terminal and that's it
-            let terminals = solution.getTerminals();
+            const terminals = solution.getTerminals();
             do {
-                let terminal = terminals.pop();
-                if (!terminal) break;
+                const terminal = terminals.pop();
+                if (!terminal) { break; }
 
-                if (terminal.value == '') continue;
+                if (terminal.value == '') { continue; }
 
-                let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
+                const neo = this.factory.addEndOperatorToTerminal(solution, terminal);
                 if (neo.isValid()) {
                     yield neo;
                     break;
@@ -169,12 +168,12 @@ export default class Neighborhood {
             } while (true);
         } else {
             // Ok. Let's add a start operator to last terminal together with the OR
-            for (let orNode of orNodes) {
-                for (let side of ['left', 'right']) {
-                    let terminal = orNode.getLastTerminalFrom(side as any);
-                    if (!terminal) break;
+            for (const orNode of orNodes) {
+                for (const side of ['left', 'right']) {
+                    const terminal = orNode.getLastTerminalFrom(side as any);
+                    if (!terminal) { break; }
 
-                    let neo = this.factory.addEndOperatorToTerminal(solution, terminal);
+                    const neo = this.factory.addEndOperatorToTerminal(solution, terminal);
                     if (neo.isValid()) {
                         yield neo;
                     }
@@ -184,50 +183,50 @@ export default class Neighborhood {
     }
 
     public * generateBySwapping(solution: Individual) {
-        let terminals = solution.getTerminals();
+        const terminals = solution.getTerminals();
 
         // Replacing / Swap
-        for (let terminal of terminals) {
-            if (terminal.value == '') continue;
+        for (const terminal of terminals) {
+            if (terminal.value == '') { continue; }
 
-            for (let char of this.program.validLeftChars) {
-                let neo = this.factory.replaceNode(solution, terminal, new Terminal(char));
-                if (neo.isValid() && neo.toString() !== solution.toString()) yield neo;
+            for (const char of this.program.validLeftChars) {
+                const neo = this.factory.replaceNode(solution, terminal, new Terminal(char));
+                if (neo.isValid() && neo.toString() !== solution.toString()) { yield neo; }
             }
 
-            for (let specialChar of this.specialChars) {
-                let neo = this.factory.replaceNode(solution, terminal, new Terminal(specialChar));
-                if (neo.isValid() && neo.toString() !== solution.toString()) yield neo;
+            for (const specialChar of this.specialChars) {
+                const neo = this.factory.replaceNode(solution, terminal, new Terminal(specialChar));
+                if (neo.isValid() && neo.toString() !== solution.toString()) { yield neo; }
             }
         }
     }
 
     public * generateByConcatenating(solution: Individual) {
         // Concatenating
-        for (let node of solution.getNodes()) {
-            if (solution.isTheRootNode(node)) continue;
-            if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
+        for (const node of solution.getNodes()) {
+            if (solution.isTheRootNode(node)) { continue; }
+            if (node.is(NodeTypes.terminal) && node.toString() == '') { continue; }
 
-            for (let char of this.program.validLeftChars) {
-                let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
-                if (neo.isValid()) yield neo;
+            for (const char of this.program.validLeftChars) {
+                const neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
+                if (neo.isValid()) { yield neo; }
             }
 
-            for (let char of this.specialChars) {
-                let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
-                if (neo.isValid()) yield neo;
+            for (const char of this.specialChars) {
+                const neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
+                if (neo.isValid()) { yield neo; }
             }
         }
     }
 
     public getAllRanges(): RangeFunc[] {
-        let ranges: RangeFunc[] = [];
-        let chars = Object.assign([], this.program.validLeftChars).sort();
+        const ranges: RangeFunc[] = [];
+        const chars = Object.assign([], this.program.validLeftChars).sort();
 
-        for (let c1 of chars) {
-            for (let c2 of chars) {
-                if (c1 >= c2) continue;
-                let func = new RangeFunc();
+        for (const c1 of chars) {
+            for (const c2 of chars) {
+                if (c1 >= c2) { continue; }
+                const func = new RangeFunc();
 
                 func.from = c1;
                 func.to = c2;
@@ -241,99 +240,87 @@ export default class Neighborhood {
 
     public * generateByAddingRangeOperator(solution: Individual) {
         // Operator: Range
-        for (let node of solution.getNodes()) {
-            if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
-            if (node === solution.tree) continue;
+        for (const node of solution.getNodes()) {
+            if (node.is(NodeTypes.terminal) && node.toString() == '') { continue; }
+            if (node === solution.tree) { continue; }
 
-            for (let range of this.getAllRanges()) {
+            for (const range of this.getAllRanges()) {
                 let neo = this.factory.replaceNode(solution, node, range);
-                if (neo.isValid()) yield neo;
+                if (neo.isValid()) { yield neo; }
 
                 neo = this.factory.concatenateToNode(solution, node, range);
-                if (neo.isValid()) yield neo;
+                if (neo.isValid()) { yield neo; }
             }
         }
     }
 
     public * generateByAddingNegationOperator(solution: Individual) {
         // Operator: Negation
-        for (let node of solution.getNodes()) {
-            if (node.toString() == '') continue;
-            if (node === solution.tree) continue;
+        for (const node of solution.getNodes()) {
+            if (node.toString() == '') { continue; }
+            if (node === solution.tree) { continue; }
 
-            for (let char of this.program.rightCharsNotInLeft) {
-                let func = new ListFunc([new Terminal(char)], 'negative');
+            for (const char of this.program.rightCharsNotInLeft) {
+                const func = new ListFunc([new Terminal(char)], 'negative');
 
                 let neo = this.factory.replaceNode(solution, node, func);
-                if (neo.isValid()) yield neo;
+                if (neo.isValid()) { yield neo; }
 
                 neo = this.factory.concatenateToNode(solution, node, func);
-                if (neo.isValid()) yield neo;
+                if (neo.isValid()) { yield neo; }
 
                 if (node.is(FuncTypes.list) && (node as ListFunc).negative) {
                     neo = this.factory.appendToNode(solution, node, func);
-                    if (neo.isValid()) yield neo;
+                    if (neo.isValid()) { yield neo; }
                 }
             }
         }
     }
 
-    protected * generateByConcatenatingFromRightChars(solution: Individual) {
-        let nodes = solution.getNodes();
-
-        // Operator: Concatenation (but from right chars not in left)
-        for (let char of this.program.rightCharsNotInLeft) {
-            for (let node of nodes) {
-                if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
-                let neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
-                if (neo.isValid()) yield neo;
-            }
-        }
-    }
-
+    // tslint:disable-next-line variable-name
     public * generateByAddingGivenOperator(solution: Individual, FuncClass: any) {
-        let nodes = solution.getNodes();
+        const nodes = solution.getNodes();
 
         // Operators: zeroOrMore, oneOrMore, anyChar and optional
-        let func = new FuncClass();
+        const func = new FuncClass();
+        let neo: Individual;
+        for (const node of nodes) {
+            if (node.is(NodeTypes.terminal) && node.toString() == '') { continue; }
+            if (node === solution.tree) { continue; }
 
-        for (let node of nodes) {
-            if (node.is(NodeTypes.terminal) && node.toString() == '') continue;
-            if (node === solution.tree) continue;
-
-            let neo = this.factory.replaceNode(solution, node, func);
-            if (neo.isValid()) yield neo;
+            neo = this.factory.replaceNode(solution, node, func);
+            if (neo.isValid()) { yield neo; }
 
             neo = this.factory.concatenateToNode(solution, node, func);
-            if (neo.isValid()) yield neo;
+            if (neo.isValid()) { yield neo; }
         }
 
-        let neo = this.factory.appendAtEnd(solution, func);
-        if (neo.isValid()) yield neo;
+        neo = this.factory.appendAtEnd(solution, func);
+        if (neo.isValid()) { yield neo; }
     }
 
     public * generateByAddingBackrefOperator(solution: Individual) {
-        let alreadyGenerated: string[] = [];
+        const alreadyGenerated: string[] = [];
 
         // Operator: Backref
-        for (let node of solution.getNodes()) {
-            if (node.toString() == '') continue;
+        for (const node of solution.getNodes()) {
+            if (node.toString() === '') { continue; }
 
-            let nodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(node, solution);
-            if (nodeIsWrappedByGroup) continue;
+            const nodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(node, solution);
+            if (nodeIsWrappedByGroup) { continue; }
 
-            let current = this.factory.wrapNodeWithGroup(solution, node);
-            let length = new Set(current.getFuncs().filter(func => func.is(FuncTypes.group))).size;
+            const current = this.factory.wrapNodeWithGroup(solution, node);
+            const length = new Set(current.getFuncs().filter((func) => func.is(FuncTypes.group))).size;
 
             // We loop for each group in the current solution to add a backref to each
             for (let i = 1; i <= length; i++) {
-                for (let localNode of current.getNodes()) {
-                    if (localNode.toString() === '') continue;
+                for (const localNode of current.getNodes()) {
+                    if (localNode.toString() === '') { continue; }
 
-                    let localNodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(localNode, current);
-                    if (localNodeIsWrappedByGroup) continue;
+                    const localNodeIsWrappedByGroup = this.factory.isNodeWrappedByGroup(localNode, current);
+                    if (localNodeIsWrappedByGroup) { continue; }
 
-                    let neo = this.factory.addBackref(current, localNode, i);
+                    const neo = this.factory.addBackref(current, localNode, i);
 
                     if (alreadyGenerated.includes(neo.toString())) {
                         continue;
@@ -344,25 +331,25 @@ export default class Neighborhood {
                     }
 
                     alreadyGenerated.push(neo.toString());
-                    if (neo.isValid()) yield neo;
+                    if (neo.isValid()) { yield neo; }
                 }
             }
         }
     }
 
     public isValidBackref(str: string, i: number): boolean {
-        let groups = Utils.times(i, () => `\\(.*\\)`).join('.*');
-        let regex = new RegExp(`^.*${groups}.*\\\\${i}`, "g");
+        const groups = Utils.times(i, () => `\\(.*\\)`).join('.*');
+        const regex = new RegExp(`^.*${groups}.*\\\\${i}`, "g");
         return regex.test(str);
     }
 
     public * generateByExtractingSingleNode(solution: Individual) {
-        for (let node of solution.getNodes()) {
-            if (solution.isTheRootNode(node)) continue;
-            if (node.toString() === '') continue;
+        for (const node of solution.getNodes()) {
+            if (solution.isTheRootNode(node)) { continue; }
+            if (node.toString() === '') { continue; }
 
             try {
-                let neo = this.factory.createFromString(node.toString());
+                const neo = this.factory.createFromString(node.toString());
                 if (neo.isValid()) {
                     yield neo;
                 } else {
@@ -376,37 +363,50 @@ export default class Neighborhood {
     }
 
     public * generateByAddingLookahead(solution: Individual) {
-        for (let terminal of solution.getTerminals()) {
-            if (terminal.toString() === '') continue;
+        for (const terminal of solution.getTerminals()) {
+            if (terminal.toString() === '') { continue; }
 
-            for (let char of this.program.leftCharsNotInRight) {
-                let lookahead = new LookaheadFunc([new Terminal(char)], 'positive');
-                let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
-                if (neo.isValid()) yield neo;
+            for (const char of this.program.leftCharsNotInRight) {
+                const lookahead = new LookaheadFunc([new Terminal(char)], 'positive');
+                const neo = this.factory.concatenateToNode(solution, terminal, lookahead);
+                if (neo.isValid()) { yield neo; }
             }
 
-            for (let char of this.program.rightCharsNotInLeft) {
-                let lookahead = new LookaheadFunc([new Terminal(char)], 'negative');
-                let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
-                if (neo.isValid()) yield neo;
+            for (const char of this.program.rightCharsNotInLeft) {
+                const lookahead = new LookaheadFunc([new Terminal(char)], 'negative');
+                const neo = this.factory.concatenateToNode(solution, terminal, lookahead);
+                if (neo.isValid()) { yield neo; }
             }
         }
     }
 
     public * generateByAddingLookbehind(solution: Individual) {
-        for (let terminal of solution.getTerminals()) {
-            if (terminal.toString() === '') continue;
+        for (const terminal of solution.getTerminals()) {
+            if (terminal.toString() === '') { continue; }
 
-            for (let char of this.program.leftCharsNotInRight) {
-                let lookahead = new LookbehindFunc([new Terminal(char)], 'positive');
-                let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
-                if (neo.isValid()) yield neo;
+            for (const char of this.program.leftCharsNotInRight) {
+                const lookahead = new LookbehindFunc([new Terminal(char)], 'positive');
+                const neo = this.factory.concatenateToNode(solution, terminal, lookahead);
+                if (neo.isValid()) { yield neo; }
             }
 
-            for (let char of this.program.rightCharsNotInLeft) {
-                let lookahead = new LookbehindFunc([new Terminal(char)], 'negative');
-                let neo = this.factory.concatenateToNode(solution, terminal, lookahead);
-                if (neo.isValid()) yield neo;
+            for (const char of this.program.rightCharsNotInLeft) {
+                const lookahead = new LookbehindFunc([new Terminal(char)], 'negative');
+                const neo = this.factory.concatenateToNode(solution, terminal, lookahead);
+                if (neo.isValid()) { yield neo; }
+            }
+        }
+    }
+
+    protected * generateByConcatenatingFromRightChars(solution: Individual) {
+        const nodes = solution.getNodes();
+
+        // Operator: Concatenation (but from right chars not in left)
+        for (const char of this.program.rightCharsNotInLeft) {
+            for (const node of nodes) {
+                if (node.is(NodeTypes.terminal) && node.toString() == '') { continue; }
+                const neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
+                if (neo.isValid()) { yield neo; }
             }
         }
     }

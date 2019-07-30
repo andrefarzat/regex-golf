@@ -1,7 +1,6 @@
-import Func, { FuncTypes } from './Func';
+import { Func, FuncTypes } from './Func';
 
-
-export default class OptionalFunc extends Func {
+export class OptionalFunc extends Func {
     public type: FuncTypes = FuncTypes.optional;
 
     public toString(): string {

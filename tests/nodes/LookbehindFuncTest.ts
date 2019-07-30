@@ -1,12 +1,10 @@
 import { Expect, Test, TestCase, TestFixture } from "alsatian";
 
-import LookbehindFunc from '../../src/nodes/LookbehindFunc';
-import Terminal from "../../src/nodes/Terminal";
-
-
+import { LookbehindFunc } from '../../src/nodes/LookbehindFunc';
+import { Terminal } from "../../src/nodes/Terminal";
 
 @TestFixture()
-export default class LookbehindFuncTest {
+export class LookbehindFuncTest {
 
     @Test()
     public testCreateLookbehindFunc() {
@@ -16,7 +14,7 @@ export default class LookbehindFuncTest {
         func = new LookbehindFunc([new Terminal('a'), new Terminal('c')], 'negative');
         Expect(func.toString()).toBe('(?<!ac)');
 
-        let neo = func.clone();
+        const neo = func.clone();
         Expect(func).toBe(func);
         Expect(func).not.toBe(neo);
         Expect(func.toString()).toBe(neo.toString());

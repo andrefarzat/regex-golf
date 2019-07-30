@@ -1,7 +1,7 @@
 import * as cp from 'child_process';
 import * as moment from 'moment';
-import Individual from '../models/Individual';
-import Logger from '../Logger';
+import { Logger } from '../Logger';
+import { Individual } from '../models/Individual';
 
 interface EvaluationResult {
     index: number;
@@ -11,7 +11,7 @@ interface EvaluationResult {
     matchesOnRight: number;
 }
 
-export default class Evaluator {
+export class Evaluator {
     public worker: cp.ChildProcess;
     public cache: {[key: number]: Individual} = {};
 
@@ -41,8 +41,8 @@ export default class Evaluator {
     }
 
     public onMessage(result: EvaluationResult) {
-        if (typeof result === 'string') return;
-        let ind = this.cache[result.index];
+        if (typeof result === 'string') { return; }
+        const ind = this.cache[result.index];
 
         if (!ind) {
             throw new Error('How come?');
@@ -68,15 +68,16 @@ export default class Evaluator {
         return new Promise<number>(async (resolve, reject) => {
             this.cache[ind.evaluationIndex] = ind;
 
-            let worker = await this.getWorker();
-            worker.send({ regex: ind.toString(), index: ind.evaluationIndex, left: this.left, right: this.right }, err => {
-                if (err) return Logger.error("Super error", err.message);
+            const worker = await this.getWorker();
+            const params = { regex: ind.toString(), index: ind.evaluationIndex, left: this.left, right: this.right };
+            worker.send(params, (err) => {
+                if (err) { return Logger.error("Super error", err.message); }
 
                 ind.evaluationStartTime = new Date();
 
-                let fn = () => {
-                    let now = moment();
-                    let diff = now.diff(ind.evaluationStartTime, 'milliseconds');
+                const fn = () => {
+                    const now = moment();
+                    const diff = now.diff(ind.evaluationStartTime, 'milliseconds');
 
                     if (ind.evaluationEndTime) {
                         resolve(ind.fitness);

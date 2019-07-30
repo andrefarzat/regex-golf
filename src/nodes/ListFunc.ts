@@ -1,16 +1,15 @@
-import Func, { FuncTypes } from './Func';
+import { Func, FuncTypes } from './Func';
 
 import { NegativePositive } from './LookaheadFunc';
-import Node, { NodeTypes } from './Node';
+import { Node, NodeTypes } from './Node';
 
-
-export default class ListFunc extends Func {
+export class ListFunc extends Func {
     public type: FuncTypes = FuncTypes.list;
     public negative: boolean = false;
 
     public constructor(
         public children: Node[],
-        negativePositive: NegativePositive = 'positive'
+        negativePositive: NegativePositive = 'positive',
     ) {
         super(children);
         this.negative = negativePositive == 'negative';
@@ -21,8 +20,8 @@ export default class ListFunc extends Func {
     }
 
     public clone() {
-        let negativePositive: NegativePositive = this.negative ? 'negative' : 'positive';
-        return new ListFunc(this.children.map(child => child.clone()), negativePositive);
+        const negativePositive: NegativePositive = this.negative ? 'negative' : 'positive';
+        return new ListFunc(this.children.map((child) => child.clone()), negativePositive);
     }
 
     public addChild(child: Node) {
@@ -34,6 +33,6 @@ export default class ListFunc extends Func {
     }
 
     public isEmpty(): boolean {
-        return this.children.every(child => child.toString() === '');
+        return this.children.every((child) => child.toString() === '');
     }
 }

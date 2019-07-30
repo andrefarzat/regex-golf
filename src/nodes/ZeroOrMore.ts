@@ -1,7 +1,6 @@
-import Func, { FuncTypes } from './Func';
+import { Func, FuncTypes } from './Func';
 
-
-export default class ZeroOrMoreFunc extends Func {
+export class ZeroOrMoreFunc extends Func {
     public type: FuncTypes = FuncTypes.zeroOrMore;
 
     public toString(): string {

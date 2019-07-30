@@ -1,5 +1,5 @@
-import { TestFixture, Test, Expect, TestCase } from "alsatian";
-import Utils from "../src/Utils";
+import { Expect, Test, TestCase, TestFixture } from "alsatian";
+import { Utils } from "../src/Utils";
 
 @TestFixture('UtilsTest')
 export class UtilsTest {
@@ -11,7 +11,6 @@ export class UtilsTest {
     public testGetUniqueChars(str: string, expectedResult: string[]) {
         Expect(Utils.getUniqueChars(str)).toEqual(expectedResult);
     }
-
 
     @Test('testIsSequence')
     @TestCase('abc', true)

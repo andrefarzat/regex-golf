@@ -1,15 +1,30 @@
 import * as moment from 'moment';
 
-import Func, { FuncTypes } from "../nodes/Func";
-import Terminal from "../nodes/Terminal";
-import Node, { NodeTypes } from "../nodes/Node";
+import { ConcatFunc } from '../nodes/ConcatFunc';
+import { Func, FuncTypes } from "../nodes/Func";
+import { Node, NodeTypes } from "../nodes/Node";
+import { Terminal } from "../nodes/Terminal";
 import { NodeShrinker } from '../shrinker/NodeShrinker';
-import Utils from "../Utils";
-import ConcatFunc from '../nodes/ConcatFunc';
+import { Utils } from "../Utils";
 
+export class Individual {
 
-export default class Individual {
-    protected _string: string;
+    public get isEvaluated(): boolean {
+        return this.evaluationIndex != undefined;
+    }
+
+    public get fitness(): number {
+        return Individual.weight * (this.matchesOnLeft - this.matchesOnRight) - this.toString().length;
+    }
+
+    public get evaluationTime(): number {
+        if (!this.evaluationEndTime) { return 0; }
+        return moment(this.evaluationEndTime).diff(this.evaluationStartTime, 'millisecond');
+    }
+
+    public static setWeight(weight: number) {
+        Individual.weight = weight;
+    }
     private static weight = 10;
 
     public id = Utils.getNextId();
@@ -29,39 +44,23 @@ export default class Individual {
     public hasTimedOut = false;
 
     public invalidRegexes = ['^', '.*', '^.*',  '.*$', '.+', '.+$', '$', '+?', '[]', '[^]', `\b`];
-
-    public get isEvaluated(): boolean {
-        return this.evaluationIndex != undefined;
-    }
-
-    public get fitness(): number {
-        return Individual.weight * (this.matchesOnLeft - this.matchesOnRight) - this.toString().length;
-    }
-
-    public get evaluationTime(): number {
-        if (!this.evaluationEndTime) return 0;
-        return moment(this.evaluationEndTime).diff(this.evaluationStartTime, 'millisecond');
-    }
-
-    public static setWeight(weight: number) {
-        Individual.weight = weight;
-    }
+    protected _string: string;
 
     public toCSV(withDot: boolean = false): string {
-        let arr = [
+        const arr = [
             this.toString(),
             this.shrink().toString(),
             this.fitness,
             this.evaluationIndex,
         ];
 
-        if (withDot) arr.push(this.toDot());
+        if (withDot) { arr.push(this.toDot()); }
 
         return arr.join(',');
     }
 
     public toString(): string {
-        if (this._string === undefined) this._string = this.tree.toString();
+        if (this._string === undefined) { this._string = this.tree.toString(); }
         return this._string;
     }
 
@@ -99,14 +98,14 @@ export default class Individual {
             return false;
         }
 
-        let str = this.toString();
-        if (str.length == 0) return false;
-        if (str.substr(0, 1) == '|') return false;
-        if (str.substr(-1) == '|') return false;
-        if (this.invalidRegexes.includes(str)) return false;
-        if (/\[\^[^\]]*\[\^/.test(str)) return false;
-        if (/^\\n/.test(str)) return false;
-        if (/\/\?/.test(str)) return false;
+        const str = this.toString();
+        if (str.length == 0) { return false; }
+        if (str.substr(0, 1) == '|') { return false; }
+        if (str.substr(-1) == '|') { return false; }
+        if (this.invalidRegexes.includes(str)) { return false; }
+        if (/\[\^[^\]]*\[\^/.test(str)) { return false; }
+        if (/^\\n/.test(str)) { return false; }
+        if (/\/\?/.test(str)) { return false; }
 
         return true;
     }
@@ -116,11 +115,11 @@ export default class Individual {
     }
 
     public hasComplexEvaluation(): boolean {
-        return this.tree.getFuncs().some(func => this.COMPLEX_FUNC_TYPES.includes(func.type));
+        return this.tree.getFuncs().some((func) => this.COMPLEX_FUNC_TYPES.includes(func.type));
     }
 
     public clone(): Individual {
-        let ind = new Individual();
+        const ind = new Individual();
         ind.tree = this.tree.clone();
         ind.leftPoints = this.leftPoints;
         ind.rightPoints = this.rightPoints;
@@ -130,10 +129,10 @@ export default class Individual {
     }
 
     public getParentsOf(node: Node): Func[] {
-        let parents: Func[] = [];
+        const parents: Func[] = [];
 
         do {
-            let parent = this.getParentOf(node);
+            const parent = this.getParentOf(node);
             if (parent) {
                 parents.unshift(parent);
                 node = parent;
@@ -146,9 +145,9 @@ export default class Individual {
     }
 
     public getParentOf(node: Node): Func | undefined {
-        let funcs = this.getFuncs();
+        const funcs = this.getFuncs();
 
-        for (let func of funcs) {
+        for (const func of funcs) {
             if (func.hasTheChild(node)) {
                 return func;
             }
@@ -200,11 +199,11 @@ export default class Individual {
     }
 
     public shrink(): Individual {
-        let ind = new Individual();
+        const ind = new Individual();
         let node = NodeShrinker.shrinkRoot(this.tree);
 
         if (node.nodeType === 'terminal') {
-            let func = new ConcatFunc([node]);
+            const func = new ConcatFunc([node]);
             node = func;
         }
 

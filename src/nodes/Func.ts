@@ -1,5 +1,5 @@
-import Node, {NodeTypes} from "./Node";
-import Terminal from "./Terminal";
+import { Node, NodeTypes } from "./Node";
+import { Terminal } from "./Terminal";
 
 export enum FuncTypes {
     concatenation = "•",
@@ -21,27 +21,27 @@ export enum FuncTypes {
     lookbehind = "(?<•)",
 }
 
-
-export default abstract class Func implements Node {
-    public type: FuncTypes = FuncTypes.concatenation;
-    public nodeType: NodeTypes = NodeTypes.func;
-
-    public static Types = FuncTypes;
-    protected static _options: string[] = null;
+export abstract class Func implements Node {
 
     public static get options(): FuncTypes[] {
-        if (!Func._options) { Func._options = Object.keys(FuncTypes).map(key => (FuncTypes as any)[key]); }
+        if (!Func._options) { Func._options = Object.keys(FuncTypes).map((key) => (FuncTypes as any)[key]); }
         return Func._options as FuncTypes[];
     }
+
+    // tslint:disable-next-line:variable-name
+    public static Types = FuncTypes;
+    protected static _options: string[] = null;
+    public type: FuncTypes = FuncTypes.concatenation;
+    public nodeType: NodeTypes = NodeTypes.func;
 
     public constructor(public children: Node[] = []) {}
 
     public toString(): string {
-        return this.children.map(child => child.toString()).join('');
+        return this.children.map((child) => child.toString()).join('');
     }
 
     public childrenToString(): string {
-        return this.children.map(child => child.toString()).join('');
+        return this.children.map((child) => child.toString()).join('');
     }
 
     public addChild(child: Node) {
@@ -49,12 +49,12 @@ export default abstract class Func implements Node {
     }
 
     public is(type: NodeTypes | FuncTypes): boolean {
-        if (type == this.nodeType) return true;
+        if (type == this.nodeType) { return true; }
         return type == this.type;
     }
 
     public notIn(types: FuncTypes[]): boolean {
-        return types.every(type => this.is(type));
+        return types.every((type) => this.is(type));
     }
 
     public hasTheChild(node: Node): boolean {
@@ -62,24 +62,24 @@ export default abstract class Func implements Node {
     }
 
     public removeChild(node: Node) {
-        let index = this.children.indexOf(node);
+        const index = this.children.indexOf(node);
         this.children.splice(index, 1);
     }
 
     public clone(): Func {
-        let func = new (this.constructor as any)();
-        func.children = this.children.map(child => child.clone());
+        const func = new (this.constructor as any)();
+        func.children = this.children.map((child) => child.clone());
         return func;
     }
 
     public toDot(i: number): string {
-        let j = i;
-        let result: string[] = [`n${j} [ label = "${this.type}" ]`];
+        const j = i;
+        const result: string[] = [`n${j} [ label = "${this.type}" ]`];
 
         i += 1;
-        for (let node of this.children) {
+        for (const node of this.children) {
             result.push(`n${j} -> n${i}`);
-            let str = node.toDot(i);
+            const str = node.toDot(i);
             result.push(str);
             i += (str.match(/label/g) || []).length;
         }
@@ -88,8 +88,8 @@ export default abstract class Func implements Node {
     }
 
     public swapChild(oldNode: Node, newNode: Node) {
-        let index = this.children.indexOf(oldNode);
-        if (index === -1) throw new Error('[Func.swapChild] Invalid child');
+        const index = this.children.indexOf(oldNode);
+        if (index === -1) { throw new Error('[Func.swapChild] Invalid child'); }
 
         this.children.splice(index, 1, newNode);
     }
@@ -99,7 +99,7 @@ export default abstract class Func implements Node {
     }
 
     public getLeastTerminal(): Terminal {
-        let nodes = this.getNodes();
+        const nodes = this.getNodes();
 
         let node = nodes.pop();
         while (node) {
@@ -114,7 +114,7 @@ export default abstract class Func implements Node {
     }
 
     public getLeastFunc(): Func {
-        let nodes = this.getNodes();
+        const nodes = this.getNodes();
 
         let node = nodes.pop();
         while (node) {
@@ -131,7 +131,7 @@ export default abstract class Func implements Node {
     public getNodes(): Node[] {
         let nodes: Node[] = [];
 
-        for (let child of this.children) {
+        for (const child of this.children) {
             nodes.push(child);
             if (child instanceof Func) {
                 nodes = nodes.concat(child.getNodes());
@@ -142,26 +142,26 @@ export default abstract class Func implements Node {
     }
 
     public getTerminals(): Terminal[] {
-        let nodes: Terminal[] = [];
-        this.getNodes().forEach(node => {
-            if (node instanceof Terminal) nodes.push(node);
+        const nodes: Terminal[] = [];
+        this.getNodes().forEach((node) => {
+            if (node instanceof Terminal) { nodes.push(node); }
         });
         return nodes;
     }
 
     public getFuncs(): Func[] {
-        let nodes: Func[] = [this];
-        this.getNodes().forEach(node => {
-            if (node instanceof Func) nodes.push(node);
+        const nodes: Func[] = [this];
+        this.getNodes().forEach((node) => {
+            if (node instanceof Func) { nodes.push(node); }
         });
         return nodes;
     }
 
     public equals(node: Node): boolean {
         if (node instanceof Func) {
-            if (node.nodeType !== this.nodeType) return false;
-            if (node.type !== this.type) return false;
-            if (node.toString() !== this.toString()) return false;
+            if (node.nodeType !== this.nodeType) { return false; }
+            if (node.type !== this.type) { return false; }
+            if (node.toString() !== this.toString()) { return false; }
             return true;
         }
 
@@ -177,7 +177,7 @@ export default abstract class Func implements Node {
     }
 
     public getFirstTerminal(): Terminal {
-        let nodes = this.getNodes();
+        const nodes = this.getNodes();
 
         let node = nodes.shift();
         while (node) {

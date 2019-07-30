@@ -1,16 +1,15 @@
-import Func, { FuncTypes } from "./Func";
-import Node from "./Node";
+import { Func, FuncTypes } from "./Func";
+import { Node } from "./Node";
 
-
-export default class RangeFunc extends Func {
+export class RangeFunc extends Func {
     public type: FuncTypes = FuncTypes.range;
     public from: string = '';
     public to: string = '';
     public negative: boolean = false;
 
     public clone(): RangeFunc {
-        let func = new RangeFunc();
-        func.children = this.children.map(child => child.clone());
+        const func = new RangeFunc();
+        func.children = this.children.map((child) => child.clone());
         func.from = this.from;
         func.to = this.to;
         func.negative = this.negative;
@@ -18,7 +17,7 @@ export default class RangeFunc extends Func {
     }
 
     public getRangeAsString(): string {
-        let diff = this.to.charCodeAt(0) - this.from.charCodeAt(0);
+        const diff = this.to.charCodeAt(0) - this.from.charCodeAt(0);
 
         if (diff > 2) {
             return `${this.from}-${this.to}`;
@@ -44,16 +43,16 @@ export default class RangeFunc extends Func {
 
     public equals(node: Node): boolean {
         if (node instanceof Func) {
-            if (node.nodeType != this.nodeType) return false;
-            if (node.type == this.type) return (node as RangeFunc).getRangeAsString() == this.getRangeAsString();
-            if (node.type == FuncTypes.list) return node.toString() == this.getRangeAsString();
+            if (node.nodeType !== this.nodeType) { return false; }
+            if (node.type === this.type) { return (node as RangeFunc).getRangeAsString() === this.getRangeAsString(); }
+            if (node.type === FuncTypes.list) { return node.toString() === this.getRangeAsString(); }
         }
 
         return false;
     }
 
     public isEmpty(): boolean {
-        return this.children.every(child => child.toString() === '');
+        return this.children.every((child) => child.toString() === '');
     }
 
 }

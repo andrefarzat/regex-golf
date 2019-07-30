@@ -1,20 +1,19 @@
-import Func, { FuncTypes } from "./Func";
+import { Func, FuncTypes } from "./Func";
 
-
-export default class RepetitionFunc extends Func {
+export class RepetitionFunc extends Func {
     public type: FuncTypes = FuncTypes.repetition;
     public repetitionNumber: string = '1';
 
     public clone(): RepetitionFunc {
-        let func = new RepetitionFunc();
+        const func = new RepetitionFunc();
         func.repetitionNumber = this.repetitionNumber;
-        func.children = this.children.map(child => child.clone());
+        func.children = this.children.map((child) => child.clone());
         return func;
     }
 
     public toString(): string {
-        let text = super.toString();
-        let len = text.length;
+        const text = super.toString();
+        const len = text.length;
 
         if (this.repetitionNumber === '1') {
             return `${text}{1}`;

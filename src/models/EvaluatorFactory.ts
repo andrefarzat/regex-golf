@@ -1,13 +1,12 @@
-import Evaluator from "./Evaluator";
-import Individual from "./Individual";
-import Logger from "../Logger";
+import { Logger } from "../Logger";
+import { Evaluator } from "./Evaluator";
+import { Individual } from "./Individual";
 
-
-export default class EvaluatorFactory {
+export class EvaluatorFactory {
+    public evaluationCount = 0;
     private evaluators: Evaluator[] = [];
     private evaluatorsStatus: {[key: number]: boolean} = {};
     private readonly MAX_EVALUATORS = 1000;
-    public evaluationCount = 0;
 
     public constructor(public left: string[], public right: string[]) { }
 
@@ -16,7 +15,7 @@ export default class EvaluatorFactory {
     }
 
     public async evaluate(ind: Individual): Promise<number> {
-        if (ind.isEvaluated) return Promise.resolve(ind.fitness);
+        if (ind.isEvaluated) { return Promise.resolve(ind.fitness); }
         ind.evaluationIndex = this.getNextEvaluationIndex();
 
         return this.evaluateSimple(ind);
@@ -26,24 +25,61 @@ export default class EvaluatorFactory {
         //     : Promise.resolve(this.evaluateSimple(ind));
     }
 
+    public async getFreeEvaluator() {
+        return new Promise<Evaluator>((resolve) => {
+            const fn = () => {
+                // tslint:disable-next-line:forin
+                for (const index in this.evaluatorsStatus) {
+                    const status = this.evaluatorsStatus[index];
+                    if (status === true) {
+                        this.evaluatorsStatus[index] = false;
+                        return resolve(this.evaluators[index]);
+                    }
+                }
+
+                if (this.evaluators.length < this.MAX_EVALUATORS) {
+                    const evaluator = new Evaluator(this.left, this.right);
+                    const len = this.evaluators.push(evaluator);
+                    this.evaluatorsStatus[len - 1] = false;
+                    return resolve(evaluator);
+                } else {
+                    setImmediate(fn);
+                }
+            };
+
+            setImmediate(fn);
+        });
+    }
+
+    public setEvaluatorFree(evaluator: Evaluator) {
+        const index = this.evaluators.indexOf(evaluator);
+        this.evaluatorsStatus[index] = true;
+    }
+
+    public close() {
+        for (const evaluator of this.evaluators) {
+            evaluator.finish();
+        }
+    }
+
     protected evaluateSimple(ind: Individual): number {
-        let result = {
+        const result = {
             leftPoints: 0,
             rightPoints: 0,
             matchesOnLeft: 0,
             matchesOnRight: 0,
         };
 
-        let regex = ind.toRegex();
+        const regex = ind.toRegex();
 
-        for (let name of this.left) {
+        for (const name of this.left) {
             if (regex.test(name)) {
                 result.leftPoints += name.length;
                 result.matchesOnLeft += 1;
             }
         }
 
-        for (let name of this.right) {
+        for (const name of this.right) {
             if (regex.test(name)) {
                 result.matchesOnRight += 1;
             } else {
@@ -65,7 +101,7 @@ export default class EvaluatorFactory {
         try {
             evaluator = await this.getFreeEvaluator();
             await evaluator.evaluate(ind);
-        } catch(e) {
+        } catch (e) {
             Logger.error('[Evaluator error]', e);
             process.exit();
         } finally {
@@ -73,41 +109,5 @@ export default class EvaluatorFactory {
         }
 
         return ind.fitness;
-    }
-
-    public async getFreeEvaluator() {
-        return new Promise<Evaluator>((resolve) => {
-            let fn = () => {
-                for (let index in this.evaluatorsStatus) {
-                    let status = this.evaluatorsStatus[index];
-                    if (status === true) {
-                        this.evaluatorsStatus[index] = false;
-                        return resolve(this.evaluators[index]);
-                    }
-                }
-
-                if (this.evaluators.length < this.MAX_EVALUATORS) {
-                    let evaluator = new Evaluator(this.left, this.right);
-                    let len = this.evaluators.push(evaluator);
-                    this.evaluatorsStatus[len - 1] = false;
-                    return resolve(evaluator);
-                } else {
-                    setImmediate(fn);
-                }
-            };
-
-            setImmediate(fn);
-        });
-    }
-
-    public setEvaluatorFree(evaluator: Evaluator) {
-        let index = this.evaluators.indexOf(evaluator);
-        this.evaluatorsStatus[index] = true;
-    }
-
-    public close() {
-        for (let evaluator of this.evaluators) {
-            evaluator.finish();
-        }
     }
 }

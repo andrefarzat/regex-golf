@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import * as Moment from 'moment';
+import * as path from 'path';
 import * as winston from 'winston';
 
 export enum LogLevel {
@@ -12,17 +12,14 @@ export enum LogLevel {
     silly = 5,
 }
 
-export default class Logger {
-    protected static logLevel = LogLevel.warn;
-    protected static instanceName: string;
-    public static _wiston: winston.Logger;
+export class Logger {
 
     protected static get wiston() {
         if (!this._wiston) {
-            let reportRootDir = path.join(__dirname, '..', 'results', 'current');
+            const reportRootDir = path.join(__dirname, '..', 'results', 'current');
 
-            let errorLog = path.join(reportRootDir, 'error.log');
-            let instanceInfo = path.join(reportRootDir, `${this.instanceName}.log`);
+            const errorLog = path.join(reportRootDir, 'error.log');
+            const instanceInfo = path.join(reportRootDir, `${this.instanceName}.log`);
 
             this._wiston = winston.createLogger({
                 level: LogLevel[this.logLevel].toString(),
@@ -31,12 +28,13 @@ export default class Logger {
                     // new winston.transports.Console({ level: 'info' }),
                     new winston.transports.File({ filename: errorLog, level: 'error' }),
                     // new winston.transports.File({ filename: instanceInfo, level: 'info' }),
-                ]
+                ],
             });
         }
 
         return this._wiston;
     }
+    public static _wiston: winston.Logger;
 
     public static init(config: {logLevel: LogLevel, instanceName: string}) {
         this.logLevel = config.logLevel;
@@ -70,4 +68,6 @@ export default class Logger {
     public static silly(...message: string[]) {
         this.log(LogLevel.silly, message.join(' '));
     }
+    protected static logLevel = LogLevel.warn;
+    protected static instanceName: string;
 }

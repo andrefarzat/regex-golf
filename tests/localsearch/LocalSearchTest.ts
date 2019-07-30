@@ -1,15 +1,15 @@
-import { Expect, Test, TestCase, TestFixture, FocusTest, AsyncTest, Timeout } from "alsatian";
+import { AsyncTest, Expect, FocusTest, Test, TestCase, TestFixture, Timeout } from "alsatian";
 
 import { LocalSearch } from "../../src/localsearch/LocalSearch";
-import Utils from "../../src/Utils";
+import { Utils } from "../../src/Utils";
 
+// tslint:disable max-classes-per-file max-line-length
 
 class MyLocalSearch extends LocalSearch {
     public restartFromSolution(): any {
         return null;
     }
 }
-
 
 @TestFixture('LocalSearchTest')
 export class LocalSearchTest {
@@ -28,18 +28,16 @@ export class LocalSearchTest {
 
         Expect(l.getMaxFitness()).toBe(21);
 
-        let inds = ['afoot', 'foo', 'f.o'].map(name => {
-            let ind = l.factory.createFromString(name);
+        const inds = ['afoot', 'foo', 'f.o'].map((name) => {
+            const ind = l.factory.createFromString(name);
             l.evaluator.evaluate(ind);
             return ind;
         });
 
-        inds[0]
-
-        await Utils.waitFor(() => inds.every(ind => ind.isEvaluated));
+        await Utils.waitFor(() => inds.every((ind) => ind.isEvaluated));
 
         let i = 0;
-        inds.forEach(ind => Expect(ind.evaluationIndex).toBe(i++));
+        inds.forEach((ind) => Expect(ind.evaluationIndex).toBe(i++));
 
         l.addSolution(inds[0]);
         Expect(l.getBestSolution()).toBe(inds[0]);
@@ -49,10 +47,5 @@ export class LocalSearchTest {
 
         l.addSolution(inds[2]);
         Expect(l.getBestSolution()).toBe(inds[1]);
-
-        // console.log(l.left);
-
-        // return this.solutions.length > 0 ? this.solutions[0] : this.localSolutions[0];
-
     }
 }

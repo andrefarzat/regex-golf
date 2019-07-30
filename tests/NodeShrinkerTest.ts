@@ -1,7 +1,6 @@
-import { Expect, Test, TestCase, TestFixture, FocusTest } from "alsatian";
+import { Expect, FocusTest, Test, TestCase, TestFixture } from "alsatian";
 
-import IndividualFactory from '../src/models/IndividualFactory';
-
+import { IndividualFactory } from '../src/models/IndividualFactory';
 
 @TestFixture('NodeShrinkerTest')
 export class NodeShrinkerTest {
@@ -13,7 +12,7 @@ export class NodeShrinkerTest {
     @Test('Test Shrink LineBegin')
     public testShrinkLineBegin(txt: string, expectedResult: string) {
         // Let's keep only one lineBegin node
-        let tree = this.individualFactory.createFromString(txt);
+        const tree = this.individualFactory.createFromString(txt);
         Expect(tree.shrink().toString()).toEqual(expectedResult);
     }
 
@@ -23,7 +22,7 @@ export class NodeShrinkerTest {
     @Test('Test Shrink LineEnd')
     public testShrinkLineEnd(txt: string, expectedResult: string) {
         // Let's keep only one lineEnd node
-        let ind = this.individualFactory.createFromString(txt);
+        const ind = this.individualFactory.createFromString(txt);
         Expect(ind.shrink().toString()).toEqual(expectedResult);
     }
 
@@ -35,12 +34,11 @@ export class NodeShrinkerTest {
     @TestCase('[^abc][^abc]{5}', '[^abc]{6}')
     @Test('Test Shrink concatenation')
     public testShrinkConcatenation(txt: string, expectedResult: string) {
-        let ind = this.individualFactory.createFromString(txt);
-        let shrunk = ind.shrink();
+        const ind = this.individualFactory.createFromString(txt);
+        const shrunk = ind.shrink();
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
-
 
     @TestCase('a', 'a')
     @TestCase('bb', 'bb')
@@ -52,8 +50,8 @@ export class NodeShrinkerTest {
     // @TestCase('abcabc', '(abc){2}') <- this should become '(abc)\1'
     @Test('Test Shrink to repetition')
     public testShrinkRepetitionExamples(txt: string, expectedResult: string) {
-        let ind = this.individualFactory.createFromString(txt);
-        let shrunk = ind.shrink();
+        const ind = this.individualFactory.createFromString(txt);
+        const shrunk = ind.shrink();
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
@@ -67,8 +65,8 @@ export class NodeShrinkerTest {
     @TestCase('abc[abcd][abcd]', 'abc[a-d]{2}')
     @Test('Test Shrink to list or range')
     public testShrinkListExamples(txt: string, expectedResult: string) {
-        let ind = this.individualFactory.createFromString(txt);
-        let shrunk = ind.shrink();
+        const ind = this.individualFactory.createFromString(txt);
+        const shrunk = ind.shrink();
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
@@ -76,8 +74,8 @@ export class NodeShrinkerTest {
     @TestCase('z[^abcabc]a', 'z[^abc]a')
     @TestCase('a[^abcdefghijklmnopqrstuvwxyz]z', 'a[^a-z]z')
     public testShrinkNegation(txt: string, expectedResult: string) {
-        let ind = this.individualFactory.createFromString(txt);
-        let shrunk = ind.shrink();
+        const ind = this.individualFactory.createFromString(txt);
+        const shrunk = ind.shrink();
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
@@ -87,8 +85,8 @@ export class NodeShrinkerTest {
     @TestCase('ab[^][^][^][^]', 'ab.{4}')
     @TestCase('a[]b[^]', 'ab.')
     public testEmptyLists(txt: string, expectedResult: string) {
-        let ind = this.individualFactory.createFromString(txt);
-        let shrunk = ind.shrink();
+        const ind = this.individualFactory.createFromString(txt);
+        const shrunk = ind.shrink();
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
@@ -99,12 +97,11 @@ export class NodeShrinkerTest {
     @TestCase('abc{1,}', 'abc+')
     @TestCase('kjasidjaa{1,}', 'kjasidjaa+')
     public testSimpleRepetitionIntoOneAndMore(txt: string, expectedResult: string) {
-        let ind = this.individualFactory.createFromString(txt);
-        let shrunk = ind.shrink();
+        const ind = this.individualFactory.createFromString(txt);
+        const shrunk = ind.shrink();
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }
-
 
     @Test('Random tests')
     @TestCase('[^aton][tu]', '[^anot][tu]')
@@ -115,9 +112,8 @@ export class NodeShrinkerTest {
     // @TestCase('[d-o][b-y][^[h-u]]*', '[d-o][b-y][^\[]*')
     @TestCase('[a-n][p-t]*[^gdnt]$', '[a-n][p-t]*[^dgnt]$')
     public randomTests(txt: string, expectedResult: string) {
-        debugger;
-        let ind = this.individualFactory.createFromString(txt);
-        let shrunk = ind.shrink();
+        const ind = this.individualFactory.createFromString(txt);
+        const shrunk = ind.shrink();
 
         Expect(shrunk.toString()).toEqual(expectedResult);
     }

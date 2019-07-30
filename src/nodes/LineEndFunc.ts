@@ -1,7 +1,6 @@
-import Func, { FuncTypes } from './Func';
+import { Func, FuncTypes } from './Func';
 
-
-export default class LineEndFunc extends Func {
+export class LineEndFunc extends Func {
     public type: FuncTypes = FuncTypes.lineEnd;
 
     public toString(): string {

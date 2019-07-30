@@ -1,15 +1,14 @@
-import Individual from "../models/Individual";
 import * as Moment from "moment";
-import IndividualFactory from "../models/IndividualFactory";
-import Utils from "../Utils";
-import EvaluatorFactory from "../models/EvaluatorFactory";
+import { EvaluatorFactory } from "../models/EvaluatorFactory";
+import { Individual } from "../models/Individual";
+import { IndividualFactory } from "../models/IndividualFactory";
+import { Utils } from "../Utils";
 
 export interface Solution {
     ind: Individual;
     date: Date;
     count: number;
 }
-
 
 export abstract class LocalSearch {
     public left: string[] = [];
@@ -32,7 +31,7 @@ export abstract class LocalSearch {
     public readonly TWO_MINUTES = 1000 * 60 * 2;
 
     constructor(public instanceName: string) {
-        let instance = Utils.loadInstance(instanceName);
+        const instance = Utils.loadInstance(instanceName);
         this.left = instance.left;
         this.right = instance.right;
     }
@@ -46,11 +45,11 @@ export abstract class LocalSearch {
     }
 
     public get leftCharsNotInRight(): string[] {
-        return this.validLeftChars.filter(char => this.validRightChars.indexOf(char) === -1);
+        return this.validLeftChars.filter((char) => this.validRightChars.indexOf(char) === -1);
     }
 
     public get rightCharsNotInLeft(): string[] {
-        return this.validRightChars.filter(char => this.validLeftChars.indexOf(char) === -1);
+        return this.validRightChars.filter((char) => this.validLeftChars.indexOf(char) === -1);
     }
 
     public init() {
@@ -63,13 +62,13 @@ export abstract class LocalSearch {
     }
 
     public extractUniqueChars(text: string[]): { [key: string]: number } {
-        let chars: { [key: string]: number } = {};
-        text.forEach(name => {
-            let uniqueChars = new Set<string>();
-            name.split('').forEach(letter => uniqueChars.add(letter));
+        const chars: { [key: string]: number } = {};
+        text.forEach((name) => {
+            const uniqueChars = new Set<string>();
+            name.split('').forEach((letter) => uniqueChars.add(letter));
 
-            uniqueChars.forEach(char => {
-                if (!(char in chars)) chars[char] = 0;
+            uniqueChars.forEach((char) => {
+                if (!(char in chars)) { chars[char] = 0; }
                 chars[char] += 1;
             });
         });
@@ -78,12 +77,12 @@ export abstract class LocalSearch {
     }
 
     public isValidLeft(ind: Individual): boolean {
-        return this.left.every(name => ind.test(name));
+        return this.left.every((name) => ind.test(name));
     }
 
     public isBest(ind: Individual): boolean {
         try {
-            let fitness = ind.fitness;
+            const fitness = ind.fitness;
             return fitness >= this.getMaxFitness();
         } catch {
             return false;
@@ -92,6 +91,7 @@ export abstract class LocalSearch {
 
     public isValidRegex(str: string): boolean {
         try {
+            // tslint:disable-next-line:no-unused-expression
             new RegExp(str);
             return true;
         } catch {
@@ -140,12 +140,12 @@ export abstract class LocalSearch {
     }
 
     public sorter(a: Individual, b: Individual): number {
-        if (a.fitness > b.fitness) return -1;
-        if (a.fitness < b.fitness) return 1;
+        if (a.fitness > b.fitness) { return -1; }
+        if (a.fitness < b.fitness) { return 1; }
 
-        if (a.toString().length > b.toString().length) return 1;
-        if (a.toString().length < b.toString().length) return -1;
+        if (a.toString().length > b.toString().length) { return 1; }
+        if (a.toString().length < b.toString().length) { return -1; }
 
         return 0;
-    };
+    }
 }

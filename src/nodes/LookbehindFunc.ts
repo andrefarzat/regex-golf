@@ -1,10 +1,9 @@
+import { Func, FuncTypes } from "./Func";
 import { NegativePositive } from './LookaheadFunc';
-import Func, { FuncTypes } from "./Func";
-import Terminal from "./Terminal";
-import Node from './Node';
+import { Node } from './Node';
+import { Terminal } from "./Terminal";
 
-
-export default class LookbehindFunc extends Func {
+export class LookbehindFunc extends Func {
     public type: FuncTypes = FuncTypes.lookbehind;
     public negative!: boolean;
 
@@ -18,8 +17,8 @@ export default class LookbehindFunc extends Func {
     }
 
     public toString(): string {
-        let symbol = this.negative ? '?<!' : '?<=';
-        let text  = super.toString();
+        const symbol = this.negative ? '?<!' : '?<=';
+        const text  = super.toString();
 
         return `(${symbol}${text})`;
     }

@@ -1,46 +1,35 @@
-import { Expect, Test, TestCase, AsyncTest, Timeout, TestFixture, FocusTest, IgnoreTest } from "alsatian";
+import { AsyncTest, Expect, FocusTest, IgnoreTest, Test, TestCase, TestFixture, Timeout } from "alsatian";
 
+import { ILS_Shrink } from "../../src/localsearch/ILS_shrink";
+import { Neighborhood } from "../../src/models/Neighborhood";
+import { AnyCharFunc } from "../../src/nodes/AnyCharFunc";
 
-import Neighborhood from "../../src/models/Neighborhood";
-import ILS_Shrink from "../../src/localsearch/ILS_shrink";
-import Individual from "../../src/models/Individual";
-import { FuncTypes } from "../../src/nodes/Func";
-import AnyCharFunc from "../../src/nodes/AnyCharFunc";
-
+// tslint:disable max-line-length
 
 @TestFixture()
-export default class NeighborhoodTest {
-
-    private removeFromArray(arr: any[], item: any) {
-        let index = arr.indexOf(item);
-        if (index !== -1) {
-            arr.splice(index, 1);
-        }
-    }
+export class NeighborhoodTest {
 
     @Timeout(4000)
     @AsyncTest("Neighborhood evaluation")
     public async testEvaluation() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('a');
+        const initialInd = program.factory.createFromString('a');
         Expect(initialInd.toString()).toEqual('a');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1000;
-
 
         let qtd = 0;
 
-        for(let ind of hood.getGenerator()) {
+        for (const ind of hood.getGenerator()) {
             qtd += 1;
             Expect(ind.isValid()).toBeTruthy();
             Expect(ind.isEvaluated).not.toBeTruthy();
         }
 
-
         let count = 0;
-        await hood.evaluate(ind => {
+        await hood.evaluate((ind) => {
             count += 1;
             Expect(ind.evaluationIndex).toBeDefined();
         });
@@ -51,19 +40,19 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByRemovingNodes")
     public testRemoving() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('abc');
+        const initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateByRemovingNodes(initialInd);
+        const generator = hood.generateByRemovingNodes(initialInd);
         const options = ['bc', 'ac', 'ab'];
 
-        for (let ind of generator) {
-            let index = options.indexOf(ind.toString());
+        for (const ind of generator) {
+            const index = options.indexOf(ind.toString());
             if (index === -1) {
                 Expect.fail(`${ind.toString()} fails`);
             } else {
@@ -80,19 +69,19 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateBySingleNode")
     public testGenerateBySingleNode() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('a[b-e][^z]x{5}');
+        const initialInd = program.factory.createFromString('a[b-e][^z]x{5}');
         Expect(initialInd.toString()).toEqual('a[b-e][^z]x{5}');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateByExtractingSingleNode(initialInd);
-        let options = ['a', '[b-e]', '[^z]', 'z', 'x{5}', 'x'];
+        const generator = hood.generateByExtractingSingleNode(initialInd);
+        const options = ['a', '[b-e]', '[^z]', 'z', 'x{5}', 'x'];
 
-        for (let ind of generator) {
-            let index = options.indexOf(ind.toString());
+        for (const ind of generator) {
+            const index = options.indexOf(ind.toString());
             if (index === -1) {
                 Expect.fail(`${ind.toString()} fails`);
             } else {
@@ -110,7 +99,7 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingStartOperator")
     public testGenerateByAddingStartOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
         // First test: Must add only ONE start operator
         let initialInd = program.factory.createFromString('abc');
@@ -122,8 +111,8 @@ export default class NeighborhoodTest {
         let generator = hood.generateByAddingStartOperator(initialInd);
         let options = ['^abc'];
 
-        for (let option of options) {
-            let ind = generator.next().value;
+        for (const option of options) {
+            const ind = generator.next().value;
             Expect(ind.toString()).toEqual(option);
         }
         Expect(generator.next().done).toBeTruthy();
@@ -137,8 +126,8 @@ export default class NeighborhoodTest {
         generator = hood.generateByAddingStartOperator(initialInd);
         options = ['^abc|efg', 'abc|^efg'];
 
-        for (let option of options) {
-            let ind = generator.next().value;
+        for (const option of options) {
+            const ind = generator.next().value;
             Expect(ind.toString()).toEqual(option);
         }
         Expect(generator.next().done).toBeTruthy();
@@ -146,7 +135,7 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingEndOperator")
     public testGenerateByAddingEndOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
         // First test: Must add only ONE end operator
         let initialInd = program.factory.createFromString('abc');
@@ -158,8 +147,8 @@ export default class NeighborhoodTest {
         let generator = hood.generateByAddingEndOperator(initialInd);
         let options = ['abc$'];
 
-        for (let option of options) {
-            let ind = generator.next().value;
+        for (const option of options) {
+            const ind = generator.next().value;
             Expect(ind.toString()).toEqual(option);
         }
         Expect(generator.next().done).toBeTruthy();
@@ -173,8 +162,8 @@ export default class NeighborhoodTest {
         generator = hood.generateByAddingEndOperator(initialInd);
         options = ['abc$|efg', 'abc|efg$'];
 
-        for (let option of options) {
-            let ind = generator.next().value;
+        for (const option of options) {
+            const ind = generator.next().value;
             Expect(ind.toString()).toEqual(option);
         }
 
@@ -183,23 +172,23 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateBySwapping")
     public testGenerateBySwapping() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('abc');
+        const initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateBySwapping(initialInd);
-        let options = [
+        const generator = hood.generateBySwapping(initialInd);
+        const options = [
             "obc", "fbc", "tbc", "ebc", "dbc", "lbc", "sbc", "nbc", "pbc", "hbc", "rbc", "ybc", "gbc", "wbc", "ibc", "cbc", "jbc", "mbc", "ubc", "\\bbc", "\\Bbc", "\\wbc", "\\Wbc", "\\dbc", "\\Dbc",
             "aoc", "afc", "atc", "aac", "aec", "adc", "alc", "asc", "anc", "apc", "ahc", "arc", "ayc", "agc", "awc", "aic", "acc", "ajc", "amc", "auc", "a\\bc", "a\\Bc", "a\\wc", "a\\Wc", "a\\dc", "a\\Dc",
             "abo", "abf", "abt", "aba", "abe", "abd", "abl", "abs", "abn", "abp", "abh", "abr", "aby", "abg", "abw", "abi", "abj", "abm", "abu", "ab\\b", "ab\\B", "ab\\w", "ab\\W", "ab\\d", "ab\\D",
         ];
 
-        for (let option of options) {
-            let ind = generator.next().value;
+        for (const option of options) {
+            const ind = generator.next().value;
             Expect(ind.toString()).toEqual(option);
         }
         Expect(generator.next().done).toBeTruthy();
@@ -207,26 +196,26 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByConcatenating")
     public testGenerateByConcatenating() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('abc');
+        const initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateByConcatenating(initialInd);
+        const generator = hood.generateByConcatenating(initialInd);
 
-        let options: string[] = program.validLeftChars.map(l => `a${l}bc`);
-        options = options.concat(program.validLeftChars.map(l => `ab${l}c`));
-        options = options.concat(program.validLeftChars.map(l => `abc${l}`));
+        let options: string[] = program.validLeftChars.map((l) => `a${l}bc`);
+        options = options.concat(program.validLeftChars.map((l) => `ab${l}c`));
+        options = options.concat(program.validLeftChars.map((l) => `abc${l}`));
 
-        options = options.concat(hood.specialChars.map(l => `a${l}bc`));
-        options = options.concat(hood.specialChars.map(l => `ab${l}c`));
-        options = options.concat(hood.specialChars.map(l => `abc${l}`));
+        options = options.concat(hood.specialChars.map((l) => `a${l}bc`));
+        options = options.concat(hood.specialChars.map((l) => `ab${l}c`));
+        options = options.concat(hood.specialChars.map((l) => `abc${l}`));
 
-        for (let ind of generator) {
-            let includes = options.includes(ind.toString());
+        for (const ind of generator) {
+            const includes = options.includes(ind.toString());
             Expect(includes).toBeTruthy();
         }
         Expect(generator.next().done).toBeTruthy();
@@ -234,13 +223,13 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood getAllRanges")
     public testGetAllRanges() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('abc');
+        const initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
-        let hood = new Neighborhood(initialInd, program);
-        let ranges = hood.getAllRanges();
+        const hood = new Neighborhood(initialInd, program);
+        const ranges = hood.getAllRanges();
 
         const options = [
             "[abc]", "[a-d]", "[a-e]", "[a-f]", "[a-g]", "[a-h]", "[a-i]", "[a-j]", "[a-l]", "[a-m]", "[a-n]", "[a-o]", "[a-p]", "[a-r]", "[a-s]", "[a-t]", "[a-u]", "[a-w]", "[a-y]",
@@ -266,8 +255,8 @@ export default class NeighborhoodTest {
 
         let i = 0;
 
-        for (let range of ranges) {
-            let includes = options.includes(range.toString());
+        for (const range of ranges) {
+            const includes = options.includes(range.toString());
             if (!includes) {
                 Expect.fail(`${range.toString()} doesnt exist`);
             }
@@ -281,29 +270,29 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingRangeOperator")
     public testGenerateByAddingRangeOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('abc');
+        const initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let ranges = hood.getAllRanges();
-        let generator = hood.generateByAddingRangeOperator(initialInd);
+        const ranges = hood.getAllRanges();
+        const generator = hood.generateByAddingRangeOperator(initialInd);
 
         let options: string[] = [];
-        options = options.concat(ranges.map(r => `${r.toString()}bc`));
-        options = options.concat(ranges.map(r => `a${r.toString()}bc`));
-        options = options.concat(ranges.map(r => `a${r.toString()}`));
-        options = options.concat(ranges.map(r => `a${r.toString()}c`));
-        options = options.concat(ranges.map(r => `ab${r.toString()}c`));
-        options = options.concat(ranges.map(r => `ab${r.toString()}`));
-        options = options.concat(ranges.map(r => `abc${r.toString()}`));
+        options = options.concat(ranges.map((r) => `${r.toString()}bc`));
+        options = options.concat(ranges.map((r) => `a${r.toString()}bc`));
+        options = options.concat(ranges.map((r) => `a${r.toString()}`));
+        options = options.concat(ranges.map((r) => `a${r.toString()}c`));
+        options = options.concat(ranges.map((r) => `ab${r.toString()}c`));
+        options = options.concat(ranges.map((r) => `ab${r.toString()}`));
+        options = options.concat(ranges.map((r) => `abc${r.toString()}`));
 
         let i = 0;
-        for (let ind of generator) {
-            let includes = options.includes(ind.toString());
+        for (const ind of generator) {
+            const includes = options.includes(ind.toString());
             if (!includes) {
                 Expect.fail(`${ind.toString()} doesnt exist`);
             }
@@ -315,30 +304,30 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingNegationOperator")
     public testGenerateByAddingNegationOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('a[^p]c');
+        const initialInd = program.factory.createFromString('a[^p]c');
         Expect(initialInd.toString()).toEqual('a[^p]c');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateByAddingNegationOperator(initialInd);
+        const generator = hood.generateByAddingNegationOperator(initialInd);
 
-        let chars = ["k", "b", "z", "A", "S", "O", "M", "I", "x"];
+        const chars = ["k", "b", "z", "A", "S", "O", "M", "I", "x"];
 
         let options: string[] = [];
         // options = options.concat(chars.map(c => `[^${c}]a[^p]c`));
-        options = options.concat(chars.map(c => `[^${c}][^p]c`));
-        options = options.concat(chars.map(c => `a[^${c}][^p]c`));
-        options = options.concat(chars.map(c => `a[^${c}]c`));
-        options = options.concat(chars.map(c => `a[^p][^${c}]c`));
-        options = options.concat(chars.map(c => `a[^p][^${c}]`));
-        options = options.concat(chars.map(c => `a[^p${c}]c`));
-        options = options.concat(chars.map(c => `a[^p]c[^${c}]`));
+        options = options.concat(chars.map((c) => `[^${c}][^p]c`));
+        options = options.concat(chars.map((c) => `a[^${c}][^p]c`));
+        options = options.concat(chars.map((c) => `a[^${c}]c`));
+        options = options.concat(chars.map((c) => `a[^p][^${c}]c`));
+        options = options.concat(chars.map((c) => `a[^p][^${c}]`));
+        options = options.concat(chars.map((c) => `a[^p${c}]c`));
+        options = options.concat(chars.map((c) => `a[^p]c[^${c}]`));
 
-        for (let ind of generator) {
-            let includes = options.includes(ind.toString());
+        for (const ind of generator) {
+            const includes = options.includes(ind.toString());
             if (!includes) {
                 Expect.fail(`${ind.toString()} doesnt exist on list`);
             } else {
@@ -352,23 +341,23 @@ export default class NeighborhoodTest {
 
     @Test("Neighborhood generateByAddingGivenOperator")
     public testGenerateByAddingGivenOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('a[^b]c');
+        const initialInd = program.factory.createFromString('a[^b]c');
         Expect(initialInd.toString()).toEqual('a[^b]c');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateByAddingGivenOperator(initialInd, AnyCharFunc);
+        const generator = hood.generateByAddingGivenOperator(initialInd, AnyCharFunc);
 
-        let options: string[] = [
-            ".[^b]c", "a.[^b]c", "a[^b]c.", "a[^.]c", "a[^b.]c", "a[^b].c", "a.c", "a[^b]c.", "a[^b]."
+        const options: string[] = [
+            ".[^b]c", "a.[^b]c", "a[^b]c.", "a[^.]c", "a[^b.]c", "a[^b].c", "a.c", "a[^b]c.", "a[^b].",
         ];
 
         let i = 0;
-        for (let ind of generator) {
-            let includes = options.includes(ind.toString());
+        for (const ind of generator) {
+            const includes = options.includes(ind.toString());
             if (!includes) {
                 Expect.fail(`expect ${ind.toString()} to equal ${options[i]}`);
             } else {
@@ -385,16 +374,16 @@ export default class NeighborhoodTest {
     @IgnoreTest()
     @Test("Neighborhood generateByAddingBackrefOperator")
     public testGenerateByAddingBackrefOperator() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('abc');
+        const initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateByAddingBackrefOperator(initialInd);
-        let options: string[] = [
+        const generator = hood.generateByAddingBackrefOperator(initialInd);
+        const options: string[] = [
             "(a)\\1bc",
             "(a)b\\1c",
             "(a)bc\\1",
@@ -418,8 +407,8 @@ export default class NeighborhoodTest {
             // "(a)(b)c\\1\\2",
         ];
 
-        for (let ind of generator) {
-            let index = options.indexOf(ind.toString());
+        for (const ind of generator) {
+            const index = options.indexOf(ind.toString());
             if (index === -1) {
                 Expect.fail(`${ind.toString()} fails`);
             } else {
@@ -442,12 +431,12 @@ export default class NeighborhoodTest {
     @TestCase(`(a)(b)\\1c\\2`, 2, true)
     @TestCase(`(a)\\2(b)\\1c`, 2, false)
     public testIsValidBackref(regex: string, i: number, expectedResult: boolean) {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('abc');
+        const initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
         Expect(hood.isValidBackref(regex, i)).toBe(expectedResult);
@@ -456,24 +445,24 @@ export default class NeighborhoodTest {
     @IgnoreTest()
     @Test()
     public testGenerateLookahead() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('abc');
+        const initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateByAddingLookahead(initialInd);
-        let options: string[] = program.leftCharsNotInRight.map(c => `a(?=${c})bc`);
-        options = options.concat(program.leftCharsNotInRight.map(c => `ab(?=${c})c`));
-        options = options.concat(program.leftCharsNotInRight.map(c => `abc(?=${c})`));
-        options = options.concat(program.rightCharsNotInLeft.map(c => `a(?!${c})bc`));
-        options = options.concat(program.rightCharsNotInLeft.map(c => `ab(?!${c})c`));
-        options = options.concat(program.rightCharsNotInLeft.map(c => `abc(?!${c})`));
+        const generator = hood.generateByAddingLookahead(initialInd);
+        let options: string[] = program.leftCharsNotInRight.map((c) => `a(?=${c})bc`);
+        options = options.concat(program.leftCharsNotInRight.map((c) => `ab(?=${c})c`));
+        options = options.concat(program.leftCharsNotInRight.map((c) => `abc(?=${c})`));
+        options = options.concat(program.rightCharsNotInLeft.map((c) => `a(?!${c})bc`));
+        options = options.concat(program.rightCharsNotInLeft.map((c) => `ab(?!${c})c`));
+        options = options.concat(program.rightCharsNotInLeft.map((c) => `abc(?!${c})`));
 
-        for (let ind of generator) {
-            let index = options.indexOf(ind.toString());
+        for (const ind of generator) {
+            const index = options.indexOf(ind.toString());
             if (index === -1) {
                 Expect.fail(`${ind.toString()} fails`);
             } else {
@@ -491,24 +480,24 @@ export default class NeighborhoodTest {
     @IgnoreTest()
     @Test()
     public testGenerateLookbehind() {
-        let program = (new ILS_Shrink('warmup')).init();
+        const program = (new ILS_Shrink('warmup')).init();
 
-        let initialInd = program.factory.createFromString('abc');
+        const initialInd = program.factory.createFromString('abc');
         Expect(initialInd.toString()).toEqual('abc');
 
-        let hood = new Neighborhood(initialInd, program);
+        const hood = new Neighborhood(initialInd, program);
         hood.maxSimultaneousEvaluations = 1;
 
-        let generator = hood.generateByAddingLookbehind(initialInd);
-        let options: string[] = program.leftCharsNotInRight.map(c => `a(?<=${c})bc`);
-        options = options.concat(program.leftCharsNotInRight.map(c => `ab(?<=${c})c`));
-        options = options.concat(program.leftCharsNotInRight.map(c => `abc(?<=${c})`));
-        options = options.concat(program.rightCharsNotInLeft.map(c => `a(?<!${c})bc`));
-        options = options.concat(program.rightCharsNotInLeft.map(c => `ab(?<!${c})c`));
-        options = options.concat(program.rightCharsNotInLeft.map(c => `abc(?<!${c})`));
+        const generator = hood.generateByAddingLookbehind(initialInd);
+        let options: string[] = program.leftCharsNotInRight.map((c) => `a(?<=${c})bc`);
+        options = options.concat(program.leftCharsNotInRight.map((c) => `ab(?<=${c})c`));
+        options = options.concat(program.leftCharsNotInRight.map((c) => `abc(?<=${c})`));
+        options = options.concat(program.rightCharsNotInLeft.map((c) => `a(?<!${c})bc`));
+        options = options.concat(program.rightCharsNotInLeft.map((c) => `ab(?<!${c})c`));
+        options = options.concat(program.rightCharsNotInLeft.map((c) => `abc(?<!${c})`));
 
-        for (let ind of generator) {
-            let index = options.indexOf(ind.toString());
+        for (const ind of generator) {
+            const index = options.indexOf(ind.toString());
             if (index === -1) {
                 Expect.fail(`${ind.toString()} fails`);
             } else {
@@ -520,6 +509,13 @@ export default class NeighborhoodTest {
 
         if (options.length !== 0) {
             Expect.fail(`Remaining: ${options.join(' ; ')}`);
+        }
+    }
+
+    private removeFromArray(arr: any[], item: any) {
+        const index = arr.indexOf(item);
+        if (index !== -1) {
+            arr.splice(index, 1);
         }
     }
 }

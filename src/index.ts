@@ -1,19 +1,18 @@
 const args = require('args');
 const fs = require('fs');
-import * as path from 'path';
 import * as moment from "moment";
+import * as path from 'path';
 
-import ILS from './localsearch/ILS';
-import ILS_Shrink from './localsearch/ILS_Shrink';
+import { ILS } from './localsearch/ILS';
+import { ILS_Shrink } from './localsearch/ILS_Shrink';
 import { LocalSearch } from './localsearch/LocalSearch';
-import RRLS from './localsearch/RRLS';
 
-import Logger from './Logger';
-import Utils from './Utils';
-import Constructed_RRLS from "./localsearch/Constructed_RRLS";
-import Individual from "./models/Individual";
-import Neighborhood from './models/Neighborhood';
+import { Logger } from './Logger';
+import { Individual } from "./models/Individual";
+import { Neighborhood } from './models/Neighborhood';
+import { Utils } from './Utils';
 
+// tslint:disable no-console
 
 args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS", "Constructed_RRLS"')
     .option('instance', 'O nome da instância do problema')
@@ -44,18 +43,15 @@ if (!flags.name) {
     process.exit();
 }
 
-
 Utils.setIndex(flags.index);
 Individual.setWeight(flags.weight);
-if (flags.seed) Utils.setSeed(flags.seed);
+if (flags.seed) { Utils.setSeed(flags.seed); }
 Logger.init({logLevel: flags.logLevel, instanceName: flags.instance});
 
 function getProgram(): LocalSearch {
     switch (flags.name) {
         case 'ILS':              return new ILS(flags.instance);
         case 'ILS_Shrink':       return new ILS_Shrink(flags.instance);
-        case 'RRLS':             return new RRLS(flags.instance);
-        case 'Constructed_RRLS': return new Constructed_RRLS(flags.instance);
     }
 
     console.log(`${flags.name} não é um algoritmo válido.`);
@@ -65,7 +61,7 @@ function getProgram(): LocalSearch {
 async function main() {
     // 1. Carrega a instância do problema
     // 2. Instância o programa
-    let program = getProgram();
+    const program = getProgram();
 
     // 3. Seta o Budget
     program.budget = flags.budget;
@@ -82,7 +78,7 @@ async function main() {
     await program.evaluator.evaluate(currentSolution);
     Logger.info(`[Initial solution]`, currentSolution.toLog());
 
-    let visitedRegexes: string[] = [];
+    const visitedRegexes: string[] = [];
 
     // 6. Loop
     do {
@@ -95,18 +91,19 @@ async function main() {
 
         // 6.3. Should stop ?
         //      Then -> Stop !
-        if (program.shouldStop()) break;
+        if (program.shouldStop()) { break; }
 
         // 6.4 Evaluate Neighborhood
-        let neighborhood = new Neighborhood(currentSolution, program);
+        const neighborhood = new Neighborhood(currentSolution, program);
         // Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
 
         try {
-            await neighborhood.evaluate(ind => {
+            await neighborhood.evaluate((ind) => {
                 Logger.debug(`[Solution]`, ind.toLog());
 
                 if (ind.evaluationIndex % 10000 === 0) {
                     const time = moment().diff(program.startTime, 'ms');
+                    // tslint:disable-next-line no-console
                     console.log(`${ind.evaluationIndex} evaluated in ${time} ms`);
                 }
 
@@ -154,36 +151,36 @@ async function main() {
 
     // 7. Apresentar resultados
     function sorter(a: Individual, b: Individual): number {
-        if (a.fitness > b.fitness) return -1;
-        if (a.fitness < b.fitness) return 1;
+        if (a.fitness > b.fitness) { return -1; }
+        if (a.fitness < b.fitness) { return 1; }
 
-        if (a.toString().length > b.toString().length) return 1;
-        if (a.toString().length < b.toString().length) return -1;
+        if (a.toString().length > b.toString().length) { return 1; }
+        if (a.toString().length < b.toString().length) { return -1; }
 
         return 0;
-    };
+    }
 
     Logger.info(`Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.sort(sorter);
-    program.localSolutions.forEach(ind => {
+    program.localSolutions.forEach((ind) => {
         Logger.info(`[Local Solution]`, ind.toLog());
     });
 
     Logger.info(`Was found ${program.solutions.length} solution(s)`);
 
     program.solutions.sort(sorter);
-    program.solutions.forEach(ind => {
+    program.solutions.forEach((ind) => {
         Logger.info(`[Solution]`, ind.toLog());
     });
 
-    if (!flags.csv) process.exit();
+    if (!flags.csv) { process.exit(); }
 
     (function() {
-        let bestSolution = program.getBestSolution();
+        const bestSolution = program.getBestSolution();
         // Nome, Depth, i, seed
-        let csvLine: (string | number)[] = [program.instanceName, program.depth, flags.index, program.seed];
+        const csvLine: Array<string | number> = [program.instanceName, program.depth, flags.index, program.seed];
 
-        let startTime = moment(program.startTime);
+        const startTime = moment(program.startTime);
         const maxFitess = flags.weight * program.left.length;
 
         if (bestSolution) {
@@ -195,7 +192,9 @@ async function main() {
             csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
             csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
             csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
-            csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds'))); // Tempo_para_encontrar_melhor_solucao
+
+            // Tempo_para_encontrar_melhor_solucao
+            csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds')));
         } else {
             csvLine.push('N/A'); // Melhor_solucao
             csvLine.push('N/A'); // Melhor_solucao_shrunk
@@ -208,11 +207,11 @@ async function main() {
             csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
         }
 
-        let totalTime = moment(program.endTime).diff(program.startTime, 'milliseconds');
+        const totalTime = moment(program.endTime).diff(program.startTime, 'milliseconds');
         csvLine.push(totalTime); // Tempo_total
         csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
 
-        let filepath = path.join(__dirname, '..', 'results', flags.csv);
+        const filepath = path.join(__dirname, '..', 'results', flags.csv);
         fs.appendFileSync(filepath, csvLine.join(',') + `\n`);
     })();
 
