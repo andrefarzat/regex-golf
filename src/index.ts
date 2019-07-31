@@ -20,7 +20,7 @@ args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS",
     .option('depth', 'O tamanho do depth', 5)
     .option('budget', 'Número máximo de avaliações', 100000 * 5)
     .option('log-level', 'Log level entre 1 e 5', 3)
-    .option('index', 'O índice da execução', 1)
+    .option('index', 'O índice da execução', 0)
     .option('seed', 'O seed para Random')
     .option('timeout', 'Timeout em miliseconds', 2000 * 60)
     .option('csv', 'Exportar resultado em csv');
