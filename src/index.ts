@@ -69,8 +69,7 @@ async function main() {
     program.seed = flags.seed;
     program.index = flags.index;
 
-    // 4. Seta o Timeout
-    program.maxTimeout = moment().add(flags.timeout, 'milliseconds');
+    // 4. Start
     program.init();
 
     // 5. Gera indivíduo inicial
@@ -101,7 +100,7 @@ async function main() {
             await neighborhood.evaluate((ind) => {
                 Logger.debug(`[Solution]`, ind.toLog());
 
-                if (ind.evaluationIndex % 100000 === 0) {
+                if (ind.evaluationIndex % 10000 === 0) {
                     const time = moment().diff(program.startTime, 'ms');
                     // tslint:disable-next-line no-console
                     console.log(`${ind.evaluationIndex} evaluated in ${time} ms`);
@@ -200,7 +199,7 @@ async function main() {
     csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
 
     const filepath = path.join(__dirname, '..', 'results', flags.csv);
-    fs.appendFileSync(filepath, csvLine.join(',') + `\n`);
+    fs.appendFileSync(filepath, csvLine.join(';') + `\n`);
 
     Logger.info(`[Program finished] total time: ${program.endTime.getTime() - program.startTime.getTime()}`);
 }

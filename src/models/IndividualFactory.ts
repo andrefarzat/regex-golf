@@ -204,8 +204,14 @@ export class IndividualFactory {
 
         const parent = neo.getParentOf(neoOne);
 
-        const index = parent.children.indexOf(neoOne);
-        parent.children.splice(index, 1, neoOne, two);
+        if (parent) {
+            const index = parent.children.indexOf(neoOne);
+            parent.children.splice(index, 1, neoOne, two);
+        } else if (neo.isTheRootNode(neoOne)) {
+            neo.tree.addChild(two);
+        } else {
+            throw new Error('Should not reach here');
+        }
 
         return neo;
     }
@@ -351,8 +357,14 @@ export class IndividualFactory {
         const index = ind.getNodes().indexOf(node);
         const neo = ind.clone();
         const neoNode = neo.getNodes()[index];
-        const parent = neo.getParentOf(neoNode);
-        parent.swapChild(neoNode, new GroupFunc([neoNode]));
+
+        if (neo.isTheRootNode(neoNode)) {
+            neo.tree = new GroupFunc([neoNode]);
+        } else {
+            const parent = neo.getParentOf(neoNode);
+            if (parent === undefined) { throw new Error('No parent. Maybe it is the Root node?'); }
+            parent.swapChild(neoNode, new GroupFunc([neoNode]));
+        }
 
         return neo;
     }

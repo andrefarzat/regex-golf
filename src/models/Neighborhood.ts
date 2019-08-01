@@ -90,15 +90,19 @@ export class Neighborhood {
             yield ind;
         }
 
-        // for (let ind of this.generateByAddingBackrefOperator(solution)) {
-        //     yield ind;
-        // }
+        for (const ind of this.generateByAddingBackrefOperator(solution)) {
+            yield ind;
+        }
 
-        // for (let ind of this.generateByAddingLookbehind(solution)) {
-        //     yield ind;
-        // }
+        for (const ind of this.generateByAddingLookbehind(solution)) {
+            yield ind;
+        }
 
         for (const ind of this.generateByExtractingSingleNode(solution)) {
+            yield ind;
+        }
+
+        for (const ind of this.generateByAddingNGram(solution)) {
             yield ind;
         }
     }
@@ -398,7 +402,7 @@ export class Neighborhood {
         }
     }
 
-    protected * generateByConcatenatingFromRightChars(solution: Individual) {
+    public * generateByConcatenatingFromRightChars(solution: Individual) {
         const nodes = solution.getNodes();
 
         // Operator: Concatenation (but from right chars not in left)
@@ -408,6 +412,15 @@ export class Neighborhood {
                 const neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
                 if (neo.isValid()) { yield neo; }
             }
+        }
+    }
+
+    public * generateByAddingNGram(solution: Individual) {
+        for (const ngram of this.program.ngrams) {
+            const neo = solution.clone();
+            const node = this.program.factory.createFromString(ngram).tree;
+            neo.tree = new OrFunc(neo.tree.clone(), node);
+            yield neo;
         }
     }
 }

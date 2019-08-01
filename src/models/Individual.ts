@@ -115,7 +115,8 @@ export class Individual {
     }
 
     public hasComplexEvaluation(): boolean {
-        return this.tree.getFuncs().some((func) => this.COMPLEX_FUNC_TYPES.includes(func.type));
+        const nodes = this.tree.getFuncs().filter((func) => this.COMPLEX_FUNC_TYPES.includes(func.type));
+        return nodes.length > 1;
     }
 
     public clone(): Individual {

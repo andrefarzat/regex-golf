@@ -24,8 +24,7 @@ export abstract class LocalSearch {
     public ngrams: string[] = [];
 
     public budget: number;
-    public depth: number;
-    public maxTimeout: Moment.Moment;
+    public depth: number = 5;
     public solutions: Individual[] = [];
     public localSolutions: Individual[] = [];
     public hasTimedOut: boolean = false;
@@ -80,11 +79,11 @@ export abstract class LocalSearch {
     }
 
     public extractNGrams(): string[] {
-        const n = 4;
+        const n = this.depth;
         const grams: string[] = [];
 
         this.left.forEach((phrase) => {
-            const chars = phrase.split(''); // ['a', 'n', 'd', 'r', 'e']
+            const chars = phrase.split('');
             chars.forEach((char, j) => {
                 let i = 1;
                 let word = char;
@@ -107,8 +106,12 @@ export abstract class LocalSearch {
 
     // To be right valid, must *not* match any right
     public isValidRight(text: string): boolean {
-        const regex = new RegExp(text);
-        return this.right.every((name) => !regex.test(name));
+        try {
+            const regex = new RegExp(text);
+            return this.right.every((name) => !regex.test(name));
+        } catch {
+            return false;
+        }
     }
 
     public isBest(ind: Individual): boolean {

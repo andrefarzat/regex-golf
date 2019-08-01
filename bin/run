@@ -20,19 +20,20 @@ _INSTANCES = {
 # ./bin/run "warmup" "backrefs" "anchors" "triples" 
 
 INSTANCES = {
-    "warmup": 10,
-    "anchors": 10,
-    "ranges": 10,
-    "backrefs": 10,
-    "abba": 10,
-    "aman-aplan": 10,
-    "prime": 15,
-    "four": 10,
-    "order": 10,
-    "triples": 30,
-    "glob": 20,
-    "balance": 10,
-    "powers": 10,
+    # "warmup": 10,
+    # "anchors": 10,
+    # "ranges": 10,
+    # "backrefs": 10,
+    # "abba": 10,
+    # "aman-aplan": 10,
+    
+    # "prime": 15,
+    # "four": 10,
+    # "order": 10,
+    # "triples": 30,
+    # "glob": 20,
+    # "balance": 10,
+    # "powers": 10,
     "long-count": 270,
     "alphabetical": 20,
 }
@@ -42,12 +43,13 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          6621545651, 2492462788, 3404588599, 2330977742, 6361187489, 2805026820,
          4323456912, 8361101999, 9935136846, 5217407358, 5619256299, 4560422870,
          5236888092, 1337360711, 7659837985, 2521100877, 8801535107, 9651599436]
+SEEDS = [7659837985]
 
-DEPTHS = [5]
+DEPTHS = [80, 5]
 
-MAX_EVALUATIONS = [1000000, 2000000]
+MAX_EVALUATIONS = [300000]
 
-FOLDER_NAME = 'evals_round3'
+FOLDER_NAME = 'grams2'
 
 
 def execute(cmd):

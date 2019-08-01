@@ -55,6 +55,7 @@ export class LocalSearchTest {
     @Timeout(1000)
     public async testNGram() {
         const l = new MyLocalSearch('family');
+        l.depth = 4;
         l.init();
 
         Expect(l.left).toEqual(["andre", "fabio"]);

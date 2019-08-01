@@ -4,8 +4,8 @@ from subprocess import call
 
 
 # Parameters
-INSTANCE = 'anchors'
-SOLUTION = '[s-w][i-l][b-i]'
+INSTANCE = 'family'
+SOLUTION = 'abc'
 LOG_LEVEL = 5
 
 

@@ -1,7 +1,7 @@
 const colors = require('colors/safe');
 const args = require('args');
 
-import ILS_S from '../localsearch/ILS';
+import { ILS_Shrink } from '../localsearch/ILS_shrink';
 import { Neighborhood } from '../models/Neighborhood';
 
 // tslint:disable no-console
@@ -23,7 +23,7 @@ if (!flags.instance || !flags.solution) {
 
 /** Start */
 
-const program = (new ILS_S(flags.instance)).init();
+const program = (new ILS_Shrink(flags.instance)).init();
 const initialInd = program.factory.createFromString(flags.solution);
 const hood = new Neighborhood(initialInd, program);
 
