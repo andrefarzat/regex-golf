@@ -47,5 +47,19 @@ export class LocalSearchTest {
 
         l.addSolution(inds[2]);
         Expect(l.getBestSolution()).toBe(inds[1]);
+
+        Expect(l.isValidRight('foo')).toBeTruthy();
+    }
+
+    @AsyncTest('n-gram')
+    @Timeout(1000)
+    public async testNGram() {
+        const l = new MyLocalSearch('family');
+        l.init();
+
+        Expect(l.left).toEqual(["andre", "fabio"]);
+        Expect(l.right).toEqual(["aleuda", "rodrigo"]);
+
+        Expect(l.ngrams).toEqual(["an", "and", "andr", "n", "nd", "ndr", "ndre", "dre", "re", "f", "fa", "fab", "fabi", "ab", "abi", "abio", "b", "bi", "bio", "io"]);
     }
 }

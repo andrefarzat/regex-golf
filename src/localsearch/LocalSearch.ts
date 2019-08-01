@@ -21,6 +21,7 @@ export abstract class LocalSearch {
     public endTime: Date;
     public seed: number;
     public index: number;
+    public ngrams: string[] = [];
 
     public budget: number;
     public depth: number;
@@ -29,6 +30,7 @@ export abstract class LocalSearch {
     public localSolutions: Individual[] = [];
     public hasTimedOut: boolean = false;
     public readonly TWO_MINUTES = 1000 * 60 * 2;
+    public readonly TEN_MINUTES = 1000 * 60 * 10;
 
     constructor(public instanceName: string) {
         const instance = Utils.loadInstance(instanceName);
@@ -56,6 +58,7 @@ export abstract class LocalSearch {
         this.startTime = new Date();
         this.chars.left = this.extractUniqueChars(this.left);
         this.chars.right = this.extractUniqueChars(this.right);
+        this.ngrams = this.extractNGrams();
         this.factory = new IndividualFactory(this.validLeftChars, this.validRightChars);
         this.evaluator = new EvaluatorFactory(this.left, this.right);
         return this;
@@ -76,8 +79,36 @@ export abstract class LocalSearch {
         return Utils.sortObjectByValue(chars);
     }
 
+    public extractNGrams(): string[] {
+        const n = 4;
+        const grams: string[] = [];
+
+        this.left.forEach((phrase) => {
+            const chars = phrase.split(''); // ['a', 'n', 'd', 'r', 'e']
+            chars.forEach((char, j) => {
+                let i = 1;
+                let word = char;
+                if (this.isValidRight(word)) { grams.push(word); }
+                chars.slice(j + 1).forEach((subchar) => {
+                    if (i >= n) { return; }
+                    word += subchar;
+                    if (this.isValidRight(word)) { grams.push(word); }
+                    i += 1;
+                });
+            });
+        });
+
+        return grams;
+    }
+
     public isValidLeft(ind: Individual): boolean {
         return this.left.every((name) => ind.test(name));
+    }
+
+    // To be right valid, must *not* match any right
+    public isValidRight(text: string): boolean {
+        const regex = new RegExp(text);
+        return this.right.every((name) => !regex.test(name));
     }
 
     public isBest(ind: Individual): boolean {
@@ -109,7 +140,7 @@ export abstract class LocalSearch {
             return true;
         }
 
-        if (Moment().diff(this.startTime, 'ms') > this.TWO_MINUTES) {
+        if (Moment().diff(this.startTime, 'ms') > this.TEN_MINUTES) {
             this.hasTimedOut = true;
             this.endTime = new Date();
             return true;

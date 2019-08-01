@@ -22,7 +22,7 @@ args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS",
     .option('log-level', 'Log level entre 1 e 5', 3)
     .option('index', 'O índice da execução', 0)
     .option('seed', 'O seed para Random')
-    .option('timeout', 'Timeout em miliseconds', 2000 * 60)
+    .option('timeout', 'Timeout em miliseconds', 10000 * 60)
     .option('csv', 'Exportar resultado em csv');
 
 const flags: {
@@ -101,7 +101,7 @@ async function main() {
             await neighborhood.evaluate((ind) => {
                 Logger.debug(`[Solution]`, ind.toLog());
 
-                if (ind.evaluationIndex % 10000 === 0) {
+                if (ind.evaluationIndex % 100000 === 0) {
                     const time = moment().diff(program.startTime, 'ms');
                     // tslint:disable-next-line no-console
                     console.log(`${ind.evaluationIndex} evaluated in ${time} ms`);

@@ -14,10 +14,10 @@ _INSTANCES = {
     "tic-tac-toe": 10
 }
 
-# ./bin/run "warmup" "abba" "order" "powers"
-# ./bin/run "anchors" "aman-aplan" "triples"
-# ./bin/run "ranges" "prime" "glob" "long-count"
-# ./bin/run "backrefs" "four" "balance" "alphabetical"
+# ./bin/run "prime" "aman-aplan" "four" "ranges"
+# ./bin/run "powers" "glob" "alphabetical" 
+# ./bin/run "long-count" "order" "abba" "balance"
+# ./bin/run "warmup" "backrefs" "anchors" "triples" 
 
 INSTANCES = {
     "warmup": 10,
@@ -45,9 +45,9 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
 
 DEPTHS = [5]
 
-MAX_EVALUATIONS = [300000, 400000, 500000, 600000]
+MAX_EVALUATIONS = [1000000, 2000000]
 
-FOLDER_NAME = 'evals_round2'
+FOLDER_NAME = 'evals_round3'
 
 
 def execute(cmd):
