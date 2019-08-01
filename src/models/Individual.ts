@@ -6,6 +6,7 @@ import { Node, NodeTypes } from "../nodes/Node";
 import { Terminal } from "../nodes/Terminal";
 import { NodeShrinker } from '../shrinker/NodeShrinker';
 import { Utils } from "../Utils";
+import { OrFunc } from '../nodes/OrFunc';
 
 export class Individual {
 
@@ -115,7 +116,28 @@ export class Individual {
     }
 
     public hasComplexEvaluation(): boolean {
-        const nodes = this.tree.getFuncs().filter((func) => this.COMPLEX_FUNC_TYPES.includes(func.type));
+        const funcs = this.tree.getFuncs();
+        const ors = funcs.filter((func) => func.is(FuncTypes.or)) as OrFunc[];
+
+        if (ors.length === 0) {
+            return this.hasMoreThanOneComplexFuncType(this.tree);
+        }
+
+        for (const or of ors) {
+            if (this.hasMoreThanOneComplexFuncType(or.left.asFunc())) {
+                return true;
+            }
+
+            if (this.hasMoreThanOneComplexFuncType(or.right.asFunc())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public hasMoreThanOneComplexFuncType(func: Func): boolean {
+        const nodes = func.getFuncs().filter((f) => this.COMPLEX_FUNC_TYPES.includes(f.type));
         return nodes.length > 1;
     }
 

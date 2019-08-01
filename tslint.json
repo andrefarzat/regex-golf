@@ -13,7 +13,8 @@
         "object-literal-sort-keys": false,
         "variable-name": {"options": ["allow-leading-underscore"]},
         "interface-name": false,
-        "forin": false
+        "forin": false,
+        "ordered-imports": false
     },
     "rulesDirectory": []
 }
