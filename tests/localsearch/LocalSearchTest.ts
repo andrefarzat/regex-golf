@@ -63,4 +63,20 @@ export class LocalSearchTest {
 
         Expect(l.ngrams).toEqual(["an", "and", "andr", "n", "nd", "ndr", "ndre", "dre", "re", "f", "fa", "fab", "fabi", "ab", "abi", "abio", "b", "bi", "bio", "io"]);
     }
+
+    @Test('dynamic depth')
+    @TestCase('long-count', 79)
+    @TestCase('family', 5)
+    @TestCase('warmup', 7)
+    @TestCase('alphabetical', 48)
+    @TestCase('glob', 39)
+    public testDinamicDepth(name: string, depth: number) {
+        const l = new MyLocalSearch(name);
+        Expect(l.depth).toBe(5);
+
+        l.depth = 0;
+        l.init();
+
+        Expect(l.depth).toBe(depth);
+    }
 }

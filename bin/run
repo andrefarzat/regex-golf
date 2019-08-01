@@ -4,8 +4,6 @@ from subprocess import call
 from threading import Thread
 import sys
 
-PROGRAMS = ['ILS_Shrink'] # , 'Constructed_RRLS'
-
 i = int(sys.argv[1]) if len(sys.argv) == 2 else 0
 
 _INSTANCES = {
@@ -15,25 +13,24 @@ _INSTANCES = {
 }
 
 # ./bin/run "prime" "aman-aplan" "four" "ranges"
-# ./bin/run "powers" "glob" "alphabetical" 
-# ./bin/run "long-count" "order" "abba" "balance"
-# ./bin/run "warmup" "backrefs" "anchors" "triples" 
+# ./bin/run "triples" "powers" "glob" "alphabetical" 
+# ./bin/run "long-count" "order" "abba" 
+# ./bin/run "balance" "warmup" "backrefs" "anchors" 
 
 INSTANCES = {
-    # "warmup": 10,
-    # "anchors": 10,
-    # "ranges": 10,
-    # "backrefs": 10,
-    # "abba": 10,
-    # "aman-aplan": 10,
-    
-    # "prime": 15,
-    # "four": 10,
-    # "order": 10,
-    # "triples": 30,
-    # "glob": 20,
-    # "balance": 10,
-    # "powers": 10,
+    "warmup": 10,
+    "anchors": 10,
+    "ranges": 10,
+    "backrefs": 10,
+    "abba": 10,
+    "aman-aplan": 10,
+    "prime": 15,
+    "four": 10,
+    "order": 10,
+    "triples": 30,
+    "glob": 20,
+    "balance": 10,
+    "powers": 10,
     "long-count": 270,
     "alphabetical": 20,
 }
@@ -43,13 +40,12 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          6621545651, 2492462788, 3404588599, 2330977742, 6361187489, 2805026820,
          4323456912, 8361101999, 9935136846, 5217407358, 5619256299, 4560422870,
          5236888092, 1337360711, 7659837985, 2521100877, 8801535107, 9651599436]
-SEEDS = [7659837985]
 
-DEPTHS = [80, 5]
+DEPTHS = [0, 5]
 
-MAX_EVALUATIONS = [300000]
+MAX_EVALUATIONS = [300000, 1000000]
 
-FOLDER_NAME = 'grams2'
+FOLDER_NAME = 'dynamic-depth'
 
 
 def execute(cmd):
@@ -64,48 +60,46 @@ for instance in instances:
         print("Invalid instance name:", instance)
         exit(1)
 
+program = 'ILS_Shrink'
+for budget in MAX_EVALUATIONS:
+    for depth in DEPTHS:
+        for instance, weight in INSTANCES.items():
+            instance = instance.strip()
 
-for program in PROGRAMS:
-    for instance, weight in INSTANCES.items():
-        instance = instance.strip()
+            if instance not in instances:
+                continue
 
-        if instance not in instances:
-            continue
+            for index, seed in enumerate(SEEDS):
+                today = datetime.date.today().strftime("%Y-%m-%d")
+                resultsDir = FOLDER_NAME
+                absResultsDir = os.path.join(os.getcwd(), "results", resultsDir)
 
-        for depth in DEPTHS:
-            for budget in MAX_EVALUATIONS:
-                for index, seed in enumerate(SEEDS):
-                    today = datetime.date.today().strftime("%Y-%m-%d")
-                    resultsDir = FOLDER_NAME
-                    absResultsDir = os.path.join(os.getcwd(), "results", resultsDir)
+                if not os.path.isdir(absResultsDir):
+                    os.mkdir(absResultsDir)
 
-                    if not os.path.isdir(absResultsDir):
-                        os.mkdir(absResultsDir)
+                absCurrentDir = os.path.join(os.getcwd(), "results", "current")
+                if not os.path.isdir(absCurrentDir):
+                    os.mkdir(absCurrentDir)
 
-                    absCurrentDir = os.path.join(os.getcwd(), "results", "current")
-                    if not os.path.isdir(absCurrentDir):
-                        os.mkdir(absCurrentDir)
+                absCsvFilePath = os.path.join(absResultsDir, "%s.csv" % program)
+                csvFilePath = os.path.join(resultsDir, "%s.csv" % program)
 
-                    absCsvFilePath = os.path.join(absResultsDir, "%s.csv" % program)
-                    csvFilePath = os.path.join(resultsDir, "%s.csv" % program)
+                if not os.path.isfile(absCsvFilePath):
+                    call(['touch', absCsvFilePath])
 
-                    if not os.path.isfile(absCsvFilePath):
-                        call(['touch', absCsvFilePath])
+                cmd = ["npm", "run", "localsearch", "--",
+                    "--name", program,
+                    "--instance", instance,
+                    "--weight", weight,
+                    "--depth", depth,
+                    "--index", "%s" % index,
+                    "--seed", seed,
+                    "--log-level", 2,
+                    "--budget", budget,
+                    "--csv", csvFilePath]
 
-                    cmd = ["npm", "run", "localsearch", "--",
-                        "--name", program,
-                        "--instance", instance,
-                        "--weight", weight,
-                        "--depth", depth,
-                        "--index", "%s" % index,
-                        "--seed", seed,
-                        "--log-level", 2,
-                        "--budget", budget,
-                        "--csv", csvFilePath]
-                    
-                    # print(" ".join(map(lambda x: str(x), cmd)))
+                # print(" ".join(map(lambda x: str(x), cmd)))
 
-                    thread = Thread(target=execute, args=(cmd,))
-                    thread.start()
-                    thread.join()
-
+                thread = Thread(target=execute, args=(cmd,))
+                thread.start()
+                thread.join()

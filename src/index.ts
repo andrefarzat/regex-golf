@@ -17,7 +17,7 @@ import { Utils } from './Utils';
 args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS", "Constructed_RRLS"')
     .option('instance', 'O nome da instância do problema')
     .option('weight', 'O peso da fitness', 1)
-    .option('depth', 'O tamanho do depth', 5)
+    .option('depth', 'O tamanho do depth')
     .option('budget', 'Número máximo de avaliações', 100000 * 5)
     .option('log-level', 'Log level entre 1 e 5', 3)
     .option('index', 'O índice da execução', 0)
@@ -29,7 +29,7 @@ const flags: {
     name: 'ILS'| 'ILS_Shrink' | 'RRLS' | 'Constructed_RRLS',
     instance: string,
     weight: number,
-    depth: number,
+    depth: string,
     budget: number,
     logLevel: number,
     index: number,
@@ -65,7 +65,7 @@ async function main() {
 
     // 3. Seta o Budget
     program.budget = flags.budget;
-    program.depth = flags.depth;
+    program.depth = parseInt(flags.depth, 10);
     program.seed = flags.seed;
     program.index = flags.index;
 

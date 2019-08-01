@@ -21,7 +21,7 @@ export class Neighborhood {
         return this.program.factory;
     }
     public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
-    public maxSimultaneousEvaluations = 2;
+    public maxSimultaneousEvaluations = 100;
     protected hood?: IterableIterator<Individual>;
 
     public constructor(public solution: Individual, public program: LocalSearch) { }

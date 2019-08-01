@@ -55,6 +55,11 @@ export abstract class LocalSearch {
 
     public init() {
         this.startTime = new Date();
+
+        if (this.depth === 0 || Number.isNaN(this.depth)) {
+            this.depth = Math.max(...this.left.map((name) => name.length));
+        }
+
         this.chars.left = this.extractUniqueChars(this.left);
         this.chars.right = this.extractUniqueChars(this.right);
         this.ngrams = this.extractNGrams();
