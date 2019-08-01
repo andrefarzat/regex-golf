@@ -62,9 +62,9 @@ export abstract class LocalSearch {
 
         this.chars.left = this.extractUniqueChars(this.left);
         this.chars.right = this.extractUniqueChars(this.right);
-        this.ngrams = this.extractNGrams();
         this.factory = new IndividualFactory(this.validLeftChars, this.validRightChars);
         this.evaluator = new EvaluatorFactory(this.left, this.right);
+        this.ngrams = this.extractNGrams();
         return this;
     }
 
@@ -100,6 +100,16 @@ export abstract class LocalSearch {
                     i += 1;
                 });
             });
+        });
+
+        const values: {[key: string]: number} = {};
+        for (const gram of grams) {
+            const ind = this.factory.createFromString(gram);
+            values[gram] = ind.isValid() ? this.evaluator.evaluateSimple(ind) : -1000;
+        }
+
+        grams.sort((a: string, b: string): number => {
+            return values[a] - values[b];
         });
 
         return grams;

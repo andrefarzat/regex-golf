@@ -18,11 +18,11 @@ export class EvaluatorFactory {
         if (ind.isEvaluated) { return Promise.resolve(ind.fitness); }
         ind.evaluationIndex = this.getNextEvaluationIndex();
 
-        // return this.evaluateSimple(ind);
+        return this.evaluateSimple(ind);
 
-        return ind.hasComplexEvaluation()
-            ? this.evaluateViaSub(ind)
-            : Promise.resolve(this.evaluateSimple(ind));
+        // return ind.hasComplexEvaluation()
+        //     ? this.evaluateViaSub(ind)
+        //     : Promise.resolve(this.evaluateSimple(ind));
     }
 
     public async getFreeEvaluator() {
@@ -62,7 +62,7 @@ export class EvaluatorFactory {
         }
     }
 
-    protected evaluateSimple(ind: Individual): number {
+    public evaluateSimple(ind: Individual): number {
         const result = {
             leftPoints: 0,
             rightPoints: 0,

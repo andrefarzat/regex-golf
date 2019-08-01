@@ -61,7 +61,7 @@ export class LocalSearchTest {
         Expect(l.left).toEqual(["andre", "fabio"]);
         Expect(l.right).toEqual(["aleuda", "rodrigo"]);
 
-        Expect(l.ngrams).toEqual(["an", "and", "andr", "n", "nd", "ndr", "ndre", "dre", "re", "f", "fa", "fab", "fabi", "ab", "abi", "abio", "b", "bi", "bio", "io"]);
+        Expect(l.ngrams).toEqual(["abio", "ndre", "andr", "fabi", "dre", "bio", "and", "fab", "ndr", "abi", "fa", "an", "re", "ab", "bi", "nd", "io", "b", "f", "n"]);
     }
 
     @Test('dynamic depth')

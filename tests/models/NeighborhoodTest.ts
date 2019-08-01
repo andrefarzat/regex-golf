@@ -1,4 +1,4 @@
-import { AsyncTest, Expect, FocusTest, IgnoreTest, Test, TestCase, TestFixture, Timeout } from "alsatian";
+import { AsyncTest, Expect, IgnoreTest, Test, TestCase, TestFixture, Timeout } from "alsatian";
 
 import { ILS_Shrink } from "../../src/localsearch/ILS_shrink";
 import { Neighborhood } from "../../src/models/Neighborhood";

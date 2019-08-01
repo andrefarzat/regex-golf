@@ -1,4 +1,4 @@
-import { Expect, FocusTest, Test, TestCase, TestFixture } from "alsatian";
+import { Expect, Test, TestCase, TestFixture } from "alsatian";
 
 import { ILS_Shrink } from '../../src/localsearch/ILS_shrink';
 

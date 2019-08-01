@@ -1,6 +1,5 @@
-import { AsyncTest, Expect, FocusTest, TestFixture, Timeout } from "alsatian";
+import { AsyncTest, Expect, TestFixture, Timeout } from "alsatian";
 
-// import { EvaluatorFactory } from "../../src/models/EvaluatorFactory";
 import { ILS } from "../../src/localsearch/ILS";
 import { Individual } from "../../src/models/Individual";
 
