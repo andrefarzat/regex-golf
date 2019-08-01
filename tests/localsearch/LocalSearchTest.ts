@@ -51,9 +51,8 @@ export class LocalSearchTest {
         Expect(l.isValidRight('foo')).toBeTruthy();
     }
 
-    @AsyncTest('n-gram')
-    @Timeout(1000)
-    public async testNGram() {
+    @Test('n-gram')
+    public testNGram() {
         const l = new MyLocalSearch('family');
         l.depth = 4;
         l.init();
@@ -61,7 +60,7 @@ export class LocalSearchTest {
         Expect(l.left).toEqual(["andre", "fabio"]);
         Expect(l.right).toEqual(["aleuda", "rodrigo"]);
 
-        Expect(l.ngrams).toEqual(["abio", "ndre", "andr", "fabi", "dre", "bio", "and", "fab", "ndr", "abi", "fa", "an", "re", "ab", "bi", "nd", "io", "b", "f", "n"]);
+        Expect(l.ngrams).toEqual(["n", "b", "f", "fa", "nd", "bi", "ab", "an", "re", "io", "dre", "fab", "bio", "ndr", "and", "abi", "abio", "ndre", "andr", "fabi"]);
     }
 
     @Test('dynamic depth')

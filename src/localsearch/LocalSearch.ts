@@ -104,15 +104,22 @@ export abstract class LocalSearch {
 
         const values: {[key: string]: number} = {};
         for (const gram of grams) {
-            const ind = this.factory.createFromString(gram);
+            const ind = this.factory.createFromString(gram, true);
             values[gram] = ind.isValid() ? this.evaluator.evaluateSimple(ind) : -1000;
         }
 
         grams.sort((a: string, b: string): number => {
-            return values[a] - values[b];
+            if (values[a] > values[b]) { return -1; }
+            if (values[a] < values[b]) { return 1; }
+
+            // untie
+            if (a.length < b.length) { return -1; }
+            if (a.length > b.length) { return 1; }
+
+            return 0;
         });
 
-        return grams;
+        return Array.from(new Set(grams));
     }
 
     public isValidLeft(ind: Individual): boolean {

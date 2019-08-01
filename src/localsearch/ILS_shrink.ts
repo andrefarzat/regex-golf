@@ -13,7 +13,7 @@ export class ILS_Shrink extends ILS {
         const ngram = this.ngrams[this.ngramIndex];
         if (ngram) {
             this.ngramIndex++;
-            return this.factory.createFromString(ngram);
+            return this.factory.createFromString(ngram, true);
         }
 
         return null;

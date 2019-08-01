@@ -18,7 +18,9 @@ export class EvaluatorFactory {
         if (ind.isEvaluated) { return Promise.resolve(ind.fitness); }
         ind.evaluationIndex = this.getNextEvaluationIndex();
 
-        return this.evaluateSimple(ind);
+        return ind.hasComplexEvaluation()
+            ? -1000
+            : this.evaluateSimple(ind);
 
         // return ind.hasComplexEvaluation()
         //     ? this.evaluateViaSub(ind)

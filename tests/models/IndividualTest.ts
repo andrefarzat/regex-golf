@@ -13,6 +13,7 @@ export class IndividualTest {
     @TestCase('(ab)*\\1', true)
     @TestCase('(ab)*|\\1', false)
     @TestCase('(ab)*|a+\\1', true)
+    @TestCase('>>>(.*)*<<>>\\1', true)
     public testComplexEvaluations(txt: string, isComplex: boolean) {
         const program = new ILS_Shrink('warmup');
         program.init();

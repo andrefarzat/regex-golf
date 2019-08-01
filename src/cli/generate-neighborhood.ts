@@ -34,6 +34,7 @@ console.log('Left chars:', program.validLeftChars);
 console.log('Right chars:', program.validLeftChars);
 console.log('Left chars not in right:', program.leftCharsNotInRight);
 console.log('Right chars not in left:', program.rightCharsNotInLeft);
+console.log('N-grams:', program.ngrams);
 console.log('');
 console.log('');
 

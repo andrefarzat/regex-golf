@@ -4,7 +4,7 @@ from subprocess import call
 
 
 # Parameters
-INSTANCE = 'family'
+INSTANCE = 'glob'
 SOLUTION = 'abc'
 LOG_LEVEL = 5
 
