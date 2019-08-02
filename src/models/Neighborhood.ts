@@ -90,21 +90,21 @@ export class Neighborhood {
             yield ind;
         }
 
-        for (const ind of this.generateByAddingBackrefOperator(solution)) {
-            yield ind;
-        }
+        // for (const ind of this.generateByAddingBackrefOperator(solution)) {
+        //     yield ind;
+        // }
 
-        for (const ind of this.generateByAddingLookbehind(solution)) {
-            yield ind;
-        }
+        // for (const ind of this.generateByAddingLookbehind(solution)) {
+        //     yield ind;
+        // }
 
         for (const ind of this.generateByExtractingSingleNode(solution)) {
             yield ind;
         }
 
-        for (const ind of this.generateByAddingNGram(solution)) {
-            yield ind;
-        }
+        // for (const ind of this.generateByAddingNGram(solution)) {
+        //     yield ind;
+        // }
     }
 
     public * generateByRemovingNodes(solution: Individual) {

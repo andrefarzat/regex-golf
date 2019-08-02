@@ -65,6 +65,7 @@ export class Evaluator {
     }
 
     public async evaluateViaSub(ind: Individual) {
+        // console.log('evaluateViaSub', ind.toString());
         return new Promise<number>(async (resolve, reject) => {
             this.cache[ind.evaluationIndex] = ind;
 
@@ -80,6 +81,7 @@ export class Evaluator {
                     const diff = now.diff(ind.evaluationStartTime, 'milliseconds');
 
                     if (ind.evaluationEndTime) {
+                        // console.log('evaluateViaSub', ind.toString(), 'evaluated');
                         resolve(ind.fitness);
                     } else if (diff > 3000) {
                         Logger.warn('timedout: ', diff.toString(), ind.toString());

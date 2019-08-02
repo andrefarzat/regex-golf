@@ -35,6 +35,14 @@ export class IndividualFactoryTest {
         Expect(ind.toString()).toEqual(text);
     }
 
+    @TestCase('her*', 'her\\*')
+    @TestCase('on*ho', 'on\\*ho')
+    @Test('Creating from special chars')
+    public testCreatingFromSpecialChars(text: string, expectedText: string) {
+        const ind = this.factory.createFromString(text, true);
+        Expect(ind.toString()).toEqual(expectedText);
+    }
+
     // @Test('Test creating with repetition')
     // public testCreateWithRepetition() {
     //     let ind = this.factory.createFromString('bba{5}');

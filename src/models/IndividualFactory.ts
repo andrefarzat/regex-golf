@@ -23,8 +23,16 @@ import { Individual } from './Individual';
 export class IndividualFactory {
     public constructor(public leftChars: string[], public rightChars: string[]) { }
 
-    public createFromString(phrase: string | RegExp): Individual {
-        const tree = regexp.parse(typeof phrase === 'string' ? `/${phrase}/` : phrase);
+    public createFromString(phrase: string | RegExp, escapeEspecialChars: boolean = false): Individual {
+        if (typeof phrase === 'string') {
+            if (escapeEspecialChars) {
+                phrase = phrase.replace(/([.^$|{}\[\]\(\)*+?\\])/g, `\\$1`);
+            }
+
+            phrase = `/${phrase}/`;
+        }
+
+        const tree = regexp.parse(phrase);
         let root = this.parseExpression(tree.body);
 
         if (root.is(NodeTypes.terminal)) {

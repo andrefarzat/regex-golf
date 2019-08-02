@@ -62,7 +62,7 @@ export class EvaluatorFactory {
         }
     }
 
-    protected evaluateSimple(ind: Individual): number {
+    public evaluateSimple(ind: Individual): number {
         const result = {
             leftPoints: 0,
             rightPoints: 0,

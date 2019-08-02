@@ -57,9 +57,9 @@ export abstract class LocalSearch {
         this.startTime = new Date();
         this.chars.left = this.extractUniqueChars(this.left);
         this.chars.right = this.extractUniqueChars(this.right);
-        this.ngrams = this.extractNGrams();
         this.factory = new IndividualFactory(this.validLeftChars, this.validRightChars);
         this.evaluator = new EvaluatorFactory(this.left, this.right);
+        this.ngrams = this.extractNGrams();
         return this;
     }
 
@@ -79,7 +79,7 @@ export abstract class LocalSearch {
     }
 
     public extractNGrams(): string[] {
-        const n = this.depth;
+        const n = Math.max(...this.left.map((name) => name.length));
         const grams: string[] = [];
 
         this.left.forEach((phrase) => {
@@ -97,7 +97,24 @@ export abstract class LocalSearch {
             });
         });
 
-        return grams;
+        const values: { [key: string]: number } = {};
+        for (const gram of grams) {
+            const ind = this.factory.createFromString(gram, true);
+            values[gram] = ind.isValid() ? this.evaluator.evaluateSimple(ind) : -1000;
+        }
+
+        grams.sort((a: string, b: string): number => {
+            if (values[a] > values[b]) { return -1; }
+            if (values[a] < values[b]) { return 1; }
+
+            // untie
+            if (a.length < b.length) { return -1; }
+            if (a.length > b.length) { return 1; }
+
+            return 0;
+        });
+
+        return Array.from(new Set(grams));
     }
 
     public isValidLeft(ind: Individual): boolean {

@@ -22,7 +22,7 @@ export class ILS_Shrink extends ILS {
         const ngram = this.ngrams[this.ngramIndex];
         if (ngram) {
             this.ngramIndex++;
-            return this.factory.createFromString(ngram);
+            return this.factory.createFromString(ngram, true);
         }
 
         // FIXME: We should not shrink to an invalid option
