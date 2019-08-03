@@ -22,6 +22,7 @@ export abstract class LocalSearch {
     public seed: number;
     public index: number;
     public ngrams: string[] = [];
+    public oldNGrams: string[] = [];
 
     public budget: number;
     public depth: number = 5;
@@ -132,7 +133,7 @@ export abstract class LocalSearch {
             return 0;
         });
 
-        return Array.from(new Set(grams));
+        return this.oldNGrams = Array.from(new Set(grams));
     }
 
     public oneMatchesTwo(one: string, two: string) {

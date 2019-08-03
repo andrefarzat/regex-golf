@@ -43,7 +43,7 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
 
 DEPTHS = [0]
 
-MAX_EVALUATIONS = [300000, 1000000]
+MAX_EVALUATIONS = [1000000] # 300000, 
 
 FOLDER_NAME = 'dynamic-depth-3'
 
@@ -61,15 +61,11 @@ for instance in instances:
         exit(1)
 
 program = 'ILS_Shrink'
-for budget in MAX_EVALUATIONS:
+for index, seed in enumerate(SEEDS):
     for depth in DEPTHS:
-        for instance, weight in INSTANCES.items():
-            instance = instance.strip()
-
-            if instance not in instances:
-                continue
-
-            for index, seed in enumerate(SEEDS):
+        for budget in MAX_EVALUATIONS:        
+            for instance in instances:
+                weight = INSTANCES[instance]
                 today = datetime.date.today().strftime("%Y-%m-%d")
                 resultsDir = FOLDER_NAME
                 absResultsDir = os.path.join(os.getcwd(), "results", resultsDir)

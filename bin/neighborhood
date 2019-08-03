@@ -4,8 +4,8 @@ from subprocess import call
 
 
 # Parameters
-INSTANCE = 'balance'
-SOLUTION = 'ab'
+INSTANCE = 'prime'
+SOLUTION = 'a'
 DEPTH = 100
 LOG_LEVEL = 5
 

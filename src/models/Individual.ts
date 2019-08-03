@@ -129,11 +129,11 @@ export class Individual {
         }
 
         for (const or of ors) {
-            if (this.hasMoreThanOneComplexFuncType(or.left.asFunc())) {
+            if (or.left.is(NodeTypes.func) && this.hasMoreThanOneComplexFuncType(or.left.asFunc())) {
                 return true;
             }
 
-            if (this.hasMoreThanOneComplexFuncType(or.right.asFunc())) {
+            if (or.right.is(NodeTypes.func) && this.hasMoreThanOneComplexFuncType(or.right.asFunc())) {
                 return true;
             }
         }

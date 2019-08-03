@@ -6,12 +6,14 @@ export class ConcatFunc extends Func {
     public type: FuncTypes = FuncTypes.concatenation;
 
     public toString(): string {
-        const orFuncs = this.children.filter((c) => c.is(FuncTypes.or)) as OrFunc[];
-        if (orFuncs.length > 0) {
-            return orFuncs.map((or) => this.orderOrToString(or)).join('');
-        } else {
-            return this.orderChildrenToLines(this.children);
-        }
+        return this.orderChildrenToLines(this.children);
+
+        // const orFuncs = this.children.filter((c) => c.is(FuncTypes.or)) as OrFunc[];
+        // if (orFuncs.length > 0) {
+        //     return orFuncs.map((or) => this.orderOrToString(or)).join('');
+        // } else {
+        //     return this.orderChildrenToLines(this.children);
+        // }
     }
 
     public orderChildrenToLines(children: Node[]) {
@@ -43,6 +45,6 @@ export class ConcatFunc extends Func {
             txt.push(or.right.toString());
         }
 
-        return txt.join('');
+        return txt.join('|');
     }
 }

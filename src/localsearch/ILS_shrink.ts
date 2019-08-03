@@ -12,7 +12,7 @@ export class ILS_Shrink extends ILS {
     }
 
     public getNextNGram(): Individual | null {
-        const ngram = this.ngrams[this.ngramIndex];
+        const ngram = this.oldNGrams[this.ngramIndex];
         if (ngram) {
             this.ngramIndex++;
             return this.factory.createFromString(ngram, true);
@@ -46,6 +46,13 @@ export class ILS_Shrink extends ILS {
         // } else {
         //     this.ngramIndex = 0;
         // }
+
+        const ngram = this.getNextNGram();
+        if (ngram) {
+            ind = ngram.shrink();
+        } else {
+            this.ngramIndex = 0;
+        }
 
         // do {
         //     const ngram = this.getNextNGram();

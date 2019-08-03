@@ -41,12 +41,13 @@ console.log('Right chars:', program.validLeftChars);
 console.log('Left chars not in right:', program.leftCharsNotInRight);
 console.log('Right chars not in left:', program.rightCharsNotInLeft);
 console.log('N-grams:', program.ngrams);
+console.log('old N-grams:', program.oldNGrams);
 console.log('');
 console.log('');
 
 let i = 0;
 for (const ind of hood.getGenerator()) {
-    console.log(ind.toString());
+    // console.log(ind.toString());
     i ++;
 }
 

@@ -94,9 +94,9 @@ export class Neighborhood {
             yield ind;
         }
 
-        for (const ind of this.generateByAddingLookbehind(solution)) {
-            yield ind;
-        }
+        // for (const ind of this.generateByAddingLookbehind(solution)) {
+        //     yield ind;
+        // }
 
         for (const ind of this.generateByExtractingSingleNode(solution)) {
             yield ind;
@@ -413,11 +413,39 @@ export class Neighborhood {
     }
 
     public * generateByAddingNGram(solution: Individual) {
+        const nodes = solution.getNodes();
+
         for (const ngram of this.program.ngrams) {
-            const neo = solution.clone();
-            const node = this.program.factory.createFromString(ngram).tree;
-            neo.tree = new OrFunc(neo.tree.clone(), node);
-            yield neo;
+            let neo: Individual;
+            const ind = this.program.factory.createFromString(ngram);
+
+            for (const node of nodes) {
+                if (solution.isTheRootNode(node)) {
+                    yield ind.clone();
+                } else {
+                    neo = this.factory.replaceNode(solution, node, ind.tree);
+                    if (neo.isValid()) { yield neo; }
+                }
+
+                neo = this.factory.concatenateToNode(solution, node, ind.tree);
+                if (neo.isValid()) { yield neo; }
+
+                let or = new OrFunc(node, ind.tree);
+                neo = this.factory.replaceNode(solution, node, or);
+                yield neo;
+
+                or = new OrFunc(ind.tree, node);
+                neo = this.factory.replaceNode(solution, node, or);
+                yield neo;
+            }
+
+            neo = solution.clone();
+            neo.tree = new OrFunc(neo.tree.clone(), ind.tree);
+            if (neo.isValid()) { yield neo; }
+
+            neo = solution.clone();
+            neo.tree = new OrFunc(ind.tree, neo.tree.clone());
+            if (neo.isValid()) { yield neo; }
         }
     }
 }

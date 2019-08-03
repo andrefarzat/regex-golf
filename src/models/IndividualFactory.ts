@@ -218,7 +218,27 @@ export class IndividualFactory {
         } else if (neo.isTheRootNode(neoOne)) {
             neo.tree.addChild(two);
         } else {
-            throw new Error('Should not reach here');
+            throw new Error('[concatenateToNode] Should not reach here');
+        }
+
+        return neo;
+    }
+
+    public replaceNodeWithOrFunc(ind: Individual, one: Node, two: Node): Individual {
+        const neo = ind.clone();
+        const neoIndex = ind.getNodes().indexOf(one);
+        const neoOne = neo.getNodes()[neoIndex];
+
+        const parent = neo.getParentOf(neoOne);
+
+        if (parent) {
+            const index = parent.children.indexOf(neoOne);
+            const or = new OrFunc(neoOne, two);
+            parent.children.splice(index, 1, neoOne, or);
+        } else if (neo.isTheRootNode(neoOne)) {
+            neo.tree = new OrFunc(neoOne, two);
+        } else {
+            throw new Error('[addOrToNode] Should not reach here');
         }
 
         return neo;

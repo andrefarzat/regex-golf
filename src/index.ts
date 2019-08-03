@@ -78,6 +78,7 @@ async function main() {
     Logger.info(`[Initial solution]`, currentSolution.toLog());
 
     const visitedRegexes: string[] = [];
+    let bestCurrentFitness = currentSolution.fitness;
 
     // 6. Loop
     do {
@@ -103,7 +104,7 @@ async function main() {
                 if (ind.evaluationIndex % 10000 === 0) {
                     const time = moment().diff(program.startTime, 'ms');
                     // tslint:disable-next-line no-console
-                    console.log(`${ind.evaluationIndex} evaluated in ${time} ms`);
+                    console.log(`${ind.evaluationIndex} evaluated in ${time} ms. [actual best: ${bestCurrentFitness}]`);
                 }
 
                 // 6.4.1. Neighbor is better than current solution ?
@@ -113,6 +114,10 @@ async function main() {
                     Logger.info(`[Found better]`, ind.toLog());
                     currentSolution = ind;
                     hasFoundBetter = true;
+
+                    if (currentSolution.fitness > bestCurrentFitness) {
+                        bestCurrentFitness = currentSolution.fitness;
+                    }
 
                     // Testing to see if we have somekind of loop
                     const hasVisitedThisInd = visitedRegexes.includes(ind.toString());

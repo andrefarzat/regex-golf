@@ -3,7 +3,7 @@ import { LocalSearch } from './LocalSearch';
 
 export class ILS extends LocalSearch {
     public async restartFromSolution(ind: Individual): Promise<Individual> {
-        let count = this.depth;
+        let count = 5;
 
         while (--count > 0) {
             const neo = this.factory.generateRandomlyFrom(ind);
