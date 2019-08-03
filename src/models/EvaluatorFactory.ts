@@ -15,12 +15,16 @@ export class EvaluatorFactory {
     }
 
     public async evaluate(ind: Individual): Promise<number> {
-        if (ind.isEvaluated) { return Promise.resolve(ind.fitness); }
+        if (ind.isEvaluated) { return ind.fitness; }
         ind.evaluationIndex = this.getNextEvaluationIndex();
 
-        return ind.hasComplexEvaluation()
-            ? -1000
-            : this.evaluateSimple(ind);
+        if (ind.hasComplexEvaluation()) {
+            ind.matchesOnLeft = 0;
+            ind.matchesOnRight = this.right.length;
+            return ind.fitness;
+        } else {
+            return this.evaluateSimple(ind);
+        }
 
         // return ind.hasComplexEvaluation()
         //     ? this.evaluateViaSub(ind)

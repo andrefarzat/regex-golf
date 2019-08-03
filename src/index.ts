@@ -117,7 +117,7 @@ async function main() {
                     // Testing to see if we have somekind of loop
                     const hasVisitedThisInd = visitedRegexes.includes(ind.toString());
                     if (hasVisitedThisInd) {
-                        Logger.warn(`[Already visited]`, ind.toLog());
+                        // Logger.warn(`[Already visited]`, ind.toLog());
                     } else {
                         visitedRegexes.push(ind.toString());
                     }

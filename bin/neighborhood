@@ -4,8 +4,8 @@ from subprocess import call
 
 
 # Parameters
-INSTANCE = 'glob'
-SOLUTION = 'abc'
+INSTANCE = 'backrefs'
+SOLUTION = '[t]'
 LOG_LEVEL = 5
 
 

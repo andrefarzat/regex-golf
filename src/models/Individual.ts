@@ -9,24 +9,28 @@ import { Utils } from "../Utils";
 import { OrFunc } from '../nodes/OrFunc';
 
 export class Individual {
+    private static weight = 10;
+
+    public static setWeight(weight: number) {
+        Individual.weight = weight;
+    }
+
+    public static getWeight() {
+        return Individual.weight;
+    }
 
     public get isEvaluated(): boolean {
         return this.evaluationIndex != undefined;
     }
 
     public get fitness(): number {
-        return Individual.weight * (this.matchesOnLeft - this.matchesOnRight) - this.toString().length;
+        return (Individual.weight * (this.matchesOnLeft - this.matchesOnRight)) - this.toString().length;
     }
 
     public get evaluationTime(): number {
         if (!this.evaluationEndTime) { return 0; }
         return moment(this.evaluationEndTime).diff(this.evaluationStartTime, 'millisecond');
     }
-
-    public static setWeight(weight: number) {
-        Individual.weight = weight;
-    }
-    private static weight = 10;
 
     public id = Utils.getNextId();
     public tree: Func;

@@ -102,9 +102,9 @@ export class Neighborhood {
             yield ind;
         }
 
-        // for (const ind of this.generateByAddingNGram(solution)) {
-        //     yield ind;
-        // }
+        for (const ind of this.generateByAddingNGram(solution)) {
+            yield ind;
+        }
     }
 
     public * generateByRemovingNodes(solution: Individual) {

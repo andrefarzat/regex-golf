@@ -13,6 +13,7 @@
     "copy-instances": "cp -r instances dist",
     "neighborhood": "ts-node src/cli/generate-neighborhood.ts",
     "read-log": "ts-node src/cli/read-log.ts",
+    "show-fitness": "ts-node src/cli/show-fitness.ts",
     "lint": "tslint --project ."
   },
   "dependencies": {
