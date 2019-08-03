@@ -76,20 +76,22 @@ export class EvaluatorFactory {
             matchesOnRight: 0,
         };
 
-        const regex = ind.toRegex();
+        if (ind.isValid()) {
+            const regex = ind.toRegex();
 
-        for (const name of this.left) {
-            if (regex.test(name)) {
-                result.leftPoints += name.length;
-                result.matchesOnLeft += 1;
+            for (const name of this.left) {
+                if (regex.test(name)) {
+                    result.leftPoints += name.length;
+                    result.matchesOnLeft += 1;
+                }
             }
-        }
 
-        for (const name of this.right) {
-            if (regex.test(name)) {
-                result.matchesOnRight += 1;
-            } else {
-                result.rightPoints += name.length;
+            for (const name of this.right) {
+                if (regex.test(name)) {
+                    result.matchesOnRight += 1;
+                } else {
+                    result.rightPoints += name.length;
+                }
             }
         }
 

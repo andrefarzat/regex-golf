@@ -12,8 +12,8 @@ _INSTANCES = {
 
 # ./bin/run "prime" "aman-aplan" "four" "ranges"
 # ./bin/run "triples" "powers" "glob" "alphabetical" 
-# ./bin/run "long-count" "order" "abba" 
-# ./bin/run "balance" "warmup" "backrefs" "anchors" 
+# ./bin/run  "order" "abba" "warmup" "backrefs" "anchors" 
+# ./bin/run "balance" "long-count" 
 
 INSTANCES = {
     "warmup": 10,
@@ -43,9 +43,9 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
 
 DEPTHS = [0]
 
-MAX_EVALUATIONS = [1000000] # 300000, 
+MAX_EVALUATIONS = [i * 1000 for i in (300, 500, 800, 1000)]
 
-FOLDER_NAME = 'dynamic-depth-3'
+FOLDER_NAME = 'dynamic-depth-4'
 
 
 def execute(cmd):

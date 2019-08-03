@@ -43,6 +43,11 @@ if (!flags.name) {
     process.exit();
 }
 
+if (['powers', 'long-count'].indexOf(flags.instance) > -1) {
+    console.log("Skippings", flags.instance);
+    process.exit();
+}
+
 Utils.setIndex(flags.index);
 Individual.setWeight(flags.weight);
 if (flags.seed) { Utils.setSeed(flags.seed); }
@@ -87,6 +92,10 @@ async function main() {
         let hasFoundBetter = false;
         if (program.isBest(currentSolution)) {
             program.addSolution(currentSolution);
+        }
+
+        if (currentSolution.fitness > bestCurrentFitness) {
+            bestCurrentFitness = currentSolution.fitness;
         }
 
         // 6.3. Should stop ?

@@ -65,7 +65,16 @@ export abstract class LocalSearch {
         this.chars.right = this.extractUniqueChars(this.right);
         this.factory = new IndividualFactory(this.validLeftChars, this.validRightChars);
         this.evaluator = new EvaluatorFactory(this.left, this.right);
-        this.ngrams = this.extractNGrams();
+
+        if (this.instanceName === 'balance') {
+            import('./balance').then(balance => {
+                this.ngrams = balance.grams;
+                this.oldNGrams = balance.oldNGrams;
+            });
+        } else {
+            this.ngrams = this.extractNGrams();
+        }
+
         return this;
     }
 

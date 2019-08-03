@@ -4,7 +4,7 @@ from subprocess import call
 
 
 # Parameters
-INSTANCE = 'ranges'
+INSTANCE = 'four'
 SOLUTION = 'a'
 DEPTH = 100
 LOG_LEVEL = 5
