@@ -30,6 +30,6 @@ export class ILS extends LocalSearch {
             ind = neo;
         }
 
-        return ind;
+        return ind.shrink();
     }
 }

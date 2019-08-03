@@ -176,11 +176,14 @@ async function main() {
     const maxFitess = flags.weight * program.left.length;
 
     if (bestSolution) {
-        bestSolution = bestSolution.shrink();
-        await program.evaluator.evaluate(bestSolution);
-
         csvLine.push(bestSolution.toString()); // Melhor_solucao
         csvLine.push(bestSolution.fitness); // Melhor_fitness
+
+        bestSolution = bestSolution.shrink();
+        await program.evaluator.evaluate(bestSolution);
+        csvLine.push(bestSolution.toString()); // Melhor_solucao_shrunk
+        csvLine.push(bestSolution.fitness); // Melhor_fitness_shrunk
+
         csvLine.push(maxFitess); // Maximo_finess
         csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
         csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
@@ -192,6 +195,8 @@ async function main() {
     } else {
         csvLine.push('N/A'); // Melhor_solucao
         csvLine.push('N/A'); // Melhor_fitness
+        csvLine.push('N/A'); // Melhor_solucao_shrunk
+        csvLine.push('N/A'); // Melhor_fitness_shrunk
         csvLine.push(maxFitess); // Maximo_finess
         csvLine.push('N/A'); // Numero_de_comparacoes
         csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes

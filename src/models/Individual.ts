@@ -111,7 +111,7 @@ export class Individual {
         if (/\[\^[^\]]*\[\^/.test(str)) { return false; }
         if (/^\\n/.test(str)) { return false; }
         if (/\/\?/.test(str)) { return false; }
-        // if (this.hasComplexEvaluation()) { return false; }
+        if (this.hasComplexEvaluation()) { return false; }
 
         return true;
     }
