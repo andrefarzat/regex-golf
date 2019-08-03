@@ -3,16 +3,19 @@ const args = require('args');
 
 import { ILS_Shrink } from '../localsearch/ILS_shrink';
 import { Neighborhood } from '../models/Neighborhood';
+import { Individual } from '../models/Individual';
 
 // tslint:disable no-console
 
 args.option('instance', 'O nome da instância do problema')
     .option('solution', 'A solução da qual será gerada a vizinhança')
+    .option('depth', 'A profundidade da árvore', 5)
     .option('log-level', 'Log level entre 1 e 5', 3);
 
 const flags: {
     instance: string,
     solution: string,
+    depth: number,
     logLevel: number,
 } = args.parse(process.argv);
 
@@ -23,7 +26,10 @@ if (!flags.instance || !flags.solution) {
 
 /** Start */
 
-const program = (new ILS_Shrink(flags.instance)).init();
+const program = new ILS_Shrink(flags.instance);
+program.depth = flags.depth;
+program.init();
+
 const initialInd = program.factory.createFromString(flags.solution);
 const hood = new Neighborhood(initialInd, program);
 

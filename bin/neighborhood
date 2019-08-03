@@ -4,8 +4,9 @@ from subprocess import call
 
 
 # Parameters
-INSTANCE = 'backrefs'
-SOLUTION = '[t]'
+INSTANCE = 'balance'
+SOLUTION = 'ab'
+DEPTH = 100
 LOG_LEVEL = 5
 
 
@@ -18,6 +19,7 @@ def main():
     cmd = ['npm', 'run', 'neighborhood', '--',
         "--instance", INSTANCE,
         "--solution", SOLUTION,
+        "--depth", DEPTH,
         "--log-level", LOG_LEVEL]
 
     execute(cmd)

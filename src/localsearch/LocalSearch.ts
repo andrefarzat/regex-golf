@@ -84,6 +84,19 @@ export abstract class LocalSearch {
     }
 
     public extractNGrams(): string[] {
+        const ngrams: string[] = [];
+        let left = this.left.concat();
+
+        for (const ngram of this.extractNGramsOLD()) {
+            const i = left.length;
+            left = left.filter(name => !this.oneMatchesTwo(ngram, name));
+            if (i > left.length) { ngrams.push(ngram); }
+        }
+
+        return ngrams;
+    }
+
+    public extractNGramsOLD(): string[] {
         const n = this.depth;
         const grams: string[] = [];
 
@@ -105,7 +118,7 @@ export abstract class LocalSearch {
         const values: {[key: string]: number} = {};
         for (const gram of grams) {
             const ind = this.factory.createFromString(gram, true);
-            values[gram] = ind.isValid() ? this.evaluator.evaluateSimple(ind) : -1000;
+            values[gram] = ind.isValid() ? this.evaluator.evaluateSimple(ind) : -10000;
         }
 
         grams.sort((a: string, b: string): number => {
@@ -120,6 +133,11 @@ export abstract class LocalSearch {
         });
 
         return Array.from(new Set(grams));
+    }
+
+    public oneMatchesTwo(one: string, two: string) {
+        const regex = new RegExp(one);
+        return regex.test(two);
     }
 
     public isValidLeft(ind: Individual): boolean {

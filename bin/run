@@ -29,7 +29,7 @@ INSTANCES = {
     "glob": 20,
     "balance": 10,
     "powers": 10,
-    # "long-count": 270,
+    "long-count": 270,
     "alphabetical": 20,
 }
 

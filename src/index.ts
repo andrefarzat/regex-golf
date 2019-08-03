@@ -149,7 +149,7 @@ async function main() {
     program.evaluator.close();
 
     // 7. Apresentar resultados
-    const bestSolution = program.getBestSolution();
+    let bestSolution = program.getBestSolution();
 
     Logger.info(`Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.forEach((ind) => {
@@ -171,26 +171,27 @@ async function main() {
     const maxFitess = flags.weight * program.left.length;
 
     if (bestSolution) {
+        bestSolution = bestSolution.shrink();
+        await program.evaluator.evaluate(bestSolution);
+
         csvLine.push(bestSolution.toString()); // Melhor_solucao
-        csvLine.push(bestSolution.shrink().toString()); // Melhor_solucao_shrunk
         csvLine.push(bestSolution.fitness); // Melhor_fitness
         csvLine.push(maxFitess); // Maximo_finess
-        csvLine.push(bestSolution.matchesOnLeft); // Matches_on_left
-        csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
         csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
         csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
+        csvLine.push(bestSolution.matchesOnLeft); // Matches_on_left
+        csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
 
         // Tempo_para_encontrar_melhor_solucao
         csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds')));
     } else {
         csvLine.push('N/A'); // Melhor_solucao
-        csvLine.push('N/A'); // Melhor_solucao_shrunk
         csvLine.push('N/A'); // Melhor_fitness
         csvLine.push(maxFitess); // Maximo_finess
-        csvLine.push('N/A'); // Matches_on_left
-        csvLine.push('N/A'); // Matches_on_right
         csvLine.push('N/A'); // Numero_de_comparacoes
         csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
+        csvLine.push('N/A'); // Matches_on_left
+        csvLine.push('N/A'); // Matches_on_right
         csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
     }
 
