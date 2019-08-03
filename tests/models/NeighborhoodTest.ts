@@ -352,7 +352,7 @@ export class NeighborhoodTest {
         const generator = hood.generateByAddingGivenOperator(initialInd, AnyCharFunc);
 
         const options: string[] = [
-            ".[^b]c", "a.[^b]c", "a[^b]c.", "a[^.]c", "a[^b.]c", "a[^b].c", "a.c", "a[^b]c.", "a[^b].",
+            ".[^b]c", "a.[^b]c", "a[^b]c.", "a[^.]c", "a[^b.]c", "a[^b].c", "a.c", "a[^b].",
         ];
 
         let i = 0;
