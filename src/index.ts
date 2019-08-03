@@ -188,10 +188,10 @@ async function main() {
         csvLine.push(bestSolution.toString()); // Melhor_solucao
         csvLine.push(bestSolution.fitness); // Melhor_fitness
 
-        bestSolution = bestSolution.shrink();
-        await program.evaluator.evaluate(bestSolution);
-        csvLine.push(bestSolution.toString()); // Melhor_solucao_shrunk
-        csvLine.push(bestSolution.fitness); // Melhor_fitness_shrunk
+        const bestShrunkSolution = bestSolution.shrink();
+        await program.evaluator.evaluate(bestShrunkSolution);
+        csvLine.push(bestShrunkSolution.toString()); // Melhor_solucao_shrunk
+        csvLine.push(bestShrunkSolution.fitness); // Melhor_fitness_shrunk
 
         csvLine.push(maxFitess); // Maximo_finess
         csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
