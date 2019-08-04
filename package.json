@@ -8,7 +8,7 @@
   "scripts": {
     "test": "ts-node tests/runner.ts | tap-dot",
     "check-coverage": "nyc --reporter=lcov --reporter=html npm run test && nyc report",
-    "test-ci": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
+    "test-ci": "nyc npm test && nyc report --reporter=text-lcov | coveralls | codecov",
     "localsearch": "ts-node src/index.ts",
     "copy-instances": "cp -r instances dist",
     "neighborhood": "ts-node src/cli/generate-neighborhood.ts",
