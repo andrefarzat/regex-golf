@@ -163,7 +163,7 @@ async function main() {
     program.evaluator.close();
 
     // 7. Apresentar resultados
-    let bestSolution = program.getBestSolution();
+    const bestSolution = program.getBestSolution();
 
     Logger.info(`Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.forEach((ind) => {
