@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - "10"
 
+env:
+  - CODECOV_TOKEN="531e85b6-892e-473d-86a3-542f232b7aea"
+
 script:
   - npm run lint
   - npm run test-ci
