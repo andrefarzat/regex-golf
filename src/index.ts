@@ -43,7 +43,7 @@ if (!flags.name) {
     process.exit();
 }
 
-if (['powers', 'long-count'].indexOf(flags.instance) > -1) {
+if (['powers'].indexOf(flags.instance) > -1) {
     console.log("Skippings", flags.instance);
     process.exit();
 }

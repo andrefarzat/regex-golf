@@ -15,6 +15,12 @@ _INSTANCES = {
 # ./bin/run  "order" "abba" "warmup" "backrefs" "anchors" 
 # ./bin/run "balance" "long-count" 
 
+
+# ./bin/run abba alphabetical 
+# ./bin/run anchors warmup backrefs four
+# ./bin/run glob order ranges
+# ./bin/run triples aman-aplan
+
 INSTANCES = {
     "warmup": 10,
     "anchors": 10,
@@ -33,17 +39,15 @@ INSTANCES = {
     "alphabetical": 20,
 }
 
-SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
-         8370032799, 2767986875, 3141506592, 3313543896, 8657690939, 9696640194,
-         6621545651, 2492462788, 3404588599, 2330977742, 6361187489, 2805026820,
+SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866, # 5
+         8370032799, 2767986875, 3141506592, 3313543896, 8657690939, 9696640194, # 11
+         6621545651, 2492462788, 3404588599, 2330977742, 6361187489, 2805026820, # 17
          4323456912, 8361101999, 9935136846, 5217407358, 5619256299, 4560422870,
          5236888092, 1337360711, 7659837985, 2521100877, 8801535107, 9651599436]
 
-# SEEDS = [9696640194]
-
 DEPTHS = [0]
 
-MAX_EVALUATIONS = [i * 1000 for i in (300, 500, 800, 1000)]
+MAX_EVALUATIONS = [i * 1000 for i in (1000, )] # 1000
 
 FOLDER_NAME = 'dynamic-depth-4'
 
@@ -62,6 +66,9 @@ for instance in instances:
 
 program = 'ILS_Shrink'
 for index, seed in enumerate(SEEDS):
+    if index < 21:
+        continue
+
     for depth in DEPTHS:
         for budget in MAX_EVALUATIONS:        
             for instance in instances:
