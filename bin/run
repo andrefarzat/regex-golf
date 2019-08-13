@@ -16,10 +16,10 @@ _INSTANCES = {
 # ./bin/run "balance" "long-count" 
 
 
-# ./bin/run abba alphabetical 
-# ./bin/run anchors warmup backrefs four
+# ./bin/run abba alphabetical aman-aplan
+# ./bin/run anchors triples backrefs four
 # ./bin/run glob order ranges
-# ./bin/run triples aman-aplan
+# ./bin/run "long-count" warmup 
 
 INSTANCES = {
     "warmup": 10,
@@ -66,7 +66,7 @@ for instance in instances:
 
 program = 'ILS_Shrink'
 for index, seed in enumerate(SEEDS):
-    if index < 21:
+    if index not in [19, 20]:
         continue
 
     for depth in DEPTHS:
