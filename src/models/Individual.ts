@@ -24,6 +24,10 @@ export class Individual {
         return this.evaluationIndex != undefined;
     }
 
+    public get simpleFitness(): number {
+        return this.matchesOnLeft - this.matchesOnRight;
+    }
+
     public get fitness(): number {
         return (Individual.weight * (this.matchesOnLeft - this.matchesOnRight)) - this.toString().length;
     }

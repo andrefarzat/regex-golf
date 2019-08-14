@@ -186,33 +186,31 @@ async function main() {
 
     if (!flags.csv) { process.exit(); }
 
-    // Nome, Depth, i, seed
+    // Nome, Depth
     const csvLine: Array<string | number> = [program.instanceName, program.depth];
 
     const startTime = moment(program.startTime);
     const totalTime = moment(program.endTime).diff(program.startTime, 'milliseconds');
     const maxFitess = flags.weight * program.left.length;
 
-    if (bestSolution) {
-        const bestShrunkSolution = bestSolution.shrink();
-        await program.evaluator.evaluate(bestShrunkSolution);
+    const bestShrunkSolution = bestSolution.shrink();
+    await program.evaluator.evaluate(bestShrunkSolution);
 
-        csvLine.push(bestSolution.fitness); // Melhor_fitness
-        csvLine.push(bestShrunkSolution.fitness); // Melhor_fitness_shrunk
-        csvLine.push(maxFitess); // Maximo_finess
-        csvLine.push(bestSolution.matchesOnLeft); // Matches_on_left
-        csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
-        csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
-        csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
-        // Tempo_para_encontrar_melhor_solucao
-        csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds')));
-        csvLine.push(totalTime); // Tempo_total
-        csvLine.push(flags.index); // Index
-        csvLine.push(program.seed); // Seed
-        csvLine.push(bestSolution.toString()); // Melhor_solucao
-        csvLine.push(bestShrunkSolution.toString()); // Melhor_solucao_shrunk
-    }
-
+    csvLine.push(bestSolution.fitness); // Melhor_fitness
+    csvLine.push(bestShrunkSolution.fitness); // Melhor_fitness_shrunk
+    csvLine.push(maxFitess); // Maximo_finess
+    csvLine.push(bestSolution.matchesOnLeft); // Matches_on_left
+    csvLine.push(bestSolution.matchesOnRight); // Matches_on_right
+    csvLine.push(bestSolution.evaluationIndex); // Numero_de_comparacoes
+    csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
+    // Tempo_para_encontrar_melhor_solucao
+    csvLine.push(Math.abs(startTime.diff(bestSolution.createdDate, 'milliseconds')));
+    csvLine.push(totalTime); // Tempo_total
+    csvLine.push(flags.index); // Index
+    csvLine.push(program.seed); // Seed
+    csvLine.push(bestSolution.simpleFitness); // Simple_fitness
+    csvLine.push(bestSolution.toString()); // Melhor_solucao
+    csvLine.push(bestShrunkSolution.toString()); // Melhor_solucao_shrunk
     csvLine.push(program.budget); // Orçamento
     csvLine.push(program.reasonToStop); // Reason to stop
 
