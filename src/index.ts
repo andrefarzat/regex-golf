@@ -22,6 +22,7 @@ args.option('name', 'O nome do algoritmo. Opções: "ILS", "ILS_Shrink", "RRLS",
     .option('log-level', 'Log level entre 1 e 5', 3)
     .option('index', 'O índice da execução', 0)
     .option('seed', 'O seed para Random')
+    .option('max-evaluations', 'O número máximo de avaliações sem melhorias', 0)
     .option('timeout', 'Timeout em miliseconds', 10000 * 60)
     .option('csv', 'Exportar resultado em csv');
 
@@ -33,6 +34,7 @@ const flags: {
     budget: number,
     logLevel: number,
     index: number,
+    maxEvaluations: number,
     timeout: number,
     seed: number,
     csv: string,
@@ -43,11 +45,10 @@ if (!flags.name) {
     process.exit();
 }
 
-if (['powers'].indexOf(flags.instance) > -1) {
-    console.log("Skippings", flags.instance);
-    process.exit();
-}
-
+// if (['powers'].indexOf(flags.instance) > -1) {
+//     console.log("Skippings", flags.instance);
+//     process.exit();
+// }
 
 Utils.setIndex(flags.index);
 Individual.setWeight(flags.weight);
@@ -75,6 +76,10 @@ async function main() {
     program.seed = flags.seed;
     program.index = flags.index;
 
+    if (flags.maxEvaluations > 0) {
+        program.maxEvaluationsWithoutImprovement = flags.maxEvaluations;
+    }
+
     // 4. Start
     program.init();
 
@@ -96,12 +101,13 @@ async function main() {
         }
 
         if (currentSolution.fitness > bestCurrentFitness) {
+            Logger.info(`[New best current fitness (1)]`, currentSolution.toLog());
             bestCurrentFitness = currentSolution.fitness;
         }
 
         // 6.3. Should stop ?
         //      Then -> Stop !
-        if (program.shouldStop()) { break; }
+        if (program.shouldStop(null, '1')) { break; }
 
         // 6.4 Evaluate Neighborhood
         const neighborhood = new Neighborhood(currentSolution, program);
@@ -113,8 +119,8 @@ async function main() {
 
                 if (ind.evaluationIndex % 10000 === 0) {
                     const time = moment().diff(program.startTime, 'ms');
-                    // tslint:disable-next-line no-console
-                    console.log(`${ind.evaluationIndex} evaluated in ${time} ms. [actual best: ${bestCurrentFitness}]`);
+                    // tslint:disable-next-line no-console max-line-length
+                    console.log(`${ind.evaluationIndex} evaluated in ${time} ms. [actual best: ${bestCurrentFitness}] [eval count: ${program.evaluationsWithoutImprovement} of ${program.maxEvaluationsWithoutImprovement}]`);
                 }
 
                 // 6.4.1. Neighbor is better than current solution ?
@@ -128,6 +134,7 @@ async function main() {
                     if (currentSolution.fitness > bestCurrentFitness) {
                         bestCurrentFitness = currentSolution.fitness;
                         program.evaluationsWithoutImprovement = 0;
+                        Logger.info(`[New best current fitness (2)]`, currentSolution.toLog());
                     }
 
                     // Testing to see if we have somekind of loop
@@ -141,14 +148,16 @@ async function main() {
                     program.evaluationsWithoutImprovement += 1;
                 }
 
-                if (program.shouldStop()) {
+                if (program.shouldStop(ind, '2')) {
                     throw new Error('Stop!');
                 }
             });
         } catch (e) {
             if (e.message === 'Stop!') {
-                Logger.error('[Timeout]');
+                console.log('Reason to stop:', program.reasonToStop);
+                Logger.error('[Stop]', program.reasonToStop);
             } else {
+                console.log('Neighborhood error:', e.message);
                 Logger.error(`[Index Neighborhood error]`, e.message);
             }
         }
@@ -167,7 +176,7 @@ async function main() {
     program.evaluator.close();
 
     // 7. Apresentar resultados
-    const bestSolution = program.getBestSolution();
+    const bestSolution = program.getBestSolution() || currentSolution;
 
     Logger.info(`Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.forEach((ind) => {
@@ -207,32 +216,6 @@ async function main() {
         csvLine.push(program.seed); // Seed
         csvLine.push(bestSolution.toString()); // Melhor_solucao
         csvLine.push(bestShrunkSolution.toString()); // Melhor_solucao_shrunk
-    } else {
-        csvLine.push('N/A'); // Melhor_solucao
-        csvLine.push('N/A'); // Melhor_fitness
-        csvLine.push('N/A'); // Melhor_solucao_shrunk
-        csvLine.push('N/A'); // Melhor_fitness_shrunk
-        csvLine.push(maxFitess); // Maximo_finess
-        csvLine.push('N/A'); // Numero_de_comparacoes
-        csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
-        csvLine.push('N/A'); // Matches_on_left
-        csvLine.push('N/A'); // Matches_on_right
-        csvLine.push('N/A'); // Tempo_para_encontrar_melhor_solucao
-
-        csvLine.push('N/A'); // Melhor_fitness
-        csvLine.push('N/A'); // Melhor_fitness_shrunk
-        csvLine.push(maxFitess); // Maximo_finess
-        csvLine.push('N/A'); // Matches_on_left
-        csvLine.push('N/A'); // Matches_on_right
-        csvLine.push('N/A'); // Numero_de_comparacoes
-        csvLine.push(program.evaluator.evaluationCount); // Numero_total_de_comparacoes
-        // Tempo_para_encontrar_melhor_solucao
-        csvLine.push('N/A');
-        csvLine.push(totalTime); // Tempo_total
-        csvLine.push(flags.index); // Index
-        csvLine.push(program.seed); // Seed
-        csvLine.push('N/A'); // Melhor_solucao
-        csvLine.push('N/A'); // Melhor_solucao_shrunk
     }
 
     csvLine.push(program.budget); // Orçamento

@@ -20,7 +20,7 @@ export class ListFuncShrinker implements FuncShrinker {
             let chars = children.map((c) => c.toString()).sort().join('');
             chars = Utils.getUniqueChars(chars);
 
-            if (chars.length === 1) {
+            if (chars.length === 1 && !node.negative) {
                 return new Terminal(chars);
             }
 

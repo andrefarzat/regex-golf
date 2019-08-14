@@ -3,6 +3,7 @@ import { EvaluatorFactory } from "../models/EvaluatorFactory";
 import { Individual } from "../models/Individual";
 import { IndividualFactory } from "../models/IndividualFactory";
 import { Utils } from "../Utils";
+import { Logger } from "../Logger";
 
 export interface Solution {
     ind: Individual;
@@ -24,6 +25,7 @@ export abstract class LocalSearch {
     public ngrams: string[] = [];
     public oldNGrams: string[] = [];
     public evaluationsWithoutImprovement = 0;
+    public maxEvaluationsWithoutImprovement = Infinity;
 
     public budget: number;
     public depth: number = 5;
@@ -33,7 +35,6 @@ export abstract class LocalSearch {
 
     public readonly TWO_MINUTES = 1000 * 60 * 2;
     public readonly TEN_MINUTES = 1000 * 60 * 10;
-    public readonly MAX_EVALUATIONS_WITHOUT_IMPROVEMENT = 200 * 1000;
 
     constructor(public instanceName: string) {
         const instance = Utils.loadInstance(instanceName);
@@ -190,40 +191,56 @@ export abstract class LocalSearch {
         return this.left.length;
     }
 
-    public shouldStop(): boolean {
+    public shouldStop(ind: Individual = null, label: string = ''): boolean {
         if (this.evaluator.evaluationCount >= this.budget) {
             this.endTime = new Date();
             this.reasonToStop = 'maxEvaluations';
+            // tslint:disable-next-line
+            Logger.info('[shouldStop]', label, 'maxEvaluations', this.evaluator.evaluationCount.toString(), this.budget.toString());
             return true;
         }
 
-        if (this.evaluationsWithoutImprovement >= this.MAX_EVALUATIONS_WITHOUT_IMPROVEMENT) {
+        if (this.evaluationsWithoutImprovement >= this.maxEvaluationsWithoutImprovement) {
             this.endTime = new Date();
             this.reasonToStop = 'withoutImprovement';
+            // tslint:disable-next-line
+            Logger.info('[shouldStop]', label, 'withoutImprovement', this.evaluationsWithoutImprovement.toString(), this.maxEvaluationsWithoutImprovement.toString());
             return true;
         }
 
         if (Moment().diff(this.startTime, 'ms') > this.TEN_MINUTES) {
-            this.reasonToStop = 'maxEvaluations';
+            this.reasonToStop = 'timeout';
             this.endTime = new Date();
+            // tslint:disable-next-line
+            Logger.info('[shouldStop]', label, 'timeout', this.evaluationsWithoutImprovement.toString(), this.maxEvaluationsWithoutImprovement.toString());
             return true;
         }
 
+        // tslint:disable-next-line
+        Logger.info('[shouldStop]', label, 'return false');
         return false;
     }
 
     public addSolution(ind: Individual) {
         const isAlreadyThere = this.solutions.find(i => i.toString() === ind.toString());
-        if (!isAlreadyThere) { this.solutions.push(ind); }
+        if (!isAlreadyThere) {
+            Logger.info('[addSolution]', ind.toString());
+            this.solutions.push(ind);
+        }
     }
 
     public addLocalSolution(ind: Individual) {
         const isAlreadyThere = this.localSolutions.find(i => i.toString() === ind.toString());
-        if (!isAlreadyThere) { this.localSolutions.push(ind); }
+        if (!isAlreadyThere) {
+            Logger.info('[addLocalSolution]', ind.toString());
+            this.localSolutions.push(ind);
+        }
     }
 
     public generateInitialIndividual(): Individual {
-        return this.factory.generateRandom(this.depth);
+        const ind = this.factory.generateRandom(this.depth);
+        Logger.info('[generateInitialIndividual]', ind.toString());
+        return ind;
     }
 
     public abstract async restartFromSolution(ind: Individual): Promise<Individual>;

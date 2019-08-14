@@ -30,11 +30,15 @@ export class Neighborhood {
         let i = 0;
 
         for (const ind of this.getGenerator()) {
-            if (!ind.isValid()) { continue; }
+            if (!ind.isValid()) {
+                Logger.info('[evaluate][invalid]', ind.toString());
+                continue;
+            }
 
             await Utils.waitFor(() => i < this.maxSimultaneousEvaluations);
             i++;
 
+            Logger.info('[evaluate]', ind.toString());
             await this.program.evaluator.evaluate(ind);
             evalFn(ind);
             i--;

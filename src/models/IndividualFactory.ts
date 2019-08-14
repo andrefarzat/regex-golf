@@ -378,7 +378,8 @@ export class IndividualFactory {
             ind = this.generateRandomlyFrom(ind);
         }
 
-        return this.generateRandomlyFrom(ind);
+        const neo = this.generateRandomlyFrom(ind);
+        return neo.shrink();
     }
 
     public wrapNodeWithGroup(ind: Individual, node: Node): Individual {

@@ -73,6 +73,7 @@ export class NodeShrinkerTest {
 
     @TestCase('z[^abcabc]a', 'z[^abc]a')
     @TestCase('a[^abcdefghijklmnopqrstuvwxyz]z', 'a[^a-z]z')
+    @TestCase('^xxxxxxxxxxxxxxxxx[^xxxxxxxxxxxxxxx]xxxxxxxxxxxxxxxxxxxxxxx$', '^x{17}[^x]x{23}$')
     public testShrinkNegation(txt: string, expectedResult: string) {
         const ind = this.individualFactory.createFromString(txt);
         const shrunk = ind.shrink();
