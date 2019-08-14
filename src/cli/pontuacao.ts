@@ -1,4 +1,4 @@
-import { ILS_Shrink } from "../localsearch/ILS_Shrink";
+import { ILS_Shrink } from "../localsearch/ILS_shrink";
 
 const WEIGHTS: {[key: string]: number} = {
     "warmup": 10,
@@ -18,7 +18,7 @@ const WEIGHTS: {[key: string]: number} = {
     "alphabetical": 20,
 };
 
-// Altere aqui para executar 
+// Altere aqui para executar
 const SOLUTIONS = {
     "warmup": "foo",
     "anchors": "k$",
@@ -63,14 +63,14 @@ function evaluate(program: ILS_Shrink, regex: RegExp) {
     return result;
 }
 
-
 Object.entries(SOLUTIONS).forEach(async ([instance, text]) => {
     const program = new ILS_Shrink(instance).init();
-    const regex = new RegExp(text)
+    const regex = new RegExp(text);
     const result = evaluate(program, regex);
 
     const weight = WEIGHTS[instance];
     const fitness = weight * (result.matchesOnLeft - result.matchesOnRight) - text.length;
 
+    // tslint:disable-next-line
     console.log(instance, `[${fitness} of ${program.left.length * weight}]`, `[${result.matchesOnLeft} of ${program.left.length}]`, `[${result.matchesOnRight} of ${program.right.length}]`);
 });

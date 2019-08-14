@@ -4,7 +4,7 @@ import * as moment from "moment";
 import * as path from 'path';
 
 import { ILS } from './localsearch/ILS';
-import { ILS_Shrink } from './localsearch/ILS_Shrink';
+import { ILS_Shrink } from './localsearch/ILS_shrink';
 import { LocalSearch } from './localsearch/LocalSearch';
 
 import { Logger } from './Logger';
