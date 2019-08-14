@@ -45,11 +45,6 @@ if (!flags.name) {
     process.exit();
 }
 
-// if (['powers'].indexOf(flags.instance) > -1) {
-//     console.log("Skippings", flags.instance);
-//     process.exit();
-// }
-
 Utils.setIndex(flags.index);
 Individual.setWeight(flags.weight);
 if (flags.seed) { Utils.setSeed(flags.seed); }
