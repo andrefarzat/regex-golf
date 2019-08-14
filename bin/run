@@ -12,14 +12,8 @@ _INSTANCES = {
 
 # ./bin/run "prime" "aman-aplan" "four" "ranges"
 # ./bin/run "triples" "powers" "glob" "alphabetical" 
-# ./bin/run  "order" "abba" "warmup" "backrefs" "anchors" 
-# ./bin/run "balance" "long-count" 
-
-
-# ./bin/run abba alphabetical aman-aplan
-# ./bin/run anchors triples backrefs four
-# ./bin/run glob order ranges
-# ./bin/run "long-count" warmup 
+# ./bin/run  "order" "abba" "warmup" "backrefs" 
+# ./bin/run "balance" "long-count" "anchors" 
 
 INSTANCES = {
     "warmup": 10,
@@ -45,11 +39,11 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          4323456912, 8361101999, 9935136846, 5217407358, 5619256299, 4560422870,
          5236888092, 1337360711, 7659837985, 2521100877, 8801535107, 9651599436]
 
-DEPTHS = [0]
+DEPTHS = [1, 3, 5, 7, 10, 13, 15, 18, 20]
 
-MAX_EVALUATIONS = [i * 1000 for i in (1000, )] # 1000
+MAX_EVALUATIONS = [i * 1000 for i in (300, )] # 1000
 
-FOLDER_NAME = 'dynamic-depth-4'
+FOLDER_NAME = 'depths'
 
 
 def execute(cmd):
@@ -66,9 +60,6 @@ for instance in instances:
 
 program = 'ILS_Shrink'
 for index, seed in enumerate(SEEDS):
-    if index not in [19]:
-        continue
-
     for depth in DEPTHS:
         for budget in MAX_EVALUATIONS:        
             for instance in instances:
