@@ -111,7 +111,7 @@ async function main() {
 
         // 6.4 Evaluate Neighborhood
         const neighborhood = new Neighborhood(currentSolution, program);
-        // Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
+        Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
 
         try {
             await neighborhood.evaluate((ind) => {

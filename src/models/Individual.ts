@@ -7,6 +7,7 @@ import { Terminal } from "../nodes/Terminal";
 import { NodeShrinker } from '../shrinker/NodeShrinker';
 import { Utils } from "../Utils";
 import { OrFunc } from '../nodes/OrFunc';
+import { ListFunc } from '../nodes/ListFunc';
 
 export class Individual {
     private static weight = 10;
@@ -236,6 +237,18 @@ export class Individual {
         }
 
         ind.tree = node as Func;
+        return ind;
+    }
+
+    public fix(): Individual {
+        const ind = new Individual();
+        ind.tree = this.tree.clone();
+
+        ind.tree.children = ind.tree.children.map(child => {
+            if (child instanceof ListFunc) { return NodeShrinker.shrinkFunc(child); }
+            return child.clone();
+        });
+
         return ind;
     }
 }

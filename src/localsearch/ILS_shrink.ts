@@ -37,6 +37,8 @@ export class ILS_Shrink extends ILS {
             ind = ngram.shrink();
         }
 
+        // Restart aleatório
+        ind = this.factory.generateRandom(this.depth);
         return super.restartFromSolution(ind);
     }
 }
