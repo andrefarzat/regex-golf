@@ -48,6 +48,7 @@ if (['powers'].indexOf(flags.instance) > -1) {
     process.exit();
 }
 
+
 Utils.setIndex(flags.index);
 Individual.setWeight(flags.weight);
 if (flags.seed) { Utils.setSeed(flags.seed); }
@@ -126,6 +127,7 @@ async function main() {
 
                     if (currentSolution.fitness > bestCurrentFitness) {
                         bestCurrentFitness = currentSolution.fitness;
+                        program.evaluationsWithoutImprovement = 0;
                     }
 
                     // Testing to see if we have somekind of loop
@@ -135,6 +137,8 @@ async function main() {
                     } else {
                         visitedRegexes.push(ind.toString());
                     }
+                } else {
+                    program.evaluationsWithoutImprovement += 1;
                 }
 
                 if (program.shouldStop()) {
@@ -142,7 +146,7 @@ async function main() {
                 }
             });
         } catch (e) {
-            if (e.message === 'Stop!' && program.hasTimedOut) {
+            if (e.message === 'Stop!') {
                 Logger.error('[Timeout]');
             } else {
                 Logger.error(`[Index Neighborhood error]`, e.message);
@@ -231,7 +235,8 @@ async function main() {
         csvLine.push('N/A'); // Melhor_solucao_shrunk
     }
 
-    csvLine.push(program.hasTimedOut ? 'true' : 'false'); // Timed_out
+    csvLine.push(program.budget); // Orçamento
+    csvLine.push(program.reasonToStop); // Reason to stop
 
     const filepath = path.join(__dirname, '..', 'results', flags.csv);
     fs.appendFileSync(filepath, csvLine.join(';') + `\n`);

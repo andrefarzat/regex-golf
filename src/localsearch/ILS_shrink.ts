@@ -6,11 +6,6 @@ import { Logger } from '../Logger';
 export class ILS_Shrink extends ILS {
     private ngramIndex = 0;
 
-    public generateInitialIndividual(): Individual {
-        const ngram = this.getNextNGram();
-        return ngram ? ngram : super.generateInitialIndividual();
-    }
-
     public getNextNGram(): Individual | null {
         const ngram = this.oldNGrams[this.ngramIndex];
         if (ngram) {
@@ -42,7 +37,6 @@ export class ILS_Shrink extends ILS {
             ind = ngram.shrink();
         }
 
-        // FIXME: We should not shrink to an invalid option
         return super.restartFromSolution(ind);
     }
 }

@@ -23,14 +23,17 @@ export abstract class LocalSearch {
     public index: number;
     public ngrams: string[] = [];
     public oldNGrams: string[] = [];
+    public evaluationsWithoutImprovement = 0;
 
     public budget: number;
     public depth: number = 5;
     public solutions: Individual[] = [];
     public localSolutions: Individual[] = [];
-    public hasTimedOut: boolean = false;
+    public reasonToStop: 'timeout' | 'withoutImprovement' | 'maxEvaluations' = null;
+
     public readonly TWO_MINUTES = 1000 * 60 * 2;
     public readonly TEN_MINUTES = 1000 * 60 * 10;
+    public readonly MAX_EVALUATIONS_WITHOUT_IMPROVEMENT = 200 * 1000;
 
     constructor(public instanceName: string) {
         const instance = Utils.loadInstance(instanceName);
@@ -190,11 +193,18 @@ export abstract class LocalSearch {
     public shouldStop(): boolean {
         if (this.evaluator.evaluationCount >= this.budget) {
             this.endTime = new Date();
+            this.reasonToStop = 'maxEvaluations';
+            return true;
+        }
+
+        if (this.evaluationsWithoutImprovement >= this.MAX_EVALUATIONS_WITHOUT_IMPROVEMENT) {
+            this.endTime = new Date();
+            this.reasonToStop = 'withoutImprovement';
             return true;
         }
 
         if (Moment().diff(this.startTime, 'ms') > this.TEN_MINUTES) {
-            this.hasTimedOut = true;
+            this.reasonToStop = 'maxEvaluations';
             this.endTime = new Date();
             return true;
         }
@@ -203,11 +213,13 @@ export abstract class LocalSearch {
     }
 
     public addSolution(ind: Individual) {
-        this.solutions.push(ind);
+        const isAlreadyThere = this.solutions.find(i => i.toString() === ind.toString());
+        if (!isAlreadyThere) { this.solutions.push(ind); }
     }
 
-    public async addLocalSolution(ind: Individual) {
-        this.localSolutions.push(ind);
+    public addLocalSolution(ind: Individual) {
+        const isAlreadyThere = this.localSolutions.find(i => i.toString() === ind.toString());
+        if (!isAlreadyThere) { this.localSolutions.push(ind); }
     }
 
     public generateInitialIndividual(): Individual {
