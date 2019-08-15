@@ -40,11 +40,11 @@ SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866,
          5236888092, 1337360711, 7659837985, 2521100877, 8801535107, 9651599436]
 
 # DEPTHS = [1, 3, 5, 7, 10, 13, 15, 18, 20]
-DEPTS = [0]
+DEPTHS = [0]
 
-MAX_EVALUATIONS = [i * 1000 for i in (300, 500, 800, 1000)]
+BUDGETS = [i * 1000 for i in (300, 500, 800, 1000)]
 
-FOLDER_NAME = 'powers'
+FOLDER_NAME = 'finalmente'
 
 
 def execute(cmd):
@@ -62,7 +62,7 @@ for instance in instances:
 program = 'ILS_Shrink'
 for index, seed in enumerate(SEEDS):
     for depth in DEPTHS:
-        for budget in MAX_EVALUATIONS:        
+        for budget in BUDGETS:        
             for instance in instances:
                 weight = INSTANCES[instance]
                 today = datetime.date.today().strftime("%Y-%m-%d")
