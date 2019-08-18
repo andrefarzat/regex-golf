@@ -212,7 +212,7 @@ async function main() {
     csvLine.push(bestSolution.toString()); // Melhor_solucao
     csvLine.push(bestShrunkSolution.toString()); // Melhor_solucao_shrunk
     csvLine.push(program.budget); // Orçamento
-    csvLine.push(program.reasonToStop); // Reason to stop
+    csvLine.push(program.reasonToStop); // Reason_to_stop
 
     const filepath = path.join(__dirname, '..', 'results', flags.csv);
     fs.appendFileSync(filepath, csvLine.join(';') + `\n`);
