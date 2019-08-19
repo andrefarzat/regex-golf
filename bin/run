@@ -93,11 +93,10 @@ for index, seed in enumerate(SEEDS):
                     "--seed", seed,
                     "--log-level", 2,
                     "--budget", budget,
-                    "--max-evaluations", 200_000,
                     "--csv", csvFilePath]
 
                 print(" ".join(map(lambda x: str(x), cmd)))
 
-                # thread = Thread(target=execute, args=(cmd,))
-                # thread.start()
-                # thread.join()
+                thread = Thread(target=execute, args=(cmd,))
+                thread.start()
+                thread.join()
