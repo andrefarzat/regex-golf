@@ -18,8 +18,8 @@ const WEIGHTS: {[key: string]: number} = {
     "alphabetical": 20,
 };
 
-// Altere aqui para executar
-const SOLUTIONS = {
+// Humanos
+const _SOLUTIONS = {
     "warmup": "foo",
     "anchors": "k$",
     "ranges": "^[a-f]*$",
@@ -35,6 +35,25 @@ const SOLUTIONS = {
     "powers": "^(?!(.(..)+)\\1*$)",
     "long-count": "((.+)0\\2+1){8}",
     "alphabetical": ".r.{32}r|a.{10}te|n.n..",
+};
+
+// Busca local
+const SOLUTIONS = {
+    "warmup": "foo",
+    "anchors": "k$",
+    "ranges": "^[a-f]*$",
+    "backrefs": "ho|ea|oc|ry|rp|te|tr|en|^[lm]|rou|.la*$",
+    "abba": "rit|rs|st|z|ph|.u|te*$",
+    "aman-aplan": "mu|ic|ev|oo|x|^[^cims]*$",
+    "prime": "x{33}|^xx.?$",
+    "four": "lit|ev|de|vi|ara|o.o",
+    "order": "ce|ch|lo|^.[^ar]*$",
+    "triples": "0{9}|472|775|0[12]5|003|900|009|06|5[45]|2[34]|[01]2$",
+    "glob": "ro|rr|eat|lle|tl|de|co|gen|ow|fa|lo",
+    "balance": ">>><>><<|<<>><>>|<>{4}<<|<>{4}$",
+    "powers": "^..?$",
+    "long-count": "0{4} 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 101",
+    "alphabetical": "ar t[ -e]|a t|r sn|rt r|t tes|esen|e .r",
 };
 
 function evaluate(program: ILS_Shrink, regex: RegExp) {
@@ -73,4 +92,5 @@ Object.entries(SOLUTIONS).forEach(async ([instance, text]) => {
 
     // tslint:disable-next-line
     console.log(instance, `[${fitness} of ${program.left.length * weight}]`, `[${result.matchesOnLeft} of ${program.left.length}]`, `[${result.matchesOnRight} of ${program.right.length}]`);
+    // console.log(instance, fitness);
 });
