@@ -19,7 +19,7 @@ const WEIGHTS: {[key: string]: number} = {
 };
 
 // Humanos
-const _SOLUTIONS = {
+const SOLUTIONS = {
     "warmup": "foo",
     "anchors": "k$",
     "ranges": "^[a-f]*$",
@@ -38,7 +38,7 @@ const _SOLUTIONS = {
 };
 
 // Busca local
-const SOLUTIONS = {
+const _SOLUTIONS = {
     "warmup": "foo",
     "anchors": "k$",
     "ranges": "^[a-f]*$",
@@ -91,6 +91,6 @@ Object.entries(SOLUTIONS).forEach(async ([instance, text]) => {
     const fitness = weight * (result.matchesOnLeft - result.matchesOnRight) - text.length;
 
     // tslint:disable-next-line
-    console.log(instance, `[${fitness} of ${program.left.length * weight}]`, `[${result.matchesOnLeft} of ${program.left.length}]`, `[${result.matchesOnRight} of ${program.right.length}]`);
-    // console.log(instance, fitness);
+    // console.log(instance, `[${fitness} of ${program.left.length * weight}]`, `[${result.matchesOnLeft} of ${program.left.length}]`, `[${result.matchesOnRight} of ${program.right.length}]`);
+    console.log(`"${instance}": [${result.matchesOnLeft - result.matchesOnRight}, ${fitness}],`);
 });
