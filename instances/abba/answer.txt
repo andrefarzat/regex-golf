@@ -5,3 +5,5 @@ z|.u|nv|st|ca|[^f]it
 ((.)(?!\2))*$|ef
 
 ^(?!.*(.)\1)|ef
+
+it|ca|st|\wu|nv|z

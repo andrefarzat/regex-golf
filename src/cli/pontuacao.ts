@@ -19,7 +19,7 @@ const WEIGHTS: {[key: string]: number} = {
 };
 
 // Humanos
-const SOLUTIONS = {
+const HUMANS_SOLUTIONS = {
     "warmup": "foo",
     "anchors": "k$",
     "ranges": "^[a-f]*$",
@@ -54,6 +54,12 @@ const _SOLUTIONS = {
     "powers": "^..?$",
     "long-count": "0{4} 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 101",
     "alphabetical": "ar t[ -e]|a t|r sn|rt r|t tes|esen|e .r",
+};
+
+const SOLUTIONS = {
+    "abba": `it|ca|st|\\wu|nv|z`,
+    "alphabetical": "nt\\w|n r|eas",
+    "ranges": "[adf][ad\\^be]|\\wbe",
 };
 
 function evaluate(program: ILS_Shrink, regex: RegExp) {
