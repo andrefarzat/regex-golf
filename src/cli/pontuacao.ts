@@ -57,9 +57,9 @@ const _SOLUTIONS = {
 };
 
 const SOLUTIONS = {
-    "abba": `it|ca|st|\\wu|nv|z`,
-    "alphabetical": "nt\\w|n r|eas",
-    "ranges": "[adf][ad\\^be]|\\wbe",
+    abba: `it|ca|st|\\wu|nv|z`,
+    alphabetical: "nt\\w|n r|eas",
+    ranges: "[adf][ad\\^be]|\\wbe",
 };
 
 function evaluate(program: ILS_Shrink, regex: RegExp) {
@@ -97,6 +97,5 @@ Object.entries(SOLUTIONS).forEach(async ([instance, text]) => {
     const fitness = weight * (result.matchesOnLeft - result.matchesOnRight) - text.length;
 
     // tslint:disable-next-line
-    // console.log(instance, `[${fitness} of ${program.left.length * weight}]`, `[${result.matchesOnLeft} of ${program.left.length}]`, `[${result.matchesOnRight} of ${program.right.length}]`);
     console.log(`"${instance}": [${result.matchesOnLeft - result.matchesOnRight}, ${fitness}],`);
 });
