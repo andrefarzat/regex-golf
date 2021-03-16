@@ -1,4 +1,5 @@
-import * as regexp from "regexp-tree";
+import regexp from "regexp-tree";
+import { Char, Expression } from "regexp-tree/ast";
 
 import { AnyCharFunc } from "../nodes/AnyCharFunc";
 import { BackrefFunc } from "../nodes/BackrefFunc";
@@ -44,7 +45,7 @@ export class IndividualFactory {
         return ind;
     }
 
-    public parseExpression(expression: regexp.Node.Expression): Node {
+    public parseExpression(expression: Expression): Node {
         if (expression.type == 'Char') {
             return this.parseChar(expression);
         } else if (expression.type == 'Assertion') {
@@ -123,14 +124,14 @@ export class IndividualFactory {
         }
     }
 
-    public parseChar(char: regexp.Node.Char): Func | Terminal {
+    public parseChar(char: Char): Func | Terminal {
         if (char.kind === 'simple') {
             return new Terminal(char.value);
         } else if (char.kind === 'meta') {
             if (char.value === '.') { return new AnyCharFunc(); }
-        } else {
-            throw new Error(`No kind ${char.kind} on Char`);
         }
+
+        throw new Error(`No kind ${char.kind} on Char`);
     }
 
     public getRandomCharFromLeft(): Terminal {

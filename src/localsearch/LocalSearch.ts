@@ -1,4 +1,4 @@
-import * as Moment from "moment";
+import dayjs from 'dayjs';
 import { EvaluatorFactory } from "../models/EvaluatorFactory";
 import { Individual } from "../models/Individual";
 import { IndividualFactory } from "../models/IndividualFactory";
@@ -12,8 +12,7 @@ export interface Solution {
 }
 
 export abstract class LocalSearch {
-    public left: string[] = [];
-    public right: string[] = [];
+    public instanceName: string;
     public chars: { left: { [key: string]: number }, right: { [key: string]: number } } = { left: {}, right: {} };
     public factory: IndividualFactory;
     public evaluator: EvaluatorFactory;
@@ -22,10 +21,12 @@ export abstract class LocalSearch {
     public endTime: Date;
     public seed: number;
     public index: number;
+    public env: 'server' | 'browser' = 'server';
     public ngrams: string[] = [];
     public oldNGrams: string[] = [];
     public evaluationsWithoutImprovement = 0;
     public maxEvaluationsWithoutImprovement = Infinity;
+    public hasTimedOut: boolean = false;
 
     public budget: number;
     public depth: number = 5;
@@ -36,11 +37,7 @@ export abstract class LocalSearch {
     public readonly TWO_MINUTES = 1000 * 60 * 2;
     public readonly TEN_MINUTES = 1000 * 60 * 10;
 
-    constructor(public instanceName: string) {
-        const instance = Utils.loadInstance(instanceName);
-        this.left = instance.left;
-        this.right = instance.right;
-    }
+    constructor(public left: string[], public right: string[]) { }
 
     public get validLeftChars(): string[] {
         return Object.keys(this.chars.left);
@@ -58,7 +55,7 @@ export abstract class LocalSearch {
         return this.validRightChars.filter((char) => this.validLeftChars.indexOf(char) === -1);
     }
 
-    public init() {
+    public async init() {
         this.startTime = new Date();
 
         if (this.depth === 0 || Number.isNaN(this.depth)) {
@@ -68,7 +65,7 @@ export abstract class LocalSearch {
         this.chars.left = this.extractUniqueChars(this.left);
         this.chars.right = this.extractUniqueChars(this.right);
         this.factory = new IndividualFactory(this.validLeftChars, this.validRightChars);
-        this.evaluator = new EvaluatorFactory(this.left, this.right);
+        this.evaluator = new EvaluatorFactory(this.left, this.right, this.env);
 
         if (this.instanceName === 'balance') {
             import('./balance').then(balance => {
@@ -76,7 +73,7 @@ export abstract class LocalSearch {
                 this.oldNGrams = balance.oldNGrams;
             });
         } else {
-            this.ngrams = this.extractNGrams();
+            this.ngrams = await this.extractNGrams();
         }
 
         return this;
@@ -97,11 +94,11 @@ export abstract class LocalSearch {
         return Utils.sortObjectByValue(chars);
     }
 
-    public extractNGrams(): string[] {
+    public async extractNGrams(): Promise<string[]> {
         const ngrams: string[] = [];
         let left = this.left.concat();
 
-        for (const ngram of this.extractNGramsOLD()) {
+        for (const ngram of (await this.extractNGramsOLD())) {
             const i = left.length;
             left = left.filter(name => !this.oneMatchesTwo(ngram, name));
             if (i > left.length) { ngrams.push(ngram); }
@@ -110,7 +107,7 @@ export abstract class LocalSearch {
         return ngrams;
     }
 
-    public extractNGramsOLD(): string[] {
+    public async extractNGramsOLD(): Promise<string[]> {
         const n = this.depth;
         const grams: string[] = [];
 
@@ -132,7 +129,7 @@ export abstract class LocalSearch {
         const values: {[key: string]: number} = {};
         for (const gram of grams) {
             const ind = this.factory.createFromString(gram, true);
-            values[gram] = ind.isValid() ? this.evaluator.evaluateSimple(ind) : -10000;
+            values[gram] = ind.isValid() ? (await this.evaluator.evaluateSimple(ind)) : -10000;
         }
 
         grams.sort((a: string, b: string): number => {
@@ -208,7 +205,7 @@ export abstract class LocalSearch {
             return true;
         }
 
-        if (Moment().diff(this.startTime, 'ms') > this.TEN_MINUTES) {
+        if (dayjs().diff(this.startTime, 'ms') > this.TEN_MINUTES) {
             this.reasonToStop = 'timeout';
             this.endTime = new Date();
             // tslint:disable-next-line
@@ -243,7 +240,7 @@ export abstract class LocalSearch {
         return ind;
     }
 
-    public abstract async restartFromSolution(ind: Individual): Promise<Individual>;
+    public abstract restartFromSolution(ind: Individual): Promise<Individual>;
 
     public getBestSolution(): Individual | undefined {
         this.localSolutions.sort(this.sorter);

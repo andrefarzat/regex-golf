@@ -1,4 +1,4 @@
-import * as regexpTree from "regexp-tree";
+import regexpTree from "regexp-tree";
 
 import { IndividualFactory } from "../models/IndividualFactory";
 import { AnyCharFunc } from "../nodes/AnyCharFunc";

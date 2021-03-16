@@ -1,4 +1,3 @@
-const colors = require('colors/safe');
 const args = require('args');
 
 import { ILS_Shrink } from '../localsearch/ILS_shrink';

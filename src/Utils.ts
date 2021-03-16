@@ -1,6 +1,6 @@
-import * as fs from "fs";
-import MersenneTwister = require("mersenne-twister");
-import * as path from "path";
+// import fs from "fs";
+import MersenneTwister from "mersenne-twister";
+// import path from "path";
 
 export class Utils {
 
@@ -8,20 +8,20 @@ export class Utils {
         this.random = new MersenneTwister(seed);
     }
 
-    public static loadInstance(instanceName: string): {left: string[], right: string[]} {
-        const pathToLeftFile  = path.join(__dirname, '..', 'instances', instanceName, 'left.txt');
-        const pathToRightFile = path.join(__dirname, '..', 'instances', instanceName, 'right.txt');
+    // public static loadInstance(instanceName: string): {left: string[], right: string[]} {
+    //     const pathToLeftFile  = path.join(__dirname, '..', 'instances', instanceName, 'left.txt');
+    //     const pathToRightFile = path.join(__dirname, '..', 'instances', instanceName, 'right.txt');
 
-        return {
-            left: Utils.getTxtFileAsArray(pathToLeftFile),
-            right: Utils.getTxtFileAsArray(pathToRightFile),
-        };
-    }
+    //     return {
+    //         left: Utils.getTxtFileAsArray(pathToLeftFile),
+    //         right: Utils.getTxtFileAsArray(pathToRightFile),
+    //     };
+    // }
 
-    public static getTxtFileAsArray(pathToFile: string): string[] {
-        const fileContent = fs.readFileSync(pathToFile);
-        return fileContent.toString().split('\n').map((line) => line.trim()).filter((line) => line);
-    }
+    // public static getTxtFileAsArray(pathToFile: string): string[] {
+    //     const fileContent = fs.readFileSync(pathToFile);
+    //     return fileContent.toString().split('\n').map((line) => line.trim()).filter((line) => line);
+    // }
 
     public static nextInt(max: number = 10): number {
         return Math.round(this.random.random() * max);
@@ -67,7 +67,7 @@ export class Utils {
 
     public static async waitFor(conditionFn: () => boolean) {
         return new Promise<void>((resolve) => {
-            const fn = () => { conditionFn() ? resolve() : setImmediate(fn); };
+            const fn = () => { conditionFn() ? resolve() : setTimeout(fn, 0); };
             fn();
         });
     }

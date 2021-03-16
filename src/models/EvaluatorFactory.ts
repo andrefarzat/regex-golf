@@ -1,97 +1,59 @@
+import { Individual } from "./Individual";
 import { Logger } from "../Logger";
 import { Evaluator } from "./Evaluator";
-import { Individual } from "./Individual";
+// import { ServerEvaluator } from "./ServerEvaluator";
+import { BrowserEvaluator } from "./BrowserEvaluator";
+
 
 export class EvaluatorFactory {
-    public evaluationCount = 0;
     private evaluators: Evaluator[] = [];
     private evaluatorsStatus: {[key: number]: boolean} = {};
     private readonly MAX_EVALUATORS = 1000;
+    public evaluationCount = 0;
 
-    public constructor(public left: string[], public right: string[]) { }
+    public constructor(
+        public left: string[],
+        public right: string[],
+        private env: 'server' | 'browser',
+    ) { }
 
     public getNextEvaluationIndex(): number {
         return this.evaluationCount ++;
     }
 
     public async evaluate(ind: Individual): Promise<number> {
-        if (ind.isEvaluated) { return ind.fitness; }
+        if (ind.isEvaluated) return Promise.resolve(ind.fitness);
         ind.evaluationIndex = this.getNextEvaluationIndex();
 
-        if (ind.hasComplexEvaluation()) {
-            ind.matchesOnLeft = 0;
-            ind.matchesOnRight = this.right.length;
-            return ind.fitness;
-        } else {
-            return this.evaluateSimple(ind);
-        }
+        return this.evaluateSimple(ind);
 
         // return ind.hasComplexEvaluation()
         //     ? this.evaluateViaSub(ind)
         //     : Promise.resolve(this.evaluateSimple(ind));
     }
 
-    public async getFreeEvaluator() {
-        return new Promise<Evaluator>((resolve) => {
-            const fn = () => {
-                // tslint:disable-next-line:forin
-                for (const index in this.evaluatorsStatus) {
-                    const status = this.evaluatorsStatus[index];
-                    if (status === true) {
-                        this.evaluatorsStatus[index] = false;
-                        return resolve(this.evaluators[index]);
-                    }
-                }
-
-                if (this.evaluators.length < this.MAX_EVALUATORS) {
-                    const evaluator = new Evaluator(this.left, this.right);
-                    const len = this.evaluators.push(evaluator);
-                    this.evaluatorsStatus[len - 1] = false;
-                    return resolve(evaluator);
-                } else {
-                    setImmediate(fn);
-                }
-            };
-
-            setImmediate(fn);
-        });
-    }
-
-    public setEvaluatorFree(evaluator: Evaluator) {
-        const index = this.evaluators.indexOf(evaluator);
-        this.evaluatorsStatus[index] = true;
-    }
-
-    public close() {
-        for (const evaluator of this.evaluators) {
-            evaluator.finish();
-        }
-    }
-
-    public evaluateSimple(ind: Individual): number {
-        const result = {
+    public evaluateSimple(ind: Individual): Promise<number> {
+        let result = {
             leftPoints: 0,
             rightPoints: 0,
             matchesOnLeft: 0,
             matchesOnRight: 0,
         };
 
-        if (ind.isValid()) {
-            const regex = ind.toRegex();
+        let regex = ind.toRegex();
 
-            for (const name of this.left) {
-                if (regex.test(name)) {
-                    result.leftPoints += name.length;
-                    result.matchesOnLeft += 1;
-                }
+        for (const name of this.left) {
+            if (regex.test(name)) {
+                result.leftPoints += name.length;
+                result.matchesOnLeft += 1;
             }
+        }
 
-            for (const name of this.right) {
-                if (regex.test(name)) {
-                    result.matchesOnRight += 1;
-                } else {
-                    result.rightPoints += name.length;
-                }
+        for (const name of this.right) {
+            if (regex.test(name)) {
+                result.matchesOnRight += 1;
+            } else {
+                result.rightPoints += name.length;
             }
         }
 
@@ -100,7 +62,7 @@ export class EvaluatorFactory {
         ind.matchesOnLeft = result.matchesOnLeft;
         ind.matchesOnRight = result.matchesOnRight;
 
-        return ind.fitness;
+        return Promise.resolve(ind.fitness);
     }
 
     protected async evaluateViaSub(ind: Individual) {
@@ -109,13 +71,57 @@ export class EvaluatorFactory {
         try {
             evaluator = await this.getFreeEvaluator();
             await evaluator.evaluate(ind);
-        } catch (e) {
-            Logger.error('[Evaluator error]', e);
-            process.exit();
+        } catch(e) {
+            if (this.env === 'server') {
+                Logger.error('[Evaluator error]', e);
+                // process.exit();
+            }
         } finally {
             this.setEvaluatorFree(evaluator);
         }
 
         return ind.fitness;
+    }
+
+    public async getFreeEvaluator() {
+        return new Promise<Evaluator>((resolve) => {
+            let fn = () => {
+                for (let index in this.evaluatorsStatus) {
+                    let status = this.evaluatorsStatus[index];
+                    if (status === true) {
+                        this.evaluatorsStatus[index] = false;
+                        return resolve(this.evaluators[index]);
+                    }
+                }
+
+                if (this.evaluators.length < this.MAX_EVALUATORS) {
+                    let evaluator = this.getNewEvaluator(this.left, this.right);
+                    let len = this.evaluators.push(evaluator);
+                    this.evaluatorsStatus[len - 1] = false;
+                    return resolve(evaluator);
+                } else {
+                    setTimeout(fn, 0);
+                }
+            };
+
+            setTimeout(fn, 0);
+        });
+    }
+
+    public getNewEvaluator(left: string[], right: string[]): Evaluator {
+        if (this.env === 'server') throw new Error(`Nope. No ServerEvaluator for now`);
+        return new BrowserEvaluator(left, right);
+        // return this.env === 'server' ? new ServerEvaluator(left, right) : new BrowserEvaluator(left, right);
+    }
+
+    public setEvaluatorFree(evaluator: Evaluator) {
+        let index = this.evaluators.indexOf(evaluator);
+        this.evaluatorsStatus[index] = true;
+    }
+
+    public close() {
+        for (let evaluator of this.evaluators) {
+            evaluator.finish();
+        }
     }
 }

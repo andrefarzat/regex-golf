@@ -1,7 +1,5 @@
 import * as fs from 'fs';
 const path = require('path');
-const colors = require('colors/safe');
-const args = require('args');
 
 type Type = 'Initial solution' | 'Found better' | 'Starting neighborhood for'
             | 'Jumped to' | 'Invalid' | 'Neighborhood error';
@@ -19,7 +17,7 @@ interface JSONLogFormat {
 
 const keypress = async () => {
     process.stdin.setRawMode(true);
-    return new Promise((resolve) => process.stdin.once('data', () => {
+    return new Promise<void>((resolve) => process.stdin.once('data', () => {
         process.stdin.setRawMode(false);
         resolve();
     }));

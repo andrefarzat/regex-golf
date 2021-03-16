@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import dayjs from 'dayjs';
 
 import { ConcatFunc } from '../nodes/ConcatFunc';
 import { Func, FuncTypes } from "../nodes/Func";
@@ -34,7 +34,7 @@ export class Individual {
 
     public get evaluationTime(): number {
         if (!this.evaluationEndTime) { return 0; }
-        return moment(this.evaluationEndTime).diff(this.evaluationStartTime, 'millisecond');
+        return dayjs(this.evaluationEndTime).diff(this.evaluationStartTime, 'millisecond');
     }
 
     public id = Utils.getNextId();
