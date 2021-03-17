@@ -45,6 +45,7 @@ export class Individual {
     public rightPoints: number = 0;
     public evaluationStartTime?: Date;
     public evaluationEndTime?: Date;
+    public origin: { name: string; args: string[] };
 
     public evaluationIndex: number = undefined;
 
@@ -241,6 +242,7 @@ export class Individual {
         }
 
         ind.tree = node as Func;
+        ind.origin = { name: 'shrink', args: []};
         return ind;
     }
 

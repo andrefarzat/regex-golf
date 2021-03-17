@@ -1,1 +1,189 @@
-<div> oi {{ title }} </div>
+<div class="page">
+    <div class="content">
+        <div class="container-xl">
+            <div class="page-header d-print-none">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h2 class="page-title">
+                        Regex Golf
+                        </h2>
+                    </div>
+
+                    <div class="col-auto ms-auto d-print-none">
+                        <div class="btn-list">
+                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-report" (click)="toggleRun()">
+                                {{ isRunning ? "Pause" : "Start" }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row row-cards mb-3">
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-header d-flex">
+                            <h4 class="card-title" style="margin-right: 1rem">Instance:</h4>
+                            <select class="form-select form-control"  [(ngModel)]="form.instance" (change)="selectInstance()">
+                                <option *ngFor="let i of instances" [ngValue]="i">{{ i.name }}</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Match list
+                                            <span class="form-label-description">{{ getItensCount(form.left) }}</span>
+                                        </label>
+                                        <textarea [(ngModel)]="form.left" class="form-control" style="resize: none;" rows="6"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Unmatch list
+                                            <span class="form-label-description">{{ getItensCount(form.right) }}</span>
+                                        </label>
+                                        <textarea [(ngModel)]="form.right" class="form-control" style="resize: none;" rows="6"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Settings</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Budget</label>
+                                        <input type="number" [(ngModel)]="form.budget" class="form-control" />
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Depth</label>
+                                        <input type="number" [(ngModel)]="form.depth" class="form-control" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Timeout <small class="text-muted">in ms</small></label>
+                                        <input type="number" [(ngModel)]="form.timeout" class="form-control" />
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Seed</label>
+                                        <input type="text" [(ngModel)]="form.seed" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row row-cards">
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Operators</h3>
+                        </div>
+                        <table class="table card-table table-vcenter">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th colspan="2">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let name of operatorNames">
+                                <td>{{ name }}</td>
+                                <td>{{ operators[name].count }}</td>
+                                <td class="w-50">
+                                    <div class="progress progress-xs">
+                                        <div class="progress-bar bg-primary" [ngStyle]="{'width': getOperatorPercentage(operators[name].count) + '%'}"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+
+                <div class="col-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="subheader">Progress</div>
+                            </div>
+                            <div class="h1 mb-3">{{ current.index }} of {{ form.budget }}</div>
+                            <div class="d-flex mb-2">
+                                <div>Current progress</div>
+                                <div class="ms-auto">
+                                    <span class="text-green d-inline-flex align-items-center lh-1">
+                                        {{ current.progress }}% <!--  Download SVG icon from http://tabler-icons.io/i/trending-up
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="14 7 21 7 21 14"></polyline></svg> -->
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-blue" [ngStyle]="{'width': current.progress + '%'}" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                                    <span class="visually-hidden">{{ current.progress }}% Complete</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="subheader">Best solution</div>
+                            </div>
+                            <div class="h1 mb-3">{{ current.best }}</div>
+                            <div class="d-flex mb-2">
+                                <div>Fitness</div>
+                                <div class="ms-auto">
+                                    <span class="text-blue d-inline-flex align-items-center lh-1">
+                                        {{ current.fitness }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- output -->
+            <div class="row row-cards mt-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table vcenter card-table">
+                                <thead>
+                                    <tr>
+                                        <th>Event type</th>
+                                        <th>Origin</th>
+                                        <th>Regex</th>
+                                        <th>Fitness</th>
+                                    </tr>
+                                </thead>
+                                <tbody #output id="tbody-output">
+                                    <tr>
+                                        <td colspan="3">Press start...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

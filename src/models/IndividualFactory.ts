@@ -42,6 +42,7 @@ export class IndividualFactory {
 
         const ind = new Individual();
         ind.tree = root as Func;
+        ind.origin = {name: 'createFromString', args: [phrase.toString()]};
         return ind;
     }
 
@@ -147,17 +148,20 @@ export class IndividualFactory {
     public appendAtEnd(ind: Individual, node: Node): Individual {
         const newInd = ind.clone();
         newInd.tree.addChild(node);
+        newInd.origin = {name: 'appendAtEnd', args: [node.toString()]};
         return newInd;
     }
 
     public appendAtBeginning(ind: Individual, node: Node): Individual {
         const newInd = ind.clone();
         newInd.tree.children.unshift(node);
+        newInd.origin = {name: 'appendAtBeginning', args: [node.toString()]};
         return newInd;
     }
 
     public appendToNode(ind: Individual, nodeWhichReceive: Node, nodeWhichWillBeAppended: Node): Individual {
         const neo = ind.clone();
+        neo.origin = {name: 'appendToNode', args: [nodeWhichReceive.toString(), nodeWhichWillBeAppended.toString()]};
         const neoIndex = ind.getNodes().indexOf(nodeWhichReceive);
         const neoOne = neo.getNodes()[neoIndex];
 
@@ -174,6 +178,7 @@ export class IndividualFactory {
 
     public insertRandomly(ind: Individual, node: Node): Individual {
         const newInd = ind.clone();
+        newInd.origin = {name: 'insertRandomly', args: [node.toString()]};
         const funcs = newInd.getFuncs();
         const func = Utils.getRandomlyFromList(funcs);
         func.addChild(node);
@@ -182,6 +187,7 @@ export class IndividualFactory {
 
     public swapRandomly(ind: Individual, node: Node): Individual {
         const newInd = ind.clone();
+        newInd.origin = {name: 'swapRandomly', args: [node.toString()]};
         const currentTerminal = Utils.getRandomlyFromList(newInd.getTerminals());
         const parent = newInd.getParentOf(currentTerminal);
 
@@ -194,6 +200,7 @@ export class IndividualFactory {
 
     public replaceNode(ind: Individual, one: Node, two: Node): Individual {
         const neo = ind.clone();
+        neo.origin = {name: 'replaceNode', args: [one.toString(), two.toString()]};
         const oneIndex = ind.getNodes().indexOf(one);
         const neoOne = neo.getNodes()[oneIndex];
 
@@ -208,6 +215,7 @@ export class IndividualFactory {
 
     public concatenateToNode(ind: Individual, one: Node, two: Node): Individual {
         const neo = ind.clone();
+        neo.origin = {name: 'concatenateToNode', args: [one.toString(), two.toString()]};
         const neoIndex = ind.getNodes().indexOf(one);
         const neoOne = neo.getNodes()[neoIndex];
 
@@ -227,6 +235,7 @@ export class IndividualFactory {
 
     public replaceNodeWithOrFunc(ind: Individual, one: Node, two: Node): Individual {
         const neo = ind.clone();
+        neo.origin = {name: 'replaceNodeWithOrFunc', args: [one.toString(), two.toString()]};
         const neoIndex = ind.getNodes().indexOf(one);
         const neoOne = neo.getNodes()[neoIndex];
 
@@ -247,6 +256,7 @@ export class IndividualFactory {
 
     public addStartOperator(ind: Individual): Individual {
         const newInd = ind.clone();
+        newInd.origin = {name: 'addStartOperator', args: [ind.toString()]};
         const funcStartOperator = newInd.getFuncs().find((current) => current.type == Func.Types.lineBegin);
 
         if (!funcStartOperator) {
@@ -259,6 +269,7 @@ export class IndividualFactory {
     public addStartOperatorToTerminal(ind: Individual, terminal: Terminal): Individual {
         let index = ind.getNodes().indexOf(terminal);
         const neo = ind.clone();
+        neo.origin = {name: 'addStartOperatorToTerminal', args: [terminal.toString()]};
         const neoTerminal = neo.getNodes()[index];
         const parent = neo.getParentOf(neoTerminal);
 
@@ -275,8 +286,8 @@ export class IndividualFactory {
     }
 
     public addEndOperator(ind: Individual): Individual {
-        const node = this.getRandomCharFromLeft();
         const newInd = ind.clone();
+        newInd.origin = {name: 'addEndOperator', args: []};
         const funcEndOperator = newInd.getFuncs().find((current) => current.type == Func.Types.lineEnd);
 
         if (!funcEndOperator) {
@@ -289,6 +300,7 @@ export class IndividualFactory {
     public addEndOperatorToTerminal(ind: Individual, terminal: Terminal): Individual {
         let index = ind.getNodes().indexOf(terminal);
         const neo = ind.clone();
+        neo.origin = {name: 'addEndOperatorToTerminal', args: [terminal.toString()]};
         const neoTerminal = neo.getNodes()[index];
         const parent = neo.getParentOf(neoTerminal);
 
@@ -306,6 +318,7 @@ export class IndividualFactory {
 
     public addToNegation(ind: Individual, node: Node): Individual {
         const newInd = ind.clone();
+        newInd.origin = {name: 'addToNegation', args: [node.toString()]};
         let func = newInd.getFuncs().find((current) => {
             if (current instanceof ListFunc) {
                 return current.negative;
@@ -324,6 +337,7 @@ export class IndividualFactory {
 
     public removeRandomChar(ind: Individual): Individual {
         const neo = ind.clone();
+        neo.origin = {name: 'removeRandomChar', args: []};
         const terminal = Utils.getRandomlyFromList(neo.getTerminals());
         const parent = neo.getParentOf(terminal);
         if (parent) {
@@ -334,11 +348,14 @@ export class IndividualFactory {
 
     public removeRandomNode(ind: Individual): Individual {
         const node = Utils.getRandomlyFromList(ind.getNodes());
-        return this.removeNode(ind, node);
+        const neo = this.removeNode(ind, node);
+        neo.origin = {name: 'removeRandomNode', args: []};
+        return neo;
     }
 
     public removeNode(ind: Individual, node: Node): Individual {
         const neo = ind.clone();
+        neo.origin = {name: 'removeNode', args: [node.toString()]};
         const index = ind.getNodes().indexOf(node);
         const nodeToBeRemoved = neo.getNodes()[index];
         const parent = neo.getParentOf(nodeToBeRemoved);
@@ -379,12 +396,16 @@ export class IndividualFactory {
             ind = this.generateRandomlyFrom(ind);
         }
 
-        return this.generateRandomlyFrom(ind).fix();
+
+        const neo = this.generateRandomlyFrom(ind).fix();
+        neo.origin = { name: 'generateRandom', args: [depth.toString()]};
+        return neo;
     }
 
     public wrapNodeWithGroup(ind: Individual, node: Node): Individual {
         const index = ind.getNodes().indexOf(node);
         const neo = ind.clone();
+        neo.origin = {name: 'removeNode', args: [node.toString()]};
         const neoNode = neo.getNodes()[index];
 
         if (neo.isTheRootNode(neoNode)) {
@@ -401,7 +422,9 @@ export class IndividualFactory {
     public addBackref(ind: Individual, node: Node, number: number = 1): Individual {
         const func = new BackrefFunc();
         func.number = number;
-        return this.concatenateToNode(ind, node, func);
+        const neo = this.concatenateToNode(ind, node, func);
+        neo.origin = {name: 'addBackref', args: [node.toString(), number.toString()]};
+        return neo;
     }
 
     public isNodeWrappedBy(ind: Individual, node: Node, type: FuncTypes): boolean {

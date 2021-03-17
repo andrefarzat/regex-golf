@@ -10,17 +10,19 @@ export enum LogType {
     alreadyVisited,
     error,
     jumpedTo,
+    finished,
 }
 
 export interface LogEntry {
     type: LogType,
-    msg: string,
+    ind: Individual,
 }
 
 export interface LogProgress {
     evaluationIndex: number;
     time: number;
     percentage: number;
+    ind: Individual;
 }
 
 @Injectable({
@@ -43,7 +45,11 @@ export class LoggerService {
         return this.cache[id];
     }
 
-    async log(type: LogType, msg: string, percentage?: number) {
+    async finish(ind: Individual) {
+        return this.log(LogType.finished, ind);
+    }
+
+    async log(type: LogType, ind: Individual, percentage?: number) {
         // const callout = document.createElement('div');
         // callout.className = `callout ${level}`;
 
@@ -52,20 +58,20 @@ export class LoggerService {
         // callout.appendChild(p);
 
         // this.getEl('logs').appendChild(callout);
-        const entry: LogEntry = { msg, type };
+        const entry: LogEntry = { ind, type };
         this.added.emit(entry);
     }
 
     async logInitialSolution(ind: Individual) {
-        this.log(LogType.initialSolution, ind.toLog());
+        this.log(LogType.initialSolution, ind);
     }
 
     async logStartNeighborhood(ind: Individual) {
-        this.log(LogType.startNeighborhood, ind.toLog());
+        this.log(LogType.startNeighborhood, ind);
     }
 
     async debug(ind: Individual) {
-        // console.log('Debug', ind.toLog());
+        // console.log('Debug', ind);
     }
 
     async evaluation(ind: Individual, time: number) {
@@ -79,16 +85,16 @@ export class LoggerService {
         const evaluationIndex = ind.evaluationIndex;
         const percentage = Math.ceil((ind.evaluationIndex * 100) / this.maxEvaluations);
 
-        this.progress.emit({ evaluationIndex, time, percentage });
-        this.log(LogType.evaluation, ind.toLog());
+        this.progress.emit({ evaluationIndex, time, percentage, ind });
+        this.log(LogType.evaluation, ind);
     }
 
     async foundBetter(ind: Individual) {
-        this.log(LogType.foundBetter, ind.toLog());
+        this.log(LogType.foundBetter, ind);
     }
 
     async alreadyVisited(ind: Individual) {
-        this.log(LogType.alreadyVisited, ind.toLog());
+        this.log(LogType.alreadyVisited, ind);
     }
 
     async error(title: string, text: string = '') {
@@ -96,7 +102,7 @@ export class LoggerService {
     }
 
     async jumpedTo(ind: Individual) {
-        this.log(LogType.jumpedTo, ind.toLog());
+        this.log(LogType.jumpedTo, ind);
     }
 
 

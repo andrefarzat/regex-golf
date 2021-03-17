@@ -16,7 +16,6 @@
         "./src/**/*.ts",
         "./tests/*.ts",
         "./tests/**/*.ts",
-        "./node_modules/@types/node/index.d.ts"
     ],
     "exclude": [
         "./tests/runner.ts"

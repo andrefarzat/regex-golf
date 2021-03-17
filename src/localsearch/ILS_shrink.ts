@@ -20,6 +20,7 @@ export class ILS_Shrink extends ILS {
 
     public async restartFromSolution(ind: Individual): Promise<Individual> {
         const shunkCurrentSolution = ind.shrink();
+        shunkCurrentSolution.origin = { name: 'shink', args: [ind.toString()] };
 
         if (shunkCurrentSolution.isValid()) {
             try {
@@ -35,6 +36,7 @@ export class ILS_Shrink extends ILS {
         const ngram = this.getNextNGram();
         if (ngram) {
             ind = ngram.shrink();
+            ind.origin = { name: 'shink', args: ['getNextNGram', ngram.toString()] };
         }
 
         // Restart aleatório

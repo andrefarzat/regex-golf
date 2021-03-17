@@ -13,10 +13,11 @@ export interface LocalSearchConfig {
     depth: number;
     seed: number;
     timeout: number;
+    instanceName: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class LocalSearchService {
     protected config?: LocalSearchConfig;
@@ -36,12 +37,14 @@ export class LocalSearchService {
         this.config = config;
         this.play();
 
+        this.logger.maxEvaluations = config.budget;
+
         const instance = { left: config.left, right: config.right };
 
         // 2. Instância o programa
         const program = new ILS_Shrink(instance.left, instance.right);
         program.env = 'browser';
-        program.instanceName = 'browser';
+        program.instanceName = config.instanceName;
 
         // 3. Seta o Budget
         program.budget = config.budget;
@@ -87,9 +90,9 @@ export class LocalSearchService {
                 await neighborhood.evaluate(ind => {
                     this.logger.debug(ind);
 
-                    if (ind.evaluationIndex % 100 === 0) {
-                        const time = dayjs().diff(program.startTime, 'ms');
-                        this.logger.evaluation(ind, time)
+                    if (ind.evaluationIndex % 10 === 0) {
+                        // const time = dayjs().diff(program.startTime, 'ms');
+                        this.logger.evaluation(ind, 0);
                         // console.log(`${ind.evaluationIndex} evaluated in ${time} ms`);
                     }
 
@@ -127,12 +130,14 @@ export class LocalSearchService {
             //           -> Realizar o restart
             if (!hasFoundBetter) {
                 program.addLocalSolution(currentSolution);
+                // this.logger.addLocalSolution(currentSolution);
                 currentSolution = await program.restartFromSolution(currentSolution);
                 await program.evaluator.evaluate(currentSolution);
                 this.logger.jumpedTo(currentSolution);
             }
         } while (true);
 
+        this.logger.finish(currentSolution);
         program.evaluator.close();
     }
 
