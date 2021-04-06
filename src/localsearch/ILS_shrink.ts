@@ -10,7 +10,8 @@ export class ILS_Shrink extends ILS {
         const ngram = this.oldNGrams[this.ngramIndex];
         if (ngram) {
             this.ngramIndex++;
-            return this.factory.createFromString(ngram, true);
+            const ind = this.factory.createFromString(ngram, true);
+            ind.addOrigin('getNextNGram', [this.ngramIndex.toString(), ngram]);
         } else {
             this.ngramIndex = 0;
         }
@@ -20,6 +21,7 @@ export class ILS_Shrink extends ILS {
 
     public async restartFromSolution(ind: Individual): Promise<Individual> {
         const shunkCurrentSolution = ind.shrink();
+        shunkCurrentSolution.addOrigin('restartFromSolution', [ind.toString()])
 
         if (shunkCurrentSolution.isValid()) {
             try {

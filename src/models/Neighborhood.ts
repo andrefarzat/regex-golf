@@ -16,13 +16,13 @@ import { Utils } from "../Utils";
 import { Individual } from "./Individual";
 
 export class Neighborhood {
+    public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
+    public maxSimultaneousEvaluations = 100;
+    protected hood?: IterableIterator<Individual>;
 
     public get factory() {
         return this.program.factory;
     }
-    public readonly specialChars = [`\\b`, `\\B`, `\\w`, `\\W`, `\\d`, `\\D`];
-    public maxSimultaneousEvaluations = 100;
-    protected hood?: IterableIterator<Individual>;
 
     public constructor(public solution: Individual, public program: LocalSearch) { }
 

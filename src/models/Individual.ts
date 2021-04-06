@@ -9,6 +9,11 @@ import { Utils } from "../Utils";
 import { OrFunc } from '../nodes/OrFunc';
 import { ListFunc } from '../nodes/ListFunc';
 
+export interface IndividualOrigin {
+    name: string;
+    args: string[]
+}
+
 export class Individual {
     private static weight = 10;
 
@@ -45,6 +50,7 @@ export class Individual {
     public rightPoints: number = 0;
     public evaluationStartTime?: Date;
     public evaluationEndTime?: Date;
+    public origin: {name: string; args: string[]}[] = [];
 
     public evaluationIndex: number = undefined;
 
@@ -55,6 +61,10 @@ export class Individual {
 
     public invalidRegexes = ['^', '.*', '^.*',  '.*$', '.+', '.+$', '$', '+?', '[]', '[^]', `\b`];
     protected _string: string;
+
+    public addOrigin(name: string, args: string[]) {
+        this.origin.push({ name, args });
+    }
 
     public toCSV(withDot: boolean = false): string {
         const arr = [

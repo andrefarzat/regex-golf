@@ -41,6 +41,7 @@ export class NodeShrinker {
 
             const factory = new IndividualFactory([], []);
             const ind = factory.createFromString(optimizedRe);
+            ind.addOrigin('shrinkRoot', [node.toString()]);
             return ind.isValid() ? ind.tree : neo;
         } catch {
             return neo;

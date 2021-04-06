@@ -16,7 +16,8 @@
     "read-log": "ts-node src/cli/read-log.ts",
     "pontuacao": "ts-node src/cli/pontuacao.ts",
     "show-fitness": "ts-node src/cli/show-fitness.ts",
-    "lint": "tslint --project ."
+    "lint": "tslint --project .",
+    "execute": "ts-node src/cli/execute.ts"
   },
   "dependencies": {
     "@types/args": "^3.0.0",
@@ -25,6 +26,7 @@
     "alsatian": "^2.2.1",
     "args": "^3.0.8",
     "color": "2.0.1",
+    "dayjs": "^1.10.4",
     "mersenne-twister": "^1.1.0",
     "moment": "^2.19.4",
     "raw-loader": "^0.5.1",

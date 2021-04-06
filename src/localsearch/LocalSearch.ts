@@ -1,9 +1,9 @@
-import * as Moment from "moment";
+import * as dayjs from 'dayjs';
 import { EvaluatorFactory } from "../models/EvaluatorFactory";
 import { Individual } from "../models/Individual";
 import { IndividualFactory } from "../models/IndividualFactory";
 import { Utils } from "../Utils";
-import { Logger } from "../Logger";
+import { ILogger } from "../loggers/ILogger";
 
 export interface Solution {
     ind: Individual;
@@ -36,7 +36,7 @@ export abstract class LocalSearch {
     public readonly TWO_MINUTES = 1000 * 60 * 2;
     public readonly TEN_MINUTES = 1000 * 60 * 10;
 
-    constructor(public instanceName: string) {
+    constructor(public instanceName: string, public logger: ILogger) {
         const instance = Utils.loadInstance(instanceName);
         this.left = instance.left;
         this.right = instance.right;
@@ -195,36 +195,51 @@ export abstract class LocalSearch {
         if (this.evaluator.evaluationCount >= this.budget) {
             this.endTime = new Date();
             this.reasonToStop = 'maxEvaluations';
-            // tslint:disable-next-line
-            Logger.info('[shouldStop]', label, 'maxEvaluations', this.evaluator.evaluationCount.toString(), this.budget.toString());
+
+            this.logger.logStop(label, {
+                endTime: this.endTime.toString(),
+                reasonToStop: this.reasonToStop,
+                evaluationCount: this.evaluator.evaluationCount.toString(),
+                budget: this.budget.toString()
+            });
+
             return true;
         }
 
         if (this.evaluationsWithoutImprovement >= this.maxEvaluationsWithoutImprovement) {
             this.endTime = new Date();
             this.reasonToStop = 'withoutImprovement';
-            // tslint:disable-next-line
-            Logger.info('[shouldStop]', label, 'withoutImprovement', this.evaluationsWithoutImprovement.toString(), this.maxEvaluationsWithoutImprovement.toString());
+
+            this.logger.logStop(label, {
+                endTime: this.endTime.toString(),
+                reasonToStop: this.reasonToStop,
+                evaluationsWithoutImprovement: this.evaluationsWithoutImprovement.toString(),
+                maxEvaluationsWithoutImprovement: this.maxEvaluationsWithoutImprovement.toString(),
+            });
+
             return true;
         }
 
-        if (Moment().diff(this.startTime, 'ms') > this.TEN_MINUTES) {
+        if (dayjs().diff(this.startTime, 'ms') > this.TEN_MINUTES) {
             this.reasonToStop = 'timeout';
             this.endTime = new Date();
-            // tslint:disable-next-line
-            Logger.info('[shouldStop]', label, 'timeout', this.evaluationsWithoutImprovement.toString(), this.maxEvaluationsWithoutImprovement.toString());
+
+            this.logger.logStop(label, {
+                endTime: this.endTime.toString(),
+                reasonToStop: this.reasonToStop,
+                evaluationsWithoutImprovement: this.evaluationsWithoutImprovement.toString(),
+                maxEvaluationsWithoutImprovement: this.maxEvaluationsWithoutImprovement.toString(),
+            });
+
             return true;
         }
 
-        // tslint:disable-next-line
-        Logger.info('[shouldStop]', label, 'return false');
         return false;
     }
 
     public addSolution(ind: Individual) {
         const isAlreadyThere = this.solutions.find(i => i.toString() === ind.toString());
         if (!isAlreadyThere) {
-            Logger.info('[addSolution]', ind.toString());
             this.solutions.push(ind);
         }
     }
@@ -232,18 +247,16 @@ export abstract class LocalSearch {
     public addLocalSolution(ind: Individual) {
         const isAlreadyThere = this.localSolutions.find(i => i.toString() === ind.toString());
         if (!isAlreadyThere) {
-            Logger.info('[addLocalSolution]', ind.toString());
             this.localSolutions.push(ind);
         }
     }
 
     public generateInitialIndividual(): Individual {
         const ind = this.factory.generateRandom(this.depth);
-        Logger.info('[generateInitialIndividual]', ind.toString());
         return ind;
     }
 
-    public abstract async restartFromSolution(ind: Individual): Promise<Individual>;
+    public abstract restartFromSolution(ind: Individual): Promise<Individual>;
 
     public getBestSolution(): Individual | undefined {
         this.localSolutions.sort(this.sorter);
