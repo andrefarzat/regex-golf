@@ -10,6 +10,7 @@ export class Main {
     public instanceName = 'abba';
     public ils: ILS_Shrink;
     public currentSolution: Individual;
+    public q: Promise<void>;
 
     public visitedRegexes: string[] = [];
     public bestCurrentFitness: number = 0;
@@ -19,9 +20,7 @@ export class Main {
     public async execute(): Promise<void> {
         this.init();
         this.currentSolution = await this.generateInitialIndividual();
-
-        this.loop();
-        this.finish();
+        return this.loop();
     }
 
     private async loop() {
@@ -88,6 +87,7 @@ export class Main {
                 } else {
                     this.logger.logNeighborhoodError(neighborhood, e);
                 }
+                break;
             }
 
             // 6.5. Não encontrou melhor?
@@ -101,6 +101,9 @@ export class Main {
                 this.logger.logJumpedTo(this.currentSolution);
             }
         } while (true);
+
+        this.finish();
+        return Promise.resolve();
     }
 
     private init() {

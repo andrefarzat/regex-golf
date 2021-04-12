@@ -83,4 +83,20 @@ export class InMemoryLogger implements ILogger {
         this.addLogEntry('Starting neighborhood', ind);
     }
 
+    public getLogAsCsvString(): string {
+        const keys: (keyof LogEntry)[] = ['index', 'event', 'regex', 'origin', 'fitness'];
+        const lines = this.logs.map(log => {
+            return keys.map(key => log[key].toString()).join(';');
+        });
+
+        return lines.join('\n');
+    }
+
+    public dump() {
+        this.logs.forEach(log => {
+            const values: string[] = Object.keys(log).map(key => (log as any)[key]?.toString());
+            console.log(values.join(';'));
+        });
+    }
+
 }
