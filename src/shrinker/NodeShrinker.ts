@@ -1,4 +1,5 @@
 import * as regexpTree from "regexp-tree";
+import { Individual, IndividualOrigin } from "../models/Individual";
 
 import { IndividualFactory } from "../models/IndividualFactory";
 import { AnyCharFunc } from "../nodes/AnyCharFunc";
@@ -19,7 +20,21 @@ import { RepetitionFuncShrinker } from "./RepetitionFuncShrinker";
 
 export class NodeShrinker {
 
-    public static shrinkRoot(node: Node): Node {
+    public static shrinkIndividual(ind: Individual): Individual {
+        let [node, origin] = NodeShrinker.shrinkRoot(ind.tree);
+
+        if (node.nodeType === 'terminal') {
+            const func = new ConcatFunc([node]);
+            node = func;
+        }
+
+        const neo = new Individual();
+        neo.addOrigin(origin.name, origin.args);
+        neo.tree = node as Func;
+        return neo;
+    }
+
+    public static shrinkRoot(node: Node): [Node, IndividualOrigin] {
         const neo = NodeShrinker.shrink(node);
 
         const options = [
@@ -42,9 +57,9 @@ export class NodeShrinker {
             const factory = new IndividualFactory([], []);
             const ind = factory.createFromString(optimizedRe);
             ind.addOrigin('shrinkRoot', [node.toString()]);
-            return ind.isValid() ? ind.tree : neo;
+            return ind.isValid() ? [ind.tree, ind.origin[0]] : [neo, ind.origin[0]];
         } catch {
-            return neo;
+            return [neo, {'name': 'shrinkRoot', 'args': [node.toString()]}];
         }
     }
 

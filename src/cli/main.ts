@@ -94,6 +94,7 @@ export class Main {
             //      Then -> Loga solução local
             //           -> Realizar o restart
             if (!hasFoundBetter) {
+                debugger;
                 this.ils.addLocalSolution(this.currentSolution);
                 this.logger.logAddLocalSolution(this.currentSolution);
                 this.currentSolution = await this.ils.restartFromSolution(this.currentSolution);

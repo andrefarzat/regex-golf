@@ -75,7 +75,7 @@ export class FileLogger implements ILogger {
         this.addLogEntry('Jumped to', currentSolution);
     }
     logAddLocalSolution(currentSolution: Individual): void {
-        this.addLogEntry('Add local solution', currentSolution);
+        // this.addLogEntry('Add local solution', currentSolution);
     }
     logNeighborhoodError(neighborhood: Neighborhood, e: any): void {
         // throw new Error("Method not implemented.");
@@ -84,16 +84,16 @@ export class FileLogger implements ILogger {
         // throw new Error("Method not implemented.");
     }
     logFoundBetter(ind: Individual): void {
-        this.addLogEntry('Found better', ind);
+        this.addLogEntry('Found better in neighborhood', ind);
     }
     logEvaluation(ind: Individual): void {
         // this.addLogEntry('Evaluation', ind);
     }
     logAddSolution(ind: Individual): void {
-        this.addLogEntry('Add solution', ind);
+        // this.addLogEntry('Add solution', ind);
     }
     logBestCurrentSolutionAmongNeighborhoods(ind: Individual): void {
-        this.addLogEntry('Best current solution among neightborhoods', ind);
+        this.addLogEntry('Best current solution among neighborhoods', ind);
     }
     logStartNeighborhood(ind: Individual): void {
         this.addLogEntry('Start of neighborhood', ind);

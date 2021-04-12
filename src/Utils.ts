@@ -65,6 +65,10 @@ export class Utils {
         return this.idIndex++;
     }
 
+    public static resetNextId(): void {
+        this.idIndex = 0;
+    }
+
     public static async waitFor(conditionFn: () => boolean) {
         return new Promise<void>((resolve) => {
             const fn = () => { conditionFn() ? resolve() : setImmediate(fn); };

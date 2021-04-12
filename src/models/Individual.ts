@@ -242,16 +242,7 @@ export class Individual {
     }
 
     public shrink(): Individual {
-        const ind = new Individual();
-        let node = NodeShrinker.shrinkRoot(this.tree);
-
-        if (node.nodeType === 'terminal') {
-            const func = new ConcatFunc([node]);
-            node = func;
-        }
-
-        ind.tree = node as Func;
-        return ind;
+        return NodeShrinker.shrinkIndividual(this);
     }
 
     public fix(): Individual {
