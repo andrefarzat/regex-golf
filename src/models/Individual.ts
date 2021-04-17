@@ -60,7 +60,6 @@ export class Individual {
     public hasTimedOut = false;
 
     public invalidRegexes = ['^', '.*', '^.*',  '.*$', '.+', '.+$', '$', '+?', '[]', '[^]', `\b`];
-    protected _string: string;
 
     public addOrigin(name: string, args: string[]) {
         this.origin.push({ name, args });
@@ -80,8 +79,7 @@ export class Individual {
     }
 
     public toString(): string {
-        if (this._string === undefined) { this._string = this.tree.toString(); }
-        return this._string;
+        return this.tree.toString();
     }
 
     public toLog(): string {
@@ -168,6 +166,7 @@ export class Individual {
         ind.rightPoints = this.rightPoints;
         ind.matchesOnLeft = this.matchesOnLeft;
         ind.matchesOnRight = this.matchesOnRight;
+        ind.origin = JSON.parse(JSON.stringify(this.origin));
         return ind;
     }
 
@@ -242,7 +241,9 @@ export class Individual {
     }
 
     public shrink(): Individual {
-        return NodeShrinker.shrinkIndividual(this);
+        const ind = NodeShrinker.shrinkIndividual(this);
+        ind.addOrigin('shrink', []);
+        return ind;
     }
 
     public fix(): Individual {

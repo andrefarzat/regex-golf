@@ -51,19 +51,26 @@ export class FileLogger implements ILogger {
         return `${origin.name}(${origin.args.join(', ')})`;
     }
 
+    private getOriginListFromInd(ind: Individual): string {
+        const origins = ind.origin.map(origin => `${origin.name}(${origin.args.join(', ')})`);
+        return `[${origins}]`;
+    }
+
     public addLogEntry(event: string, ind: Individual): void {
         let originName = '';
         let originArgs = '';
 
         if (ind.origin.length > 0) {
-            originName = ind.origin[0].name;
-            originArgs = ind.origin[0].args.join(',');
+            originName = ind.origin[ind.origin.length - 1].name;
+            originArgs = ind.origin[ind.origin.length - 1].args.join(',');
         }
 
-        const line = [ind.id, event, ind.toString(), originName, originArgs, ind.fitness].join(';');
+        const wasShrunk = ind.origin.some(origin => origin.name === 'shrink');
+
+        // const line = [ind.id, event, ind.toString(), originName, originArgs, wasShrunk, ind.fitness].join(';');
+        const line = [ind.id, event, ind.toString(), this.getOriginListFromInd(ind), ind.fitness].join(';');
         this.wiston.info(line);
     }
-
 
     logStop(label: string, data: { [key: string]: string; }): void {
         // throw new Error("Method not implemented.");
@@ -84,7 +91,7 @@ export class FileLogger implements ILogger {
         // throw new Error("Method not implemented.");
     }
     logFoundBetter(ind: Individual): void {
-        this.addLogEntry('Found better in neighborhood', ind);
+        this.addLogEntry('Found better in current neighborhood', ind);
     }
     logEvaluation(ind: Individual): void {
         // this.addLogEntry('Evaluation', ind);
@@ -93,10 +100,14 @@ export class FileLogger implements ILogger {
         // this.addLogEntry('Add solution', ind);
     }
     logBestCurrentSolutionAmongNeighborhoods(ind: Individual): void {
-        this.addLogEntry('Best current solution among neighborhoods', ind);
+        this.addLogEntry('Found better current solution among all neighborhoods', ind);
     }
     logStartNeighborhood(ind: Individual): void {
         this.addLogEntry('Start of neighborhood', ind);
+    }
+
+    logFinished(bestInd: Individual, lastIndEvaluated: Individual): void {
+        this.addLogEntry('Finished. The best found is here', bestInd);
     }
 
 }

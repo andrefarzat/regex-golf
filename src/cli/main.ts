@@ -1,4 +1,4 @@
-import * as dayjs from 'dayjs';
+ import * as dayjs from 'dayjs';
 
 import { ILS_Shrink } from "../localsearch/ILS_shrink";
 import { Individual } from "../models/Individual";
@@ -24,6 +24,7 @@ export class Main {
     }
 
     private async loop() {
+        let currentIndInLoop: Individual;
         // 6. Loop
         do {
             // 6.2. Current Solution is the Best ?
@@ -49,6 +50,7 @@ export class Main {
 
             try {
                 await neighborhood.evaluate((ind) => {
+                    currentIndInLoop = ind;
                     this.logger.logEvaluation(ind);
 
                     // 6.4.1. Neighbor is better than current solution ?
@@ -103,6 +105,7 @@ export class Main {
             }
         } while (true);
 
+        this.logger.logFinished(this.currentSolution, currentIndInLoop);
         this.finish();
         return Promise.resolve();
     }
