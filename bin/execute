@@ -1,0 +1,20 @@
+#!/usr/bin/env python3
+
+from subprocess import call
+
+
+
+INSTANCES = ["warmup", "anchors", "ranges", "backrefs", "abba", "aman-aplan", "prime", "four", "order",
+             "triples", "glob", "balance", "powers", "long-count", "alphabetical"]
+
+# INSTANCES = ["triples"]
+
+TIMES = 30
+
+for i in range(0, TIMES):
+    index = i + 1
+
+    for instance in INSTANCES:
+        cmd = ['npm', 'run', 'execute', '--', instance, str(index)]
+        print(' '.join(cmd))
+        call(cmd)

@@ -62,8 +62,12 @@ export class Individual {
 
     public invalidRegexes = ['^', '.*', '^.*',  '.*$', '.+', '.+$', '$', '+?', '[]', '[^]', `\b`];
 
-    public addOrigin(name: string, args: string[]) {
-        this.origin.push({ name, args });
+    public addOrigin(name: string | IndividualOrigin, args: string[] = []) {
+        if (typeof name === 'string') {
+            this.origin.push({ name, args });
+        } else {
+            this.origin.push(name);
+        }
     }
 
     public toCSV(withDot: boolean = false): string {
@@ -258,11 +262,13 @@ export class Individual {
     }
 
     public fix(): Individual {
+        Utils.pauseCountingNextId();
         const ind = new Individual();
         ind.tree = this.tree.clone();
+        Utils.continueCountingNextId();
 
         ind.tree.children = ind.tree.children.map(child => {
-            if (child instanceof ListFunc) { return NodeShrinker.shrinkFunc(child); }
+            if (child instanceof ListFunc) { return NodeShrinker.shrinkFunc(child)[0]; }
             return child.clone();
         });
 

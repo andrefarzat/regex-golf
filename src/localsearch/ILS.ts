@@ -2,7 +2,7 @@ import { Individual } from '../models/Individual';
 import { LocalSearch } from './LocalSearch';
 
 export class ILS extends LocalSearch {
-    public async restartFromSolution(ind: Individual): Promise<Individual> {
+    public async generateIndividualToRestart(ind: Individual): Promise<Individual> {
         let count = 5;
 
         while (--count > 0) {

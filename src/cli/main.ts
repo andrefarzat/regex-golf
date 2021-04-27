@@ -4,6 +4,7 @@ import { ILS_Shrink } from "../localsearch/ILS_shrink";
 import { Individual } from "../models/Individual";
 import { ILogger } from '../loggers/ILogger';
 import { Neighborhood } from "../models/Neighborhood";
+import { Utils } from '../Utils';
 
 
 export class Main {
@@ -100,10 +101,17 @@ export class Main {
             //      Then -> Loga solução local
             //           -> Realizar o restart
             if (!hasFoundBetter) {
+                Utils.pauseCountingNextId();
+
                 this.logger.logJumpedFrom(this.currentSolution);
                 this.ils.addLocalSolution(this.currentSolution);
                 this.logger.logAddLocalSolution(this.currentSolution);
-                this.currentSolution = await this.ils.restartFromSolution(this.currentSolution);
+                this.currentSolution = await this.ils.generateIndividualToRestart(this.currentSolution);
+
+                // this.logger.logGenerateIndividualToRestart(this.currentSolution);
+                Utils.continueCountingNextId();
+                this.currentSolution.id = Utils.getNextId();
+
                 await this.ils.evaluator.evaluate(this.currentSolution);
                 this.logger.logJumpedTo(this.currentSolution);
             }
@@ -119,7 +127,7 @@ export class Main {
 
         this.ils.budget = 100000 * 5;
         this.ils.depth = 5;
-        this.ils.seed = 1234567890;
+        // this.ils.seed = 1234567890;
         this.ils.index = 0;
 
         this.ils.init();

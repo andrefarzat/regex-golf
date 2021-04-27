@@ -3,6 +3,8 @@ import { ILS } from './ILS';
 import { OrFunc } from '../nodes/OrFunc';
 import { Logger } from '../Logger';
 
+import { Utils } from '../Utils';
+
 export class ILS_Shrink extends ILS {
     private ngramIndex = 0;
 
@@ -12,6 +14,7 @@ export class ILS_Shrink extends ILS {
             this.ngramIndex++;
             const ind = this.factory.createFromString(ngram, true);
             ind.addOrigin('getNextNGram', [this.ngramIndex.toString(), ngram]);
+            return ind;
         } else {
             this.ngramIndex = 0;
         }
@@ -19,11 +22,9 @@ export class ILS_Shrink extends ILS {
         return null;
     }
 
-    public async restartFromSolution(ind: Individual): Promise<Individual> {
-        this.logger.logRestartFromSolution(ind);
-
+    public async generateIndividualToRestart(ind: Individual): Promise<Individual> {
         const shunkCurrentSolution = ind.shrink(this.logger);
-        shunkCurrentSolution.addOrigin('restartFromSolution', [ind.toString()])
+        shunkCurrentSolution.addOrigin('generateIndividualToRestart', [ind.toString()])
 
         if (shunkCurrentSolution.isValid()) {
             try {
@@ -38,11 +39,12 @@ export class ILS_Shrink extends ILS {
 
         const ngram = this.getNextNGram();
         if (ngram) {
-            ind = ngram.shrink();
+            // ind = ngram.shrink(this.logger);
+            return ngram;
         }
 
         // Restart aleatório
         ind = this.factory.generateRandom(this.depth);
-        return super.restartFromSolution(ind);
+        return super.generateIndividualToRestart(ind);
     }
 }

@@ -14,7 +14,6 @@ import { OrFunc } from '../nodes/OrFunc';
 import { RangeFunc } from '../nodes/RangeFunc';
 import { RepetitionFunc } from '../nodes/RepetitionFunc';
 import { Terminal } from '../nodes/Terminal';
-import { Utils } from '../Utils';
 import { ConcatFuncShrinker } from "./ConcatenationShrinker";
 import { ListFuncShrinker } from "./ListFuncShrinker";
 import { RepetitionFuncShrinker } from "./RepetitionFuncShrinker";
@@ -55,7 +54,7 @@ export class NodeShrinker {
     }
 
     public static shrinkRoot(node: Node): [Node, IndividualOrigin] {
-        const neo = NodeShrinker.shrink(node);
+        const [neo, origin] = NodeShrinker.shrink(node);
 
         const options = [
             'charClassToMeta',
@@ -76,6 +75,7 @@ export class NodeShrinker {
 
             const factory = new IndividualFactory([], []);
             const ind = factory.createFromString(optimizedRe);
+            ind.addOrigin(origin);
             ind.addOrigin('shrinkRoot', [node.toString()]);
             return ind.isValid() ? [ind.tree, ind.origin[0]] : [neo, ind.origin[0]];
         } catch {
@@ -83,58 +83,60 @@ export class NodeShrinker {
         }
     }
 
-    public static shrink(node?: Node): Node {
+    public static shrink(node?: Node): [Node, IndividualOrigin] {
         if (node instanceof Func) {
             return NodeShrinker.shrinkFunc(node);
         } else if (node instanceof Terminal) {
             return NodeShrinker.shrinkTerminal(node);
         } else if (node === undefined) {
-            return new Terminal('');
+            return [new Terminal(''), {name: 'emptyNode', args: []}];
         } else {
             throw new Error('Invalid Node type to Shrink');
         }
     }
 
     public static shrinkMany(nodes: Node[]): Node[] {
-        return nodes.map((node) => NodeShrinker.shrink(node));
+        return nodes.map((node) => NodeShrinker.shrink(node)[0]);
     }
 
-    public static shrinkTerminal(node: Terminal): Node {
-        return node.clone();
+    public static shrinkTerminal(node: Terminal): [Node, IndividualOrigin] {
+        return [node.clone(), {name: 'shrinkTerminal', args: []}];
     }
 
-    public static shrinkFunc(node: Func): Node {
+    public static shrinkFunc(node: Func): [Node, IndividualOrigin] {
         if (node instanceof ConcatFunc) {
             const neoNode = (new ConcatFuncShrinker()).shrink(node);
             this.log('ConcatFuncShrinker', node, neoNode);
-            return neoNode;
+            const origin: IndividualOrigin = { name: 'ConcatFuncShrinker', args: [node.toString()]};
+            return [neoNode, origin];
         }
 
         if (node instanceof RepetitionFunc) {
             const neoNode = (new RepetitionFuncShrinker()).shrink(node);
             this.log('RepetitionFuncShrinker', node, neoNode);
-            return neoNode;
+            const origin: IndividualOrigin = { name: 'RepetitionFuncShrinker', args: [node.toString()]};
+            return [neoNode, origin];
         }
 
         if (node instanceof ListFunc) {
             const neoNode = (new ListFuncShrinker()).shrink(node);
-            this.log('ListFuncShrinker', node, neoNode);
-            return neoNode;
+            const origin: IndividualOrigin = { name: 'ListFuncShrinker', args: [node.toString()]};
+            return [neoNode, origin];
         }
 
         if (node instanceof OrFunc) {
             const neoNode = NodeShrinker.shrinkOrFunc(node);
-            this.log('shrinkOrFunc', node, neoNode);
+            this.log('shrinkOrFunc', node, neoNode[0]);
             return neoNode;
         }
 
         if (node instanceof RangeFunc) {
-            return node.clone();
+            return [node.clone(), null];
         }
 
         // Anchors
         if (node instanceof LineBeginFunc || node instanceof LineEndFunc) {
-            return node.clone();
+            return [node.clone(), null];
         }
 
         if (node.is(Func.Types.concatenation)) {
@@ -154,14 +156,20 @@ export class NodeShrinker {
         if (node instanceof Func) {
             const neo = node.clone();
             neo.children = NodeShrinker.shrinkMany(neo.children);
-            return neo;
+            return [node.clone(), {name: 'shrinkMany', args: []}];
         } else {
             // Terminal
-            return new ConcatFunc([NodeShrinker.shrink(node)]);
+            const [neo, origin] = NodeShrinker.shrink(node);
+            return [new ConcatFunc([neo]), origin];
         }
     }
 
-    protected static shrinkOrFunc(node: OrFunc): Node {
-        return new OrFunc(NodeShrinker.shrink(node.left), NodeShrinker.shrink(node.right));
+    protected static shrinkOrFunc(node: OrFunc): [Node, IndividualOrigin] {
+        const left = NodeShrinker.shrink(node.left)[0];
+        const right = NodeShrinker.shrink(node.right)[0];
+
+        const neoNode = new OrFunc(left, right);
+        const origin: IndividualOrigin = { name: 'shrinkOrFunc', args: [node.toString()]};
+        return [neoNode, origin];
     }
 }

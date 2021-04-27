@@ -4,6 +4,7 @@ import * as winston from 'winston';
 import { Individual } from "../models/Individual";
 import { Neighborhood } from "../models/Neighborhood";
 import { Node } from '../nodes/Node';
+import { Utils } from '../Utils';
 import { ILogger } from "./ILogger";
 
 
@@ -124,8 +125,11 @@ export class FileLogger implements ILogger {
     logStop(label: string, data: { [key: string]: string; }): void {
         // throw new Error("Method not implemented.");
     }
-    logInitialSolution(currentSolution: Individual): void {
-        this.addLogEntry('Initial solution', currentSolution);
+    logInitialSolution(ind: Individual): void {
+        ind.id = 0;
+        Utils.resetNextId();
+        Utils.hasStarted = true;
+        this.addLogEntry('Initial solution', ind);
     }
     logJumpedFrom(ind: Individual): void {
         this.addLogEntry('Jumped from', ind);
@@ -176,8 +180,8 @@ export class FileLogger implements ILogger {
         this.wiston.info(line);
     }
 
-    logRestartFromSolution(ind: Individual): void {
-        this.addLogEntry('Restarting from solution', ind);
+    logGenerateIndividualToRestart(ind: Individual): void {
+        this.addLogEntry('Individual generated to restart', ind);
     }
 
     logFinishShrinker(fromInd: Individual, toInd: Individual): void {

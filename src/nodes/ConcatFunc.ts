@@ -17,8 +17,8 @@ export class ConcatFunc extends Func {
     }
 
     public orderChildrenToLines(children: Node[]) {
-        let hasLineBegin = false; children.some((c) => c.is(FuncTypes.lineBegin));
-        let hasLineEnd = false; children.some((c) => c.is(FuncTypes.lineEnd));
+        let hasLineBegin = false; //children.some((c) => c.is(FuncTypes.lineBegin));
+        let hasLineEnd = false; //children.some((c) => c.is(FuncTypes.lineEnd));
 
         const txt: string[] = [];
         for (const child of children) {

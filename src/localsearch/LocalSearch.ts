@@ -79,7 +79,6 @@ export abstract class LocalSearch {
             this.ngrams = this.extractNGrams();
         }
 
-        Utils.hasStarted = true;
         return this;
     }
 
@@ -257,7 +256,7 @@ export abstract class LocalSearch {
         return ind;
     }
 
-    public abstract restartFromSolution(ind: Individual): Promise<Individual>;
+    public abstract generateIndividualToRestart(ind: Individual): Promise<Individual>;
 
     public getBestSolution(): Individual | undefined {
         this.localSolutions.sort(this.sorter);

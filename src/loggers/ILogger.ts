@@ -20,5 +20,5 @@ export interface ILogger {
     logInitShrinker(ind: Individual): void;
     logShrink(ind: Individual, funcName: string, fromNode: Node, toNode: Node): void;
     logFinishShrinker(fromInd: Individual, toInd: Individual): void;
-    logRestartFromSolution(ind: Individual): void;
+    logGenerateIndividualToRestart(ind: Individual): void;
 }
