@@ -165,7 +165,7 @@ export abstract class Func implements Node {
             return true;
         }
 
-        return false;
+        return node.toString() === this.toString();
     }
 
     public asFunc(): Func {

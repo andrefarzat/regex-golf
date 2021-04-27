@@ -1,9 +1,12 @@
 import { Individual } from "../models/Individual";
 import { Neighborhood } from "../models/Neighborhood";
+import { Node } from "../nodes/Node";
 
 export interface ILogger {
+    end(): Promise<void>;
     logStop(label: string, data: { [key: string]: string }): void;
     logInitialSolution(ind: Individual): void;
+    logJumpedFrom(ind: Individual): void;
     logJumpedTo(ind: Individual): void;
     logAddLocalSolution(ind: Individual): void;
     logNeighborhoodError(neighborhood: Neighborhood, e: any): void;
@@ -14,5 +17,8 @@ export interface ILogger {
     logBestCurrentSolutionAmongNeighborhoods(ind: Individual): void;
     logStartNeighborhood(ind: Individual): void;
     logFinished(bestIndFound: Individual, lastIndEvaluated: Individual): void;
-    logShrink(ind: Individual): void;
+    logInitShrinker(ind: Individual): void;
+    logShrink(ind: Individual, funcName: string, fromNode: Node, toNode: Node): void;
+    logFinishShrinker(fromInd: Individual, toInd: Individual): void;
+    logRestartFromSolution(ind: Individual): void;
 }

@@ -7,7 +7,7 @@ import { Neighborhood } from "../models/Neighborhood";
 
 
 export class Main {
-    public instanceName = 'abba';
+    protected instanceName = 'abba';
     public ils: ILS_Shrink;
     public currentSolution: Individual;
     public q: Promise<void>;
@@ -21,6 +21,10 @@ export class Main {
         this.init();
         this.currentSolution = await this.generateInitialIndividual();
         return this.loop();
+    }
+
+    public setInstanceName(instanceName: string): void {
+        this.instanceName = instanceName;
     }
 
     private async loop() {
@@ -96,7 +100,7 @@ export class Main {
             //      Then -> Loga solução local
             //           -> Realizar o restart
             if (!hasFoundBetter) {
-                debugger;
+                this.logger.logJumpedFrom(this.currentSolution);
                 this.ils.addLocalSolution(this.currentSolution);
                 this.logger.logAddLocalSolution(this.currentSolution);
                 this.currentSolution = await this.ils.restartFromSolution(this.currentSolution);

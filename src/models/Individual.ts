@@ -8,6 +8,7 @@ import { NodeShrinker } from '../shrinker/NodeShrinker';
 import { Utils } from "../Utils";
 import { OrFunc } from '../nodes/OrFunc';
 import { ListFunc } from '../nodes/ListFunc';
+import { ILogger } from '../loggers/ILogger';
 
 export interface IndividualOrigin {
     name: string;
@@ -240,9 +241,19 @@ export class Individual {
         return false;
     }
 
-    public shrink(): Individual {
+    public shrink(logger: ILogger = null): Individual {
+        if (logger) {
+            logger.logInitShrinker(this);
+            NodeShrinker.setLogger(logger);
+        }
+
         const ind = NodeShrinker.shrinkIndividual(this);
         ind.addOrigin('shrink', []);
+
+        if (logger) {
+            logger.logFinishShrinker(this, ind);
+        }
+
         return ind;
     }
 

@@ -79,7 +79,7 @@ export abstract class LocalSearch {
             this.ngrams = this.extractNGrams();
         }
 
-        Utils.resetNextId();
+        Utils.hasStarted = true;
         return this;
     }
 

@@ -1,4 +1,5 @@
 import * as regexpTree from "regexp-tree";
+import { ILogger } from "../loggers/ILogger";
 import { Individual, IndividualOrigin } from "../models/Individual";
 
 import { IndividualFactory } from "../models/IndividualFactory";
@@ -19,8 +20,25 @@ import { ListFuncShrinker } from "./ListFuncShrinker";
 import { RepetitionFuncShrinker } from "./RepetitionFuncShrinker";
 
 export class NodeShrinker {
+    private static _logger: ILogger;
+    private static _individual: Individual;
+
+    public static setCurrentIndividual(ind: Individual): void {
+        NodeShrinker._individual = ind;
+    }
+
+    public static setLogger(logger: ILogger) {
+        NodeShrinker._logger = logger;
+    }
+
+    public static log(funcName: string, originalNode: Node, neoNode: Node) {
+        if (NodeShrinker._logger) {
+            NodeShrinker._logger.logShrink(NodeShrinker._individual, funcName, originalNode, neoNode);
+        }
+    }
 
     public static shrinkIndividual(ind: Individual): Individual {
+        NodeShrinker.setCurrentIndividual(ind);
         let [node, origin] = NodeShrinker.shrinkRoot(ind.tree);
 
         if (node.nodeType === 'terminal') {
@@ -31,6 +49,8 @@ export class NodeShrinker {
         const neo = new Individual();
         neo.addOrigin(origin.name, origin.args);
         neo.tree = node as Func;
+
+        NodeShrinker._individual = null;
         return neo;
     }
 
@@ -84,11 +104,33 @@ export class NodeShrinker {
     }
 
     public static shrinkFunc(node: Func): Node {
-        if (node instanceof ConcatFunc) { return (new ConcatFuncShrinker()).shrink(node); }
-        if (node instanceof RepetitionFunc) { return (new RepetitionFuncShrinker()).shrink(node); }
-        if (node instanceof ListFunc) { return (new ListFuncShrinker()).shrink(node); }
-        if (node instanceof OrFunc) { return NodeShrinker.shrinkOrFunc(node); }
-        if (node instanceof RangeFunc) { return node.clone(); }
+        if (node instanceof ConcatFunc) {
+            const neoNode = (new ConcatFuncShrinker()).shrink(node);
+            this.log('ConcatFuncShrinker', node, neoNode);
+            return neoNode;
+        }
+
+        if (node instanceof RepetitionFunc) {
+            const neoNode = (new RepetitionFuncShrinker()).shrink(node);
+            this.log('RepetitionFuncShrinker', node, neoNode);
+            return neoNode;
+        }
+
+        if (node instanceof ListFunc) {
+            const neoNode = (new ListFuncShrinker()).shrink(node);
+            this.log('ListFuncShrinker', node, neoNode);
+            return neoNode;
+        }
+
+        if (node instanceof OrFunc) {
+            const neoNode = NodeShrinker.shrinkOrFunc(node);
+            this.log('shrinkOrFunc', node, neoNode);
+            return neoNode;
+        }
+
+        if (node instanceof RangeFunc) {
+            return node.clone();
+        }
 
         // Anchors
         if (node instanceof LineBeginFunc || node instanceof LineEndFunc) {
