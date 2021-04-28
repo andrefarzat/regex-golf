@@ -8,6 +8,7 @@ import { ILS_Shrink } from './localsearch/ILS_shrink';
 import { LocalSearch } from './localsearch/LocalSearch';
 
 import { Logger } from './Logger';
+import { FileLogger } from "./logger/FileLogger";
 import { Individual } from "./models/Individual";
 import { Neighborhood } from './models/Neighborhood';
 import { Utils } from './Utils';
@@ -64,6 +65,9 @@ async function main() {
     // 1. Carrega a instância do problema
     // 2. Instância o programa
     const program = getProgram();
+    const logger = new FileLogger();
+
+    program.setLogger(logger);
 
     // 3. Seta o Budget
     program.budget = flags.budget;
@@ -93,10 +97,12 @@ async function main() {
         let hasFoundBetter = false;
         if (program.isBest(currentSolution)) {
             program.addSolution(currentSolution);
+            logger.logAddSolution(currentSolution);
         }
 
         if (currentSolution.fitness > bestCurrentFitness) {
             Logger.info(`[New best current fitness (1)]`, currentSolution.toLog());
+            logger.logBestCurrentSolutionAmongNeighborhoods(currentSolution);
             bestCurrentFitness = currentSolution.fitness;
         }
 
@@ -107,10 +113,15 @@ async function main() {
         // 6.4 Evaluate Neighborhood
         const neighborhood = new Neighborhood(currentSolution, program);
         Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
+        this.logger.logStartNeighborhood(currentSolution);
+
+        var currentIndInLoop;
 
         try {
             await neighborhood.evaluate((ind) => {
+                currentIndInLoop = ind;
                 Logger.debug(`[Solution]`, ind.toLog());
+                logger.logEvaluation(ind);
 
                 if (ind.evaluationIndex % 10000 === 0) {
                     const time = moment().diff(program.startTime, 'ms');
@@ -123,6 +134,7 @@ async function main() {
                 //             -> Seta que encontrou melhor
                 if (ind.isBetterThan(currentSolution)) {
                     Logger.info(`[Found better]`, ind.toLog());
+                    logger.logFoundBetter(ind);
                     currentSolution = ind;
                     hasFoundBetter = true;
 
@@ -130,12 +142,14 @@ async function main() {
                         bestCurrentFitness = currentSolution.fitness;
                         program.evaluationsWithoutImprovement = 0;
                         Logger.info(`[New best current fitness (2)]`, currentSolution.toLog());
+                        logger.logBestCurrentSolutionAmongNeighborhoods(currentSolution);
                     }
 
                     // Testing to see if we have somekind of loop
                     const hasVisitedThisInd = visitedRegexes.includes(ind.toString());
                     if (hasVisitedThisInd) {
                         // Logger.warn(`[Already visited]`, ind.toLog());
+                        logger.logHasAlreadyVisited(ind);
                     } else {
                         visitedRegexes.push(ind.toString());
                     }
@@ -154,6 +168,7 @@ async function main() {
             } else {
                 console.log('Neighborhood error:', e.message);
                 Logger.error(`[Index Neighborhood error]`, e.message);
+                logger.logNeighborhoodError(neighborhood, e);
             }
         }
 
@@ -161,10 +176,17 @@ async function main() {
         //      Then -> Loga solução local
         //           -> Realizar o restart
         if (!hasFoundBetter) {
+            Utils.pauseCountingNextId();
+            logger.logJumpedFrom(currentSolution);
             program.addLocalSolution(currentSolution);
+
+            logger.logAddLocalSolution(currentSolution);
             currentSolution = await program.restartFromSolution(currentSolution);
+
             await program.evaluator.evaluate(currentSolution);
             Logger.info(`[Jumped to]`, currentSolution.toLog());
+            logger.logJumpedTo(currentSolution);
+            Utils.continueCountingNextId();
         }
     } while (true);
 
@@ -172,6 +194,7 @@ async function main() {
 
     // 7. Apresentar resultados
     const bestSolution = program.getBestSolution() || currentSolution;
+    logger.logFinished(currentSolution, currentIndInLoop);
 
     Logger.info(`Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.forEach((ind) => {

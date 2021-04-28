@@ -11,25 +11,25 @@ _INSTANCES = {
 }
 
 # ./bin/run "prime" "aman-aplan" "four" "ranges"
-# ./bin/run "triples" "powers" "glob" "alphabetical" 
-# ./bin/run  "order" "abba" "warmup" "backrefs" 
-# ./bin/run "balance" "long-count" "anchors" 
+# ./bin/run "triples" "powers" "glob" "alphabetical"
+# ./bin/run  "order" "abba" "warmup" "backrefs"
+# ./bin/run "balance" "long-count" "anchors"
 
 INSTANCES = {
-    "warmup": 10,
-    "anchors": 10,
-    "ranges": 10,
-    "backrefs": 10,
-    "abba": 10,
-    "aman-aplan": 10,
-    "prime": 15,
-    "four": 10,
-    "order": 10,
-    "triples": 30,
-    "glob": 20,
-    "balance": 10,
-    "powers": 10,
-    "long-count": 270,
+    # "warmup": 10,
+    # "anchors": 10,
+    # "ranges": 10,
+    # "backrefs": 10,
+    # "abba": 10,
+    # "aman-aplan": 10,
+    # "prime": 15,
+    # "four": 10,
+    # "order": 10,
+    # "triples": 30,
+    # "glob": 20,
+    # "balance": 10,
+    # "powers": 10,
+    # "long-count": 270,
     "alphabetical": 20,
 }
 
@@ -64,7 +64,7 @@ for instance in instances:
 program = 'ILS_Shrink'
 for index, seed in enumerate(SEEDS):
     for depth in DEPTHS:
-        for budget in BUDGETS:        
+        for budget in BUDGETS:
             for instance in instances:
                 weight = INSTANCES[instance]
                 today = datetime.date.today().strftime("%Y-%m-%d")

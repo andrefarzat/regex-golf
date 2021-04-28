@@ -245,8 +245,10 @@ export class Individual {
     }
 
     public fix(): Individual {
+        Utils.pauseCountingNextId();
         const ind = new Individual();
         ind.tree = this.tree.clone();
+        Utils.continueCountingNextId();
 
         ind.tree.children = ind.tree.children.map(child => {
             if (child instanceof ListFunc) { return NodeShrinker.shrinkFunc(child); }

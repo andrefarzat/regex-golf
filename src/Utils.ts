@@ -3,6 +3,7 @@ import MersenneTwister = require("mersenne-twister");
 import * as path from "path";
 
 export class Utils {
+    public static hasStarted = false;
 
     public static setSeed(seed: number) {
         this.random = new MersenneTwister(seed);
@@ -62,7 +63,23 @@ export class Utils {
     }
 
     public static getNextId() {
-        return this.idIndex++;
+        if (this.hasStarted) {
+            return this.idIndex++;
+        }
+
+        return this.idIndex;
+    }
+
+    public static pauseCountingNextId() {
+        Utils.hasStarted = false;
+    }
+
+    public static continueCountingNextId() {
+        Utils.hasStarted = true;
+    }
+
+    public static resetNextId(): void {
+        this.idIndex = 1;
     }
 
     public static async waitFor(conditionFn: () => boolean) {
