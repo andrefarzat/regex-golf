@@ -4,6 +4,7 @@ import { Individual } from "../models/Individual";
 import { IndividualFactory } from "../models/IndividualFactory";
 import { Utils } from "../Utils";
 import { Logger } from "../Logger";
+import { ILogger } from "../logger/ILogger";
 
 export interface Solution {
     ind: Individual;
@@ -26,6 +27,7 @@ export abstract class LocalSearch {
     public oldNGrams: string[] = [];
     public evaluationsWithoutImprovement = 0;
     public maxEvaluationsWithoutImprovement = Infinity;
+    public logger: ILogger;
 
     public budget: number;
     public depth: number = 5;
@@ -56,6 +58,10 @@ export abstract class LocalSearch {
 
     public get rightCharsNotInLeft(): string[] {
         return this.validRightChars.filter((char) => this.validLeftChars.indexOf(char) === -1);
+    }
+
+    public setLogger(logger: ILogger): void {
+        this.logger = logger;
     }
 
     public init() {

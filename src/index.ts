@@ -67,6 +67,8 @@ async function main() {
     const program = getProgram();
     const logger = new FileLogger();
 
+    logger.setLogFileName(path.join(flags.index.toString(), flags.instance + '.csv'));
+
     program.setLogger(logger);
 
     // 3. Seta o Budget
@@ -113,7 +115,7 @@ async function main() {
         // 6.4 Evaluate Neighborhood
         const neighborhood = new Neighborhood(currentSolution, program);
         Logger.info(`[Starting neighborhood for]`, currentSolution.toLog());
-        this.logger.logStartNeighborhood(currentSolution);
+        logger.logStartNeighborhood(currentSolution);
 
         var currentIndInLoop;
 
@@ -194,7 +196,7 @@ async function main() {
 
     // 7. Apresentar resultados
     const bestSolution = program.getBestSolution() || currentSolution;
-    logger.logFinished(currentSolution, currentIndInLoop);
+    logger.logFinished(bestSolution, currentIndInLoop);
 
     Logger.info(`Was found ${program.localSolutions.length} local solution(s)`);
     program.localSolutions.forEach((ind) => {

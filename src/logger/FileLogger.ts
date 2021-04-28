@@ -86,7 +86,7 @@ export class FileLogger implements ILogger {
     }
 
     protected async waitForWinston(): Promise<void> {
-        return new Promise(async (resolve, _reject) => {
+        return new Promise<void>(async (resolve, _reject) => {
             for (const transport of this.transports) {
                 try {
                     await this.closeWinstonTransportAndWaitForFinish(transport);
@@ -176,7 +176,7 @@ export class FileLogger implements ILogger {
         }
 
         // index; event; funcName; fromNode; toNode;
-        const line = [ind?.id, 'shink', funcName, fromNode.toString(), toNode.toString()].join(';');
+        const line = [ind ? ind.id : null, 'shink', funcName, fromNode.toString(), toNode.toString()].join(';');
         this.wiston.info(line);
     }
 

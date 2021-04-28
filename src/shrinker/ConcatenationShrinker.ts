@@ -10,15 +10,15 @@ import { NodeShrinker } from "./NodeShrinker";
 export class ConcatFuncShrinker implements FuncShrinker {
 
     public shrink(func: ConcatFunc): Node {
-        let children = func.children.map((node) => NodeShrinker.shrink(node));
+        let children = func.children.map((node) => NodeShrinker.shrink(node)[0]);
         const orFuncs = children.filter((f) => f.is(FuncTypes.or)) as OrFunc[];
         if (orFuncs.length === 0) {
             children = this.shrinkStartAnchor(children);
             children = this.shrinkEndAnchor(children);
         } else {
             orFuncs.forEach((orFunc) => {
-                orFunc.left = NodeShrinker.shrink(orFunc.left);
-                orFunc.right = NodeShrinker.shrink(orFunc.right);
+                orFunc.left = NodeShrinker.shrink(orFunc.left)[0];
+                orFunc.right = NodeShrinker.shrink(orFunc.right)[0];
             });
         }
 

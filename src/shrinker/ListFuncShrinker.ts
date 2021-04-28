@@ -13,7 +13,7 @@ export class ListFuncShrinker implements FuncShrinker {
             return node.negative ? new AnyCharFunc() : new Terminal('');
         }
 
-        const children = node.children.map((c) => NodeShrinker.shrink(c));
+        const children = node.children.map((c) => NodeShrinker.shrink(c)[0]);
 
         const allAreTerminals = children.every((c) => c.is(NodeTypes.terminal));
         if (allAreTerminals) {

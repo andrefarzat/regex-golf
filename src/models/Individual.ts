@@ -8,6 +8,12 @@ import { NodeShrinker } from '../shrinker/NodeShrinker';
 import { Utils } from "../Utils";
 import { OrFunc } from '../nodes/OrFunc';
 import { ListFunc } from '../nodes/ListFunc';
+import { ILogger } from '../logger/ILogger';
+
+export interface IndividualOrigin {
+    name: string;
+    args: string[]
+}
 
 export class Individual {
     private static weight = 10;
@@ -45,6 +51,7 @@ export class Individual {
     public rightPoints: number = 0;
     public evaluationStartTime?: Date;
     public evaluationEndTime?: Date;
+    public origin: IndividualOrigin[] = [];
 
     public evaluationIndex: number = undefined;
 
@@ -55,6 +62,14 @@ export class Individual {
 
     public invalidRegexes = ['^', '.*', '^.*',  '.*$', '.+', '.+$', '$', '+?', '[]', '[^]', `\b`];
     protected _string: string;
+
+    public addOrigin(name: string | IndividualOrigin, args: string[] = []) {
+        if (typeof name === 'string') {
+            this.origin.push({ name, args });
+        } else {
+            this.origin.push(name);
+        }
+    }
 
     public toCSV(withDot: boolean = false): string {
         const arr = [
@@ -231,16 +246,19 @@ export class Individual {
         return false;
     }
 
-    public shrink(): Individual {
-        const ind = new Individual();
-        let node = NodeShrinker.shrinkRoot(this.tree);
-
-        if (node.nodeType === 'terminal') {
-            const func = new ConcatFunc([node]);
-            node = func;
+    public shrink(logger: ILogger = null): Individual {
+        if (logger) {
+            logger.logInitShrinker(this);
+            NodeShrinker.setLogger(logger);
         }
 
-        ind.tree = node as Func;
+        const ind = NodeShrinker.shrinkIndividual(this);
+        ind.addOrigin('shrink', []);
+
+        if (logger) {
+            logger.logFinishShrinker(this, ind);
+        }
+
         return ind;
     }
 
@@ -251,7 +269,7 @@ export class Individual {
         Utils.continueCountingNextId();
 
         ind.tree.children = ind.tree.children.map(child => {
-            if (child instanceof ListFunc) { return NodeShrinker.shrinkFunc(child); }
+            if (child instanceof ListFunc) { return NodeShrinker.shrinkFunc(child)[0]; }
             return child.clone();
         });
 
