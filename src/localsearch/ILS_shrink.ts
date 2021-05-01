@@ -19,7 +19,7 @@ export class ILS_Shrink extends ILS {
     }
 
     public async restartFromSolution(ind: Individual): Promise<Individual> {
-        const shunkCurrentSolution = ind.shrink();
+        const shunkCurrentSolution = ind.shrink(this.logger);
 
         if (shunkCurrentSolution.isValid()) {
             try {

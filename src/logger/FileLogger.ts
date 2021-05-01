@@ -23,6 +23,8 @@ export class FileLogger implements ILogger {
     protected logFileName: string = 'execution.log';
     protected transports: any = [];
 
+    protected _shrinkerHasInited: boolean = false;
+
     public setLogFileName(logFileName: string): void {
         this.logFileName = logFileName;
     }
@@ -167,16 +169,25 @@ export class FileLogger implements ILogger {
     }
 
     logInitShrinker(ind: Individual): void {
+        this._shrinkerHasInited = true;
         this.addLogEntry('Init shrinker', ind);
     }
 
     logShrink(ind: Individual, funcName: string, fromNode: Node, toNode: Node): void {
+        if (!this._shrinkerHasInited) {
+            return;
+        }
+
         if (fromNode.equals(toNode)) {
             return;
         }
 
-        // index; event; funcName; fromNode; toNode;
-        const line = [ind ? ind.id : null, 'shink', funcName, fromNode.toString(), toNode.toString()].join(';');
+        const indId = ind ? ind.id : null;
+        const indFitness = ind ? ind.fitness : 0;
+        const wasShrunk = ind ? ind.origin.some(origin => origin.name === 'shrink') : false;
+
+        // index; event; funcName; fromNode; toNode; wasShunk; fitness
+        const line = [indId, 'shink', funcName, fromNode.toString(), toNode.toString(), wasShrunk, indFitness].join(';');
         this.wiston.info(line);
     }
 
@@ -185,6 +196,7 @@ export class FileLogger implements ILogger {
     }
 
     logFinishShrinker(fromInd: Individual, toInd: Individual): void {
+        this._shrinkerHasInited = false;
         const isBetter = fromInd.toString().length > toInd.toString().length;
 
         // index; event; fromInd; toInd; fromIsBetter;
