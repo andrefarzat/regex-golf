@@ -85,6 +85,7 @@ export abstract class LocalSearch {
             this.ngrams = this.extractNGrams();
         }
 
+        this.ngrams.sort((a, b) => a.length - b.length);
         return this;
     }
 
