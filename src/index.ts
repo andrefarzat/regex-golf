@@ -168,7 +168,7 @@ async function main() {
                 console.log('Reason to stop:', program.reasonToStop);
                 Logger.error('[Stop]', program.reasonToStop);
             } else {
-                console.log('Neighborhood error:', e.message);
+                console.log('Neighborhood error:', e);
                 Logger.error(`[Index Neighborhood error]`, e.message);
                 logger.logNeighborhoodError(neighborhood, e);
             }

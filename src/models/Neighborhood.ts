@@ -13,7 +13,7 @@ import { RangeFunc } from "../nodes/RangeFunc";
 import { Terminal } from "../nodes/Terminal";
 import { ZeroOrMoreFunc } from "../nodes/ZeroOrMore";
 import { Utils } from "../Utils";
-import { Individual } from "./Individual";
+import { Individual, OperatorName } from "./Individual";
 
 export class Neighborhood {
 
@@ -94,6 +94,10 @@ export class Neighborhood {
             yield ind;
         }
 
+        // for (const ind of this.generateByAddingGivenOperator(solution, OrFunc)) {
+        //     yield ind;
+        // }
+
         for (const ind of this.generateByAddingBackrefOperator(solution)) {
             yield ind;
         }
@@ -120,7 +124,10 @@ export class Neighborhood {
             if (node.is(NodeTypes.terminal) && node.toString() == '') { continue; }
 
             const neo = this.factory.removeNode(solution, node);
-            if (neo.isValid()) { yield neo; }
+            if (neo.isValid()) {
+                neo.addHistory('removeNode', 'Extraction', solution, [node]);
+                yield neo;
+            }
         }
     }
 
@@ -135,6 +142,7 @@ export class Neighborhood {
 
                 const neo = this.factory.addStartOperatorToTerminal(solution, terminal);
                 if (neo.isValid()) {
+                    neo.addHistory('addStartOperatorToTerminal', 'Start anchor', solution, [terminal]);
                     yield neo;
                     break;
                 }
@@ -148,6 +156,7 @@ export class Neighborhood {
 
                     const neo = this.factory.addStartOperatorToTerminal(solution, terminal);
                     if (neo.isValid()) {
+                        neo.addHistory('addStartOperatorToTerminal', 'Start anchor', solution, [terminal]);
                         yield neo;
                     }
                 }
@@ -170,6 +179,7 @@ export class Neighborhood {
 
                 const neo = this.factory.addEndOperatorToTerminal(solution, terminal);
                 if (neo.isValid()) {
+                    neo.addHistory('addEndOperatorToTerminal', 'End anchor', solution, [terminal]);
                     yield neo;
                     break;
                 }
@@ -183,6 +193,7 @@ export class Neighborhood {
 
                     const neo = this.factory.addEndOperatorToTerminal(solution, terminal);
                     if (neo.isValid()) {
+                        neo.addHistory('addEndOperatorToTerminal', 'End anchor', solution, [terminal]);
                         yield neo;
                     }
                 }
@@ -199,12 +210,18 @@ export class Neighborhood {
 
             for (const char of this.program.validLeftChars) {
                 const neo = this.factory.replaceNode(solution, terminal, new Terminal(char));
-                if (neo.isValid() && neo.toString() !== solution.toString()) { yield neo; }
+                if (neo.isValid() && neo.toString() !== solution.toString()) {
+                    neo.addHistory('replaceNode', 'Swap', solution, [terminal, new Terminal(char)]);
+                    yield neo;
+                }
             }
 
             for (const specialChar of this.specialChars) {
                 const neo = this.factory.replaceNode(solution, terminal, new Terminal(specialChar));
-                if (neo.isValid() && neo.toString() !== solution.toString()) { yield neo; }
+                if (neo.isValid() && neo.toString() !== solution.toString()) {
+                    neo.addHistory('replaceNode', 'Swap', solution, [terminal, new Terminal(specialChar)]);
+                    yield neo;
+                }
             }
         }
     }
@@ -217,12 +234,18 @@ export class Neighborhood {
 
             for (const char of this.program.validLeftChars) {
                 const neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
-                if (neo.isValid()) { yield neo; }
+                if (neo.isValid()) {
+                    neo.addHistory('concatenateToNode', 'Concatenation', solution, [node, new Terminal(char)]);
+                    yield neo;
+                }
             }
 
             for (const char of this.specialChars) {
                 const neo = this.factory.concatenateToNode(solution, node, new Terminal(char));
-                if (neo.isValid()) { yield neo; }
+                if (neo.isValid()) {
+                    neo.addHistory('concatenateToNode', 'Concatenation', solution, [node, new Terminal(char)]);
+                    yield neo;
+                }
             }
         }
     }
@@ -254,10 +277,16 @@ export class Neighborhood {
 
             for (const range of this.getAllRanges()) {
                 let neo = this.factory.replaceNode(solution, node, range);
-                if (neo.isValid()) { yield neo; }
+                if (neo.isValid()) {
+                    neo.addHistory('replaceNode', 'Range', solution, [node, range]);
+                    yield neo;
+                }
 
                 neo = this.factory.concatenateToNode(solution, node, range);
-                if (neo.isValid()) { yield neo; }
+                if (neo.isValid()) {
+                    neo.addHistory('concatenateToNode', 'Range', solution, [node, range]);
+                    yield neo;
+                }
             }
         }
     }
@@ -272,14 +301,23 @@ export class Neighborhood {
                 const func = new ListFunc([new Terminal(char)], 'negative');
 
                 let neo = this.factory.replaceNode(solution, node, func);
-                if (neo.isValid()) { yield neo; }
+                if (neo.isValid()) {
+                    neo.addHistory('replaceNode', 'Negation', solution, [node, func]);
+                    yield neo;
+                }
 
                 neo = this.factory.concatenateToNode(solution, node, func);
-                if (neo.isValid()) { yield neo; }
+                if (neo.isValid()) {
+                    neo.addHistory('concatenateToNode', 'Negation', solution, [node, func]);
+                    yield neo;
+                }
 
                 if (node.is(FuncTypes.list) && (node as ListFunc).negative) {
                     neo = this.factory.appendToNode(solution, node, func);
-                    if (neo.isValid()) { yield neo; }
+                    if (neo.isValid()) {
+                        neo.addHistory('appendToNode', 'Negation', solution, [node, func]);
+                        yield neo;
+                    }
                 }
             }
         }
@@ -288,6 +326,7 @@ export class Neighborhood {
     // tslint:disable-next-line variable-name
     public * generateByAddingGivenOperator(solution: Individual, FuncClass: any) {
         const nodes = solution.getNodes();
+        const operatorName = this.getOperatorName(FuncClass);
 
         // Operators: zeroOrMore, oneOrMore, anyChar and optional
         const func = new FuncClass();
@@ -297,11 +336,30 @@ export class Neighborhood {
             if (node === solution.tree) { continue; }
 
             neo = this.factory.replaceNode(solution, node, func);
-            if (neo.isValid()) { yield neo; }
+            if (neo.isValid()) {
+                neo.addHistory('replaceNode', operatorName, solution, [node, func]);
+                yield neo;
+            }
 
             neo = this.factory.concatenateToNode(solution, node, func);
-            if (neo.isValid()) { yield neo; }
+            if (neo.isValid()) {
+                neo.addHistory('concatenateToNode', operatorName, solution, [node, func]);
+                yield neo;
+            }
         }
+    }
+
+    private getOperatorName(FuncClass: any): OperatorName {
+        var func = new FuncClass();
+        switch (func.type) {
+            case FuncTypes.zeroOrMore: return "Star quantifier";
+            case FuncTypes.oneOrMore: return "Plus quantifier";
+            case FuncTypes.anyChar: return "Dot";
+            case FuncTypes.optional: return "Optional";
+            case FuncTypes.or: return "Alternative";
+        }
+
+        throw new Error('Invalid FuncType: ' + func);
     }
 
     public * generateByAddingBackrefOperator(solution: Individual) {
@@ -336,7 +394,10 @@ export class Neighborhood {
                     }
 
                     alreadyGenerated.push(neo.toString());
-                    if (neo.isValid()) { yield neo; }
+                    if (neo.isValid()) {
+                        neo.addHistory('addBackref', 'Back reference', current, [localNode, i]);
+                        yield neo;
+                    }
                 }
             }
         }
@@ -356,6 +417,7 @@ export class Neighborhood {
             try {
                 const neo = this.factory.createFromString(node.toString());
                 if (neo.isValid()) {
+                    neo.addHistory('createFromString', 'Extraction', solution, [node]);
                     yield neo;
                 } else {
                     // Logger.error(`[Invalid generateByExtractingSingleNode]`, neo.toLog());
@@ -367,6 +429,7 @@ export class Neighborhood {
         }
     }
 
+    // @deprecated
     public * generateByAddingLookahead(solution: Individual) {
         for (const terminal of solution.getTerminals()) {
             if (terminal.toString() === '') { continue; }
@@ -385,6 +448,7 @@ export class Neighborhood {
         }
     }
 
+    // @deprecated
     public * generateByAddingLookbehind(solution: Individual) {
         for (const terminal of solution.getTerminals()) {
             if (terminal.toString() === '') { continue; }
@@ -425,31 +489,47 @@ export class Neighborhood {
 
             for (const node of nodes) {
                 if (solution.isTheRootNode(node)) {
-                    yield ind.clone();
+                    neo = ind.clone();
+                    neo.addHistory('createFromString', 'Swap', solution, [node]);
+                    yield neo;
                 } else {
                     neo = this.factory.replaceNode(solution, node, ind.tree);
-                    if (neo.isValid()) { yield neo; }
+                    if (neo.isValid()) {
+                        neo.addHistory('replaceNode', 'Swap', solution, [node]);
+                        yield neo;
+                    }
                 }
 
                 neo = this.factory.concatenateToNode(solution, node, ind.tree);
-                if (neo.isValid()) { yield neo; }
+                if (neo.isValid()) {
+                    neo.addHistory('concatenateToNode', 'Concatenation', solution, [node]);
+                    yield neo;
+                }
 
                 let or = new OrFunc(node, ind.tree);
                 neo = this.factory.replaceNode(solution, node, or);
+                neo.addHistory('replaceNode', 'Swap', solution, [node, or]);
                 yield neo;
 
                 or = new OrFunc(ind.tree, node);
                 neo = this.factory.replaceNode(solution, node, or);
+                neo.addHistory('replaceNode', 'Swap', solution, [node, or]);
                 yield neo;
             }
 
             neo = solution.clone();
             neo.tree = new OrFunc(neo.tree.clone(), ind.tree);
-            if (neo.isValid()) { yield neo; }
+            if (neo.isValid()) {
+                neo.addHistory('replaceNode', 'Swap', solution, [solution.tree, neo.tree]);
+                yield neo;
+            }
 
             neo = solution.clone();
             neo.tree = new OrFunc(ind.tree, neo.tree.clone());
-            if (neo.isValid()) { yield neo; }
+            if (neo.isValid()) {
+                neo.addHistory('replaceNode', 'Swap', solution, [solution.tree, neo.tree]);
+                yield neo;
+            }
         }
     }
 }

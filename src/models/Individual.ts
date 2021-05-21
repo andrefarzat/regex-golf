@@ -10,9 +10,20 @@ import { OrFunc } from '../nodes/OrFunc';
 import { ListFunc } from '../nodes/ListFunc';
 import { ILogger } from '../logger/ILogger';
 
+
+export type OperatorName = 'Extraction' | 'Start anchor' | 'End anchor' | 'Swap' | 'Concatenation' | 'Range' | 'Negation'
+                           | "Star quantifier" | "Plus quantifier" | "Dot" | "Optional" | "Alternative" | "Back reference";
+
 export interface IndividualOrigin {
     name: string;
     args: string[]
+}
+
+export interface IndividualHistory {
+    funcName: string;
+    operatorName: OperatorName;
+    originalSolution: { index: number; regex: string; };
+    args: string[];
 }
 
 export class Individual {
@@ -52,6 +63,7 @@ export class Individual {
     public evaluationStartTime?: Date;
     public evaluationEndTime?: Date;
     public origin: IndividualOrigin[] = [];
+    public history: IndividualHistory[] = [];
 
     public evaluationIndex: number = undefined;
 
@@ -274,5 +286,14 @@ export class Individual {
         });
 
         return ind;
+    }
+
+    public addHistory(funcName: string, operatorName: OperatorName, originalSolution: Individual, args: any[]) {
+        this.history.push({
+            funcName,
+            operatorName,
+            originalSolution: { index: originalSolution.id, regex: originalSolution.toString()},
+            args: args.map(arg => arg.toString()),
+        });
     }
 }

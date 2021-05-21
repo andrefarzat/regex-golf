@@ -77,8 +77,21 @@ export class FileLogger implements ILogger {
 
         const wasShrunk = ind.origin.some(origin => origin.name === 'shrink');
 
-        const line = [ind.id, event, ind.toString(), originName, originArgs, wasShrunk, ind.fitness].join(';');
+        // const line = [ind.id, event, ind.toString(), originName, originArgs, wasShrunk, ind.fitness].join(';');
         // const line = [ind.id, event, ind.toString(), this.getOriginListFromInd(ind), ind.fitness].join(';');
+
+        let operatorName = 'Initial';
+        let originalSolution = '';
+        let args = '';
+
+        if (ind.history.length > 0) {
+            const history = ind.history[0];
+            operatorName = history.operatorName;
+            args = history.args.join(',');
+            originalSolution = history.originalSolution.regex;
+        }
+
+        const line = [ind.id, event, ind.toString(), operatorName, args, originalSolution, ind.fitness].join(';');
         this.wiston.info(line);
     }
 
@@ -152,7 +165,7 @@ export class FileLogger implements ILogger {
         this.addLogEntry('Found better in current neighborhood', ind);
     }
     logEvaluation(ind: Individual): void {
-        // this.addLogEntry('Evaluation', ind);
+        this.addLogEntry('Evaluation', ind);
     }
     logAddSolution(ind: Individual): void {
         // this.addLogEntry('Add solution', ind);

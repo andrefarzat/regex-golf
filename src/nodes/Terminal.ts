@@ -50,4 +50,8 @@ export class Terminal implements Node {
     public isEmpty() {
         return this.value === '';
     }
+
+    public addHistory(funcName: string, operatorName: string, fromNode: string) {
+        return;
+    }
 }

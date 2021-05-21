@@ -1,4 +1,4 @@
-import { Node, NodeTypes } from "./Node";
+import { Node, NodeTypes, NodeHistory } from "./Node";
 import { Terminal } from "./Terminal";
 
 export enum FuncTypes {
@@ -33,6 +33,7 @@ export abstract class Func implements Node {
     protected static _options: string[] = null;
     public type: FuncTypes = FuncTypes.concatenation;
     public nodeType: NodeTypes = NodeTypes.func;
+    public history: NodeHistory[] = [];
 
     public constructor(public children: Node[] = []) {}
 
@@ -189,5 +190,9 @@ export abstract class Func implements Node {
         }
 
         return null;
+    }
+
+    public addHistory(funcName: string, operatorName: string, fromNode: string) {
+        return;
     }
 }

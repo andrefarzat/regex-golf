@@ -16,21 +16,21 @@ _INSTANCES = {
 # ./bin/run "balance" "long-count" "anchors"
 
 INSTANCES = {
-    # "warmup": 10,
+    "warmup": 10,
     # "anchors": 10,
     # "ranges": 10,
     # "backrefs": 10,
     # "abba": 10,
     # "aman-aplan": 10,
     # "prime": 15,
-    "four": 10,
+    # "four": 10,
     # "triples": 30,
     # "glob": 20,
     # "powers": 10,
     # "long-count": 270,
     # "alphabetical": 20,
     # "order": 10,
-    "balance": 10,
+    # "balance": 10,
 }
 
 SEEDS = [2967301147, 5600405384, 1632819610, 1412034944, 9724161943, 4037724866, # 5
