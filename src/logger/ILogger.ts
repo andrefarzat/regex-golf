@@ -1,6 +1,7 @@
 import { Individual } from "../models/Individual";
 import { Neighborhood } from "../models/Neighborhood";
 import { Node } from "../nodes/Node";
+import { ShrinkOperator } from "../shrinker/NodeShrinker";
 
 export interface ILogger {
     end(): Promise<void>;
@@ -21,4 +22,8 @@ export interface ILogger {
     logShrink(ind: Individual, funcName: string, fromNode: Node, toNode: Node): void;
     logFinishShrinker(fromInd: Individual, toInd: Individual): void;
     logGenerateIndividualToRestart(ind: Individual): void;
+
+    logShrinkRoot(ind: Individual): void;
+    logShrinkOperation(operationName: ShrinkOperator, args: string[]): void;
+    logShrinkRootFinished(ind: Individual, nodeResult: Node): void;
 }

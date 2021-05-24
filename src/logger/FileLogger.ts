@@ -4,6 +4,7 @@ import * as winston from 'winston';
 import { Individual } from "../models/Individual";
 import { Neighborhood } from "../models/Neighborhood";
 import { Node } from '../nodes/Node';
+import { NodeShrinker, ShrinkOperator } from '../shrinker/NodeShrinker';
 import { Utils } from '../Utils';
 import { ILogger } from "./ILogger";
 
@@ -20,6 +21,7 @@ export enum LogLevel {
 
 export class FileLogger implements ILogger {
     protected _wiston: winston.Logger;
+    protected _wistonShrinker: winston.Logger;
     protected logFileName: string = 'execution.log';
     protected transports: any = [];
 
@@ -47,9 +49,39 @@ export class FileLogger implements ILogger {
                 format: winston.format.printf(({message}) => message),
                 transports: this.transports,
             });
+
+            const initialLine = ['Index', 'Event Name', 'Regex', 'Operator Name', 'Arg for Operator', 'Regex Origin', 'Fitness'].join(';');
+            this._wiston.info(initialLine);
         }
 
         return this._wiston;
+    }
+
+    protected get wistonForShrinker() {
+        if (!this._wistonShrinker) {
+            const reportRootDir = path.join(__dirname, '..', '..', 'results', 'current');
+
+            const errorLog = path.join(reportRootDir, 'error.log');
+            const instanceInfo = path.join(reportRootDir, this.logFileName.replace('.csv', '.shrinker.csv'));
+
+            this.transports = [
+                // new winston.transports.Console({ level: 'info' }),
+                new winston.transports.File({ filename: errorLog, level: 'error' }),
+                new winston.transports.File({ filename: instanceInfo, level: 'info' })
+            ];
+
+            this._wistonShrinker = winston.createLogger({
+                level: LogLevel.info.toString(),
+                format: winston.format.printf(({message}) => message),
+                transports: this.transports,
+            });
+
+            // Event Name; Operation Name; Index; Node; Result Is Better
+            const initialLine = ['Event Name', 'Operation Name', 'Index', 'Node', 'Result Is Better'].join(';');
+            this._wistonShrinker.info(initialLine);
+        }
+
+        return this._wistonShrinker;
     }
 
     private getOriginFromInd(ind: Individual): string {
@@ -140,39 +172,50 @@ export class FileLogger implements ILogger {
     logStop(label: string, data: { [key: string]: string; }): void {
         // throw new Error("Method not implemented.");
     }
+
     logInitialSolution(ind: Individual): void {
         ind.id = 0;
         Utils.resetNextId();
         Utils.hasStarted = true;
         this.addLogEntry('Initial solution', ind);
     }
+
     logJumpedFrom(ind: Individual): void {
         this.addLogEntry('Jumped from', ind);
     }
+
     logJumpedTo(ind: Individual): void {
         this.addLogEntry('Jumped to', ind);
     }
+
     logAddLocalSolution(currentSolution: Individual): void {
         // this.addLogEntry('Add local solution', currentSolution);
     }
+
     logNeighborhoodError(neighborhood: Neighborhood, e: any): void {
         // throw new Error("Method not implemented.");
     }
+
     logHasAlreadyVisited(ind: Individual): void {
         // throw new Error("Method not implemented.");
     }
+
     logFoundBetter(ind: Individual): void {
         this.addLogEntry('Found better in current neighborhood', ind);
     }
+
     logEvaluation(ind: Individual): void {
-        this.addLogEntry('Evaluation', ind);
+        // this.addLogEntry('Evaluation', ind);
     }
+
     logAddSolution(ind: Individual): void {
         // this.addLogEntry('Add solution', ind);
     }
+
     logBestCurrentSolutionAmongNeighborhoods(ind: Individual): void {
         this.addLogEntry('Found better current solution among all neighborhoods', ind);
     }
+
     logStartNeighborhood(ind: Individual): void {
         this.addLogEntry('Start of neighborhood', ind);
     }
@@ -182,26 +225,26 @@ export class FileLogger implements ILogger {
     }
 
     logInitShrinker(ind: Individual): void {
-        this._shrinkerHasInited = true;
-        this.addLogEntry('Init shrinker', ind);
+        // this._shrinkerHasInited = true;
+        // this.addLogEntry('Init shrinker', ind);
     }
 
     logShrink(ind: Individual, funcName: string, fromNode: Node, toNode: Node): void {
-        if (!this._shrinkerHasInited) {
-            return;
-        }
+        // if (!this._shrinkerHasInited) {
+        //     return;
+        // }
 
-        if (fromNode.equals(toNode)) {
-            return;
-        }
+        // if (fromNode.equals(toNode)) {
+        //     return;
+        // }
 
-        const indId = ind ? ind.id : null;
-        const indFitness = ind ? ind.fitness : 0;
-        const wasShrunk = ind ? ind.origin.some(origin => origin.name === 'shrink') : false;
+        // const indId = ind ? ind.id : null;
+        // const indFitness = ind ? ind.fitness : 0;
+        // const wasShrunk = ind ? ind.origin.some(origin => origin.name === 'shrink') : false;
 
-        // index; event; funcName; fromNode; toNode; wasShunk; fitness
-        const line = [indId, 'shink', funcName, fromNode.toString(), toNode.toString(), wasShrunk, indFitness].join(';');
-        this.wiston.info(line);
+        // // index; event; funcName; fromNode; toNode; wasShunk; fitness
+        // const line = [indId, 'shink', funcName, fromNode.toString(), toNode.toString(), wasShrunk, indFitness].join(';');
+        // this.wiston.info(line);
     }
 
     logGenerateIndividualToRestart(ind: Individual): void {
@@ -209,12 +252,34 @@ export class FileLogger implements ILogger {
     }
 
     logFinishShrinker(fromInd: Individual, toInd: Individual): void {
-        this._shrinkerHasInited = false;
-        const isBetter = fromInd.toString().length > toInd.toString().length;
+        // this._shrinkerHasInited = false;
+        // const isBetter = fromInd.toString().length > toInd.toString().length;
 
         // index; event; fromInd; toInd; fromIsBetter;
-        const line = [toInd.id, 'Finished shrinker', fromInd.toString(), toInd.toString(), isBetter].join(';');
-        this.wiston.info(line);
+        // const line = [toInd.id, 'Finished shrinker', fromInd.toString(), toInd.toString(), isBetter].join(';');
+        // this.wiston.info(line);
+    }
+
+    logShrinkRoot(ind: Individual): void {
+        // Event Name; Operation Name; Index; Node; isBetter
+        const line = ['Shink started', 'Started', ind.id, ind.toString(), ''].join(';');
+        this.wistonForShrinker.info(line);
+    }
+
+    logShrinkOperation(operationName: ShrinkOperator, args: string[]): void {
+        const ind = NodeShrinker.getCurrentIndividual();
+        if (!ind) return;
+
+        const line = ['Shink operation', operationName, ind.id, args.join(' -> '), ''].join(';');
+        this.wistonForShrinker.info(line);
+    }
+
+    logShrinkRootFinished(ind: Individual, node: Node): void {
+        var isShorter = node.toString().length < ind.toString().length;
+
+        const line = ['Shink finished', 'Finished', ind.id, `${ind.toString()} -> ${node.toString()}`, isShorter].join(';');
+        this.wistonForShrinker.info(line);
+        this.wistonForShrinker.info('');
     }
 
 }

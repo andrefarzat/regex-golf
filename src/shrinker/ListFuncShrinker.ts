@@ -1,3 +1,4 @@
+import { ILogger } from "../logger/ILogger";
 import { AnyCharFunc } from "../nodes/AnyCharFunc";
 import { ListFunc } from "../nodes/ListFunc";
 import { Node, NodeTypes } from "../nodes/Node";
@@ -5,12 +6,25 @@ import { RangeFunc } from "../nodes/RangeFunc";
 import { Terminal } from "../nodes/Terminal";
 import { Utils } from "../Utils";
 import { FuncShrinker } from "./FuncShrinker";
-import { NodeShrinker } from "./NodeShrinker";
+import { NodeShrinker, ShrinkOperator } from "./NodeShrinker";
 
 export class ListFuncShrinker implements FuncShrinker {
+    constructor(public logger: ILogger) { }
+
+    public logShrinkOperation(operationName: ShrinkOperator, args: string[] = []): void {
+        this.logger.logShrinkOperation(operationName, args);
+    }
+
     public shrink(node: ListFunc): Node {
         if (node.isEmpty()) {
-            return node.negative ? new AnyCharFunc() : new Terminal('');
+
+            if (node.negative) {
+                this.logger.logShrinkOperation('Simplify Negation', ['[^]', '.']);
+                return new AnyCharFunc();
+            } else {
+                this.logger.logShrinkOperation('Simplify Ranges', ['[]', '']);
+                return new Terminal('');
+            }
         }
 
         const children = node.children.map((c) => NodeShrinker.shrink(c)[0]);
@@ -21,6 +35,9 @@ export class ListFuncShrinker implements FuncShrinker {
             chars = Utils.getUniqueChars(chars);
 
             if (chars.length === 1 && !node.negative) {
+                if (children.length > 2) {
+                    this.logger.logShrinkOperation('Remove Duplicate Values', [children.map(c => c.toString()).join(''), chars]);
+                }
                 return new Terminal(chars);
             }
 
@@ -31,7 +48,13 @@ export class ListFuncShrinker implements FuncShrinker {
                 func.from = chars.charAt(0);
                 func.to = chars.substr(-1);
                 func.negative = node.negative;
+
+                this.logger.logShrinkOperation('Simplify Ranges', [children.map(c => c.toString()).join(''), func.toString()]);
                 return func;
+            }
+
+            if (chars.length < children.length) {
+                this.logger.logShrinkOperation('Remove Duplicate Values', [children.map(c => c.toString()).join(''), chars]);
             }
 
             return new ListFunc(chars.split('').map((c) => new Terminal(c)), node.negative ? 'negative' : 'positive');

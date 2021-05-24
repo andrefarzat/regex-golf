@@ -19,12 +19,21 @@ import { ConcatFuncShrinker } from "./ConcatenationShrinker";
 import { ListFuncShrinker } from "./ListFuncShrinker";
 import { RepetitionFuncShrinker } from "./RepetitionFuncShrinker";
 
+
+export type ShrinkOperator = 'Remove redundant operators' | 'Remove Duplicate Values' | 'Merge repetitions' | 'Convert to repetition'
+                             | 'Merge Quantifiers' | 'Simplify Alternation' | 'Remove duplicate Alternation' | 'Simplify Ranges'
+                             | 'Convert Range to shorthand' | 'Adding Backrefs' | 'Simplify Negation';
+
 export class NodeShrinker {
     private static _logger: ILogger;
     private static _individual: Individual;
 
     public static setCurrentIndividual(ind: Individual): void {
         NodeShrinker._individual = ind;
+    }
+
+    public static getCurrentIndividual(): Individual | null {
+        return NodeShrinker._individual;
     }
 
     public static setLogger(logger: ILogger) {
@@ -55,6 +64,7 @@ export class NodeShrinker {
     }
 
     public static shrinkRoot(node: Node): [Node, IndividualOrigin] {
+        if (NodeShrinker._logger) { NodeShrinker._logger.logShrinkRoot(NodeShrinker._individual); }
         const [neo, origin] = NodeShrinker.shrink(node);
 
         const options = [
@@ -78,8 +88,10 @@ export class NodeShrinker {
             const ind = factory.createFromString(optimizedRe);
             ind.addOrigin(origin);
             ind.addOrigin('shrinkRoot', [node.toString()]);
+            if (NodeShrinker._logger) { NodeShrinker._logger.logShrinkRootFinished(NodeShrinker._individual, ind.tree); }
             return ind.isValid() ? [ind.tree, ind.origin[0]] : [neo, ind.origin[0]];
         } catch {
+            if (NodeShrinker._logger) { NodeShrinker._logger.logShrinkRootFinished(NodeShrinker._individual, node); }
             return [neo, {'name': 'shrinkRoot', 'args': [node.toString()]}];
         }
     }
@@ -106,21 +118,21 @@ export class NodeShrinker {
 
     public static shrinkFunc(node: Func): [Node, IndividualOrigin] {
         if (node instanceof ConcatFunc) {
-            const neoNode = (new ConcatFuncShrinker()).shrink(node);
+            const neoNode = (new ConcatFuncShrinker(NodeShrinker._logger)).shrink(node);
             this.log('ConcatFuncShrinker', node, neoNode);
             const origin: IndividualOrigin = { name: 'ConcatFuncShrinker', args: [node.toString()]};
             return [neoNode, origin];
         }
 
         if (node instanceof RepetitionFunc) {
-            const neoNode = (new RepetitionFuncShrinker()).shrink(node);
+            const neoNode = (new RepetitionFuncShrinker(NodeShrinker._logger)).shrink(node);
             this.log('RepetitionFuncShrinker', node, neoNode);
             const origin: IndividualOrigin = { name: 'RepetitionFuncShrinker', args: [node.toString()]};
             return [neoNode, origin];
         }
 
         if (node instanceof ListFunc) {
-            const neoNode = (new ListFuncShrinker()).shrink(node);
+            const neoNode = (new ListFuncShrinker(NodeShrinker._logger)).shrink(node);
             const origin: IndividualOrigin = { name: 'ListFuncShrinker', args: [node.toString()]};
             return [neoNode, origin];
         }

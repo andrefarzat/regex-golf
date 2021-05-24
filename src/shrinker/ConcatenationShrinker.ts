@@ -1,3 +1,4 @@
+import { ILogger } from "../logger/ILogger";
 import { ConcatFunc } from "../nodes/ConcatFunc";
 import { FuncTypes } from "../nodes/Func";
 import { Node, NodeTypes } from "../nodes/Node";
@@ -5,9 +6,14 @@ import { OrFunc } from "../nodes/OrFunc";
 import { RepetitionFunc } from "../nodes/RepetitionFunc";
 import { Terminal } from "../nodes/Terminal";
 import { FuncShrinker } from "./FuncShrinker";
-import { NodeShrinker } from "./NodeShrinker";
+import { NodeShrinker, ShrinkOperator } from "./NodeShrinker";
 
 export class ConcatFuncShrinker implements FuncShrinker {
+    constructor(public logger: ILogger) { }
+
+    public logShrinkOperation(operationName: ShrinkOperator, args: string[] = []): void {
+        this.logger.logShrinkOperation(operationName, args);
+    }
 
     public shrink(func: ConcatFunc): Node {
         let children = func.children.map((node) => NodeShrinker.shrink(node)[0]);
@@ -53,6 +59,7 @@ export class ConcatFuncShrinker implements FuncShrinker {
         return children.map((child) => {
             if (child.is(FuncTypes.lineBegin)) {
                 if (quantity > 0) {
+                    this.logShrinkOperation("Remove redundant operators", ['^']);
                     return new Terminal('');
                 } else {
                     quantity += 1;
@@ -69,6 +76,7 @@ export class ConcatFuncShrinker implements FuncShrinker {
         return children.reverse().map((child) => {
             if (child.is(FuncTypes.lineEnd)) {
                 if (quantity > 0) {
+                    this.logShrinkOperation("Remove redundant operators", ['$']);
                     return new Terminal('');
                 } else {
                     quantity += 1;
@@ -90,6 +98,7 @@ export class ConcatFuncShrinker implements FuncShrinker {
 
     private mainShrink(children: Node[]): ConcatFunc {
         const neoChildren: Node[] = [];
+        const childrenAsString = children.map(c => c.toString()).join('');
 
         for (let i = 0; i < children.length; i++) {
             const current = children[i];
@@ -117,6 +126,7 @@ export class ConcatFuncShrinker implements FuncShrinker {
                     neo.repetitionNumber = (sequenceCount + 1).toString();
                     neoChildren.push(neo);
                     i += sequenceCount;
+                    this.logShrinkOperation("Convert to repetition", [childrenAsString, neo.toString()]);
                     continue;
                 }
 
@@ -127,6 +137,7 @@ export class ConcatFuncShrinker implements FuncShrinker {
                         const neo = next.clone();
                         neo.repetitionNumber = this.addToRepetitionNumber(neo, '1');
                         neoChildren.push(neo);
+                        this.logShrinkOperation("Convert to repetition", [childrenAsString, neo.toString()]);
                         i += 1;
                         continue;
                     }
@@ -142,6 +153,7 @@ export class ConcatFuncShrinker implements FuncShrinker {
                         const neo = new RepetitionFunc(current.children);
                         neo.repetitionNumber = this.addToRepetitionNumber(neo, 1);
                         neoChildren.push(neo);
+                        this.logShrinkOperation("Convert to repetition", [childrenAsString, neo.toString()]);
                         i += 1;
                         continue;
                     }
@@ -153,6 +165,7 @@ export class ConcatFuncShrinker implements FuncShrinker {
                         const neo = current.clone();
                         neo.repetitionNumber = this.addToRepetitionNumber(neo, next.repetitionNumber);
                         neoChildren.push(neo);
+                        this.logShrinkOperation("Convert to repetition", [childrenAsString, neo.toString()]);
                         i += 1;
                         continue;
                     }
