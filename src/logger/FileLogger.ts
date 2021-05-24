@@ -20,12 +20,17 @@ export enum LogLevel {
 
 
 export class FileLogger implements ILogger {
+    protected static _instance: FileLogger = new FileLogger();
     protected _wiston: winston.Logger;
     protected _wistonShrinker: winston.Logger;
     protected logFileName: string = 'execution.log';
     protected transports: any = [];
 
     protected _shrinkerHasInited: boolean = false;
+
+    public static getInstance(): FileLogger {
+        return FileLogger._instance;
+    }
 
     public setLogFileName(logFileName: string): void {
         this.logFileName = logFileName;

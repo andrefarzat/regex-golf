@@ -1,3 +1,4 @@
+import { FileLogger } from "../logger/FileLogger";
 import { ILogger } from "../logger/ILogger";
 import { Node, NodeTypes } from "../nodes/Node";
 import { OneOrMoreFunc } from "../nodes/OneOrMoreFunc";
@@ -6,7 +7,11 @@ import { FuncShrinker } from "./FuncShrinker";
 import { NodeShrinker, ShrinkOperator } from "./NodeShrinker";
 
 export class RepetitionFuncShrinker implements FuncShrinker {
-    constructor(public logger: ILogger) { }
+    protected logger: ILogger;
+
+    constructor(logger: ILogger) {
+        this.logger = logger ? logger : FileLogger.getInstance();
+    }
 
     public logShrinkOperation(operationName: ShrinkOperator, args: string[] = []): void {
         this.logger.logShrinkOperation(operationName, args);
